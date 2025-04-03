@@ -17,6 +17,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: 'Incorrect password' }, { status: 401 })
   }
 
-  // ✅ ตรงนี้สามารถเพิ่ม session/JWT ได้ในอนาคต
-  return NextResponse.json({ message: 'Login successful', user }, { status: 200 })
+  // ✅ ส่งเฉพาะข้อมูลที่จำเป็น
+  return NextResponse.json(
+    {
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    },
+    { status: 200 }
+  )
 }

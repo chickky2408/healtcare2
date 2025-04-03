@@ -108,11 +108,13 @@ export default function LoginPage() {
 
       const data = await res.json()
       if (res.ok) {
+        // ✅ เก็บข้อมูล user ลง localStorage
+        localStorage.setItem('user', JSON.stringify(data.user))
         router.push('/dashboard')
       } else {
         setMessage(data.message || 'Login failed')
       }
-    } catch  {
+    } catch {
       setMessage('Server error. Please try again.')
     } finally {
       setLoading(false)
