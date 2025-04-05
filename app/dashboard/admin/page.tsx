@@ -1,21 +1,27 @@
-
 // ✅ Admin Dashboard
 // app/dashboard/admin/page.tsx
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+type User = {
+  id: string
+  name: string
+  email: string
+  role: 'USER' | 'DOCTOR' | 'ADMIN'
+}
+
 export default function AdminDashboard() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const router = useRouter()
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
     if (!storedUser) return router.push('/login')
-    const parsed = JSON.parse(storedUser)
+    const parsed: User = JSON.parse(storedUser)
     if (parsed.role !== 'ADMIN') return router.push('/login')
     setUser(parsed)
-  }, [])
+  }, [router])
 
   if (!user) return null
 
