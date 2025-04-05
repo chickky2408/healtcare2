@@ -9,20 +9,8 @@ type User = {
   role: 'USER' | 'DOCTOR' | 'ADMIN'
 }
 
-type Appointment = {
-  id: string
-  date: string
-  time: string
-  type: string
-  doctor: {
-    name: string
-    specialty: string
-  }
-}
-
 export default function UserDashboard() {
   const [user, setUser] = useState<User | null>(null)
-  const [appointments, setAppointments] = useState<Appointment[]>([])
   const router = useRouter()
 
   useEffect(() => {
@@ -31,46 +19,24 @@ export default function UserDashboard() {
     const parsed: User = JSON.parse(storedUser)
     if (parsed.role !== 'USER') return router.push('/login')
     setUser(parsed)
-
-    // fetch appointments
-    fetch('/api/appointments/user', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: parsed.email }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.appointments) setAppointments(data.appointments)
-      })
   }, [router])
 
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-blue-50 p-6">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-blue-700 mb-4">
+    <div className="min-h-screen flex items-center justify-center bg-blue-50 px-4">
+      <div className="bg-white p-8 rounded-xl shadow-md text-center">
+        <h1 className="text-2xl font-bold text-blue-700 mb-2">
           Welcome, {user.name}
         </h1>
-        <h2 className="text-xl font-semibold mb-2">Your Appointments</h2>
+        <p className="text-gray-600 mb-6">Role: {user.role}</p>
 
-        {appointments.length === 0 ? (
-          <p className="text-gray-500">No appointments found.</p>
-        ) : (
-          <ul className="space-y-4">
-            {appointments.map((a) => (
-              <li key={a.id} className="border p-4 rounded-md shadow-sm">
-                <p className="text-sm text-gray-600">
-                  🕒 {new Date(a.date).toLocaleDateString()} at {a.time}
-                </p>
-                <p>
-                  🧑‍⚕️ <b>{a.doctor.name}</b> ({a.doctor.specialty})
-                </p>
-                <p>📋 Treatment: <b>{a.type}</b></p>
-              </li>
-            ))}
-          </ul>
-        )}
+        <a
+          href="/dashboard/user/appointments"
+          className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Manage My Appointments
+        </a>
       </div>
     </div>
   )
