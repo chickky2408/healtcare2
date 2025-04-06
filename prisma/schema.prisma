@@ -90,7 +90,7 @@ model Appointment {
   date         DateTime
   time         String
   type         TreatmentType
-  symptoms     String?
+  symptoms     String
   createdAt    DateTime      @default(now())
 }
 
@@ -99,4 +99,5 @@ enum TreatmentType {
   CLEANING
   ORTHODONTIC
   AI_DIAGNOSIS
+  SURGERY
 }

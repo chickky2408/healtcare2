@@ -1,3 +1,4 @@
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -11,12 +12,17 @@ export default function BookingPage() {
   }
 
   const [doctors, setDoctors] = useState<Doctor[]>([])
-  const [selectedDoctor, setSelectedDoctor] = useState<string>('')
+  const [selectedDoctor, setSelectedDoctor] = useState('')
+//   const [selectedType, setSelectedType] = useState('')
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
   const [availableTimes, setAvailableTimes] = useState<string[]>([])
   const [message, setMessage] = useState('')
   const [user, setUser] = useState<{ name: string; email: string } | null>(null)
+  const [symptoms, setSymptoms] = useState('')
+  const [type, setType] = useState('')
+  // Removed unused type and setType state variables
+  
 
   const router = useRouter()
 
@@ -29,35 +35,29 @@ export default function BookingPage() {
     fetchDoctors()
 
     const stored = localStorage.getItem('user')
-    if (stored) {
-      const parsed = JSON.parse(stored)
-      setUser(parsed)
-    }
+    if (stored) setUser(JSON.parse(stored))
   }, [])
 
   useEffect(() => {
-    const fetchAvailable = async () => {
-      if (!selectedDoctor || !date) return
-      const res = await fetch('/api/appointments/available', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ doctorId: selectedDoctor, date }),
-      })
-      const data = await res.json()
-      setAvailableTimes(data.availableTimes || [])
+    const fetchAvailableTimes = async () => {
+      if (selectedDoctor && date) {
+        const res = await fetch('/api/appointments/available', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ doctorId: selectedDoctor, date })
+        })
+        const data = await res.json()
+        setAvailableTimes(data.availableTimes || [])
+      }
     }
-    fetchAvailable()
+    fetchAvailableTimes()
   }, [selectedDoctor, date])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setMessage('')
-
-    if (!selectedDoctor || !date || !time || !user) {
-      setMessage('Please complete all fields')
-      return
+    if (!selectedDoctor || !date || !time || !user || !type) {
+      return setMessage('❗ Please complete all fields')
     }
-
     const res = await fetch('/api/appointments/book', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -67,73 +67,98 @@ export default function BookingPage() {
         time,
         patientName: user.name,
         patientEmail: user.email,
-        type: 'CLEANING',
-      }),
+        type,
+        symptoms,
+      })
     })
-
     const result = await res.json()
-    if (res.ok) {
-      router.push('/dashboard/user?success=true')
-    } else {
-      setMessage(result.message || '❌ Booking failed.')
-    }
+    if (res.ok) router.push('/dashboard/user?success=true')
+    else setMessage(result.message || '❌ Booking failed.')
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-start">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full">
-        <h1 className="text-2xl font-bold mb-4">📅 Book an Appointment</h1>
+    <div className="min-h-screen bg-blue-50 p-6 flex justify-center items-start md:items-center">
+      <div className="bg-white shadow-2xl rounded-3xl p-8 w-full max-w-xl animate-fade-in">
+        <h1 className="text-3xl font-bold text-blue-700 mb-6 text-center">📅 Book an Appointment</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block mb-1 font-medium">Select Doctor</label>
+            <label className="block mb-1 font-semibold text-gray-700">Select Doctor</label>
             <select
-              className="w-full border px-3 py-2 rounded"
               value={selectedDoctor}
               onChange={(e) => setSelectedDoctor(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">-- Select --</option>
               {doctors.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.name} ({d.specialty})
-                </option>
+                <option key={d.id} value={d.id}>{d.name} ({d.specialty})</option>
               ))}
             </select>
           </div>
+
           <div>
-            <label className="block mb-1 font-medium">Select Date</label>
+            <label className="block mb-1 font-medium">Select Treatment</label>
+            <select
+                className="w-full border px-3 py-2 rounded"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+            >
+                <option value="">-- Select Treatment --</option>
+                <option value="VIDEO_CALL">Video Call</option>
+                <option value="CLEANING">Cleaning</option>
+                <option value="ORTHODONTIC">Orthodontic</option>
+                <option value="AI_DIAGNOSIS">AI Diagnosis</option>
+            </select>
+        </div>
+
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">Select Date</label>
             <input
               type="date"
-              className="w-full border px-3 py-2 rounded"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
           <div>
-            <label className="block mb-1 font-medium">Select Time</label>
+            <label className="block mb-1 font-semibold text-gray-700">Select Time</label>
             <select
-              className="w-full border px-3 py-2 rounded"
               value={time}
               onChange={(e) => setTime(e.target.value)}
+              className="w-full border border-gray-300 px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">-- Select Time --</option>
-              {availableTimes.map((t) => (
-                <option key={t} value={t}>{t}</option>
+              {availableTimes.map((t, idx) => (
+                <option key={idx} value={t}>{t}</option>
               ))}
             </select>
           </div>
+
+
+          <div>
+            <label className="block mb-1 font-medium">Symptoms / Concerns</label>
+            <textarea
+                className="w-full border px-3 py-2 rounded resize-none"
+                rows={3}
+                placeholder="Describe your symptoms or concerns..."
+                value={symptoms}
+                onChange={(e) => setSymptoms(e.target.value)}
+            />
+          </div>
+
+
           <button
             type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition duration-200"
           >
             Confirm Booking
           </button>
         </form>
+        {message && <p className="text-center mt-4 text-red-500 font-medium">{message}</p>}
 
-        {message && <p className="mt-4 text-center text-blue-700">{message}</p>}
-
-        <a href="/dashboard/user" className="block text-center mt-4 text-sm text-blue-600 underline">
-          ← Back to Dashboard
-        </a>
+        <div className="text-center mt-6">
+          <a href="/dashboard/user" className="text-sm text-blue-500 hover:underline">← Back to Dashboard</a>
+        </div>
       </div>
     </div>
   )
