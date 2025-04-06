@@ -1,28 +1,25 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function BookingPage() {
-    //if <any[]> have issues , use this solution  below
-    type Doctor = {
-        id: string
-        name: string
-        specialty: string
-      }
-      
+  type Doctor = {
+    id: string
+    name: string
+    specialty: string
+  }
+
   const [doctors, setDoctors] = useState<Doctor[]>([])
-  
-  //if <any[]> have issues , use this solution above
-
-
   const [selectedDoctor, setSelectedDoctor] = useState<string>('')
   const [date, setDate] = useState('')
   const [time, setTime] = useState('')
+  const [availableTimes, setAvailableTimes] = useState<string[]>([])
   const [message, setMessage] = useState('')
-
   const [user, setUser] = useState<{ name: string; email: string } | null>(null)
 
-  // Load doctors from API
+  const router = useRouter()
+
   useEffect(() => {
     const fetchDoctors = async () => {
       const res = await fetch('/api/doctors')
@@ -38,9 +35,24 @@ export default function BookingPage() {
     }
   }, [])
 
+  useEffect(() => {
+    const fetchAvailable = async () => {
+      if (!selectedDoctor || !date) return
+      const res = await fetch('/api/appointments/available', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ doctorId: selectedDoctor, date }),
+      })
+      const data = await res.json()
+      setAvailableTimes(data.availableTimes || [])
+    }
+    fetchAvailable()
+  }, [selectedDoctor, date])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
+
     if (!selectedDoctor || !date || !time || !user) {
       setMessage('Please complete all fields')
       return
@@ -56,12 +68,12 @@ export default function BookingPage() {
         patientName: user.name,
         patientEmail: user.email,
         type: 'CLEANING',
-      })
+      }),
     })
 
     const result = await res.json()
     if (res.ok) {
-      setMessage('✅ Appointment booked successfully!')
+      router.push('/dashboard/user?success=true')
     } else {
       setMessage(result.message || '❌ Booking failed.')
     }
@@ -98,12 +110,16 @@ export default function BookingPage() {
           </div>
           <div>
             <label className="block mb-1 font-medium">Select Time</label>
-            <input
-              type="time"
+            <select
               className="w-full border px-3 py-2 rounded"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-            />
+            >
+              <option value="">-- Select Time --</option>
+              {availableTimes.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
           </div>
           <button
             type="submit"
