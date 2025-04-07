@@ -32,7 +32,7 @@ export default function AuthForm() {
       } else {
         setMessage(data.message || 'Registration failed')
       }
-    } catch (error) {
+    } catch  {
       setMessage('Server error. Please try again later.')
     } finally {
       setLoading(false)
