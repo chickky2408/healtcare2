@@ -1,31 +1,22 @@
-// import { NextResponse } from 'next/server'
-// import { PrismaClient } from '@prisma/client'
-
-// const prisma = new PrismaClient()
-
-// export async function DELETE(req: Request) {
-//   const { id } = await req.json()
-//   if (!id) return NextResponse.json({ message: 'Missing id' }, { status: 400 })
-
-//   await prisma.appointment.delete({ where: { id } })
-
-//   return NextResponse.json({ message: 'Appointment cancelled' }, { status: 200 })
-// }
-
-
+// File: app/api/appointments/delete/route.ts
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 export async function DELETE(req: Request) {
-  const { searchParams } = new URL(req.url)
-  const id = searchParams.get('id')
+  const body = await req.json()
+  const { id } = body
 
   if (!id) {
-    return NextResponse.json({ message: 'Missing ID' }, { status: 400 })
+    return NextResponse.json({ message: 'Missing appointment ID' }, { status: 400 })
   }
 
-  await prisma.appointment.delete({ where: { id } })
-  return NextResponse.json({ message: 'Deleted successfully' })
+  try {
+    await prisma.appointment.delete({ where: { id } })
+    return NextResponse.json({ message: 'Appointment deleted' })
+  } catch (error) {
+    console.error('Error deleting appointment:', error)
+    return NextResponse.json({ message: 'Failed to delete' }, { status: 500 })
+  }
 }
