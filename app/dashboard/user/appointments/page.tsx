@@ -1,7 +1,11 @@
+
+
 // 'use client'
 
 // import { useEffect, useState } from 'react'
 // import { useRouter } from 'next/navigation'
+
+
 
 // type Appointment = {
 //   id: string
@@ -22,6 +26,7 @@
 //   // Removed unused user state
 //   const [appointments, setAppointments] = useState<Appointment[]>([])
 //   const router = useRouter()
+
 
 //   useEffect(() => {
 //     const stored = localStorage.getItem('user')
@@ -105,10 +110,15 @@
 
 
 
+
+
+
+
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ConfirmModal from '@/components/ConfirmModal'
 
 type Appointment = {
   id: string
@@ -126,8 +136,9 @@ type User = {
 }
 
 export default function AppointmentsPage() {
-  // Removed unused user state
   const [appointments, setAppointments] = useState<Appointment[]>([])
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -136,7 +147,6 @@ export default function AppointmentsPage() {
 
     const parsed: User = JSON.parse(stored)
     if (parsed.role !== 'USER') return router.push('/login')
-    // Removed setUser as user state is no longer used
 
     fetch('/api/appointments/user', {
       method: 'POST',
@@ -149,19 +159,21 @@ export default function AppointmentsPage() {
       })
   }, [router])
 
-  const cancelAppointment = async (id: string) => {
-    const confirmed = confirm('Cancel this appointment?')
-    if (!confirmed) return
+  const handleCancel = async () => {
+    if (!selectedId) return
 
     const res = await fetch('/api/appointments/delete', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({ id: selectedId }),
     })
 
     if (res.ok) {
-      setAppointments(appointments.filter((a) => a.id !== id))
+      setAppointments((prev) => prev.filter((a) => a.id !== selectedId))
+      alert('Appointment cancelled.')
     }
+
+    setShowConfirm(false)
   }
 
   return (
@@ -183,10 +195,8 @@ export default function AppointmentsPage() {
                 <p>
                   🧑‍⚕️ <b>{a.doctor.name}</b> ({a.doctor.specialty})
                 </p>
-                <p>
-                  📋 Treatment: <b>{a.type}</b>
-                </p>
-                <div className="mt-2 space-x-2">
+                <p>📋 Treatment: <b>{a.type}</b></p>
+                <div className="mt-2 flex gap-2">
                   <button
                     className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
                     onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
@@ -195,7 +205,10 @@ export default function AppointmentsPage() {
                   </button>
                   <button
                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                    onClick={() => cancelAppointment(a.id)}
+                    onClick={() => {
+                      setSelectedId(a.id)
+                      setShowConfirm(true)
+                    }}
                   >
                     Cancel
                   </button>
@@ -205,6 +218,14 @@ export default function AppointmentsPage() {
           </ul>
         )}
       </div>
+
+      {/* ✅ Confirm Modal */}
+      <ConfirmModal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleCancel}
+        message="Are you sure you want to cancel this appointment?"
+      />
     </div>
   )
 }
