@@ -45,5 +45,21 @@ export async function POST(req: Request) {
     },
   })
 
-  return NextResponse.json({ appointments })
+  return NextResponse.json({
+    appointments: appointments.map((a) => ({
+      id: a.id,
+      date: a.date,
+      time: a.time,
+      type: a.type,
+      symptoms: a.symptoms,
+      patientName: a.patientName,
+      patientEmail: a.patientEmail,
+      doctor: {
+        id: a.doctor.id,
+        name: a.doctor.name,
+        specialty: a.doctor.specialty,
+
+      }
+    })),
+  })
 }

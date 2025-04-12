@@ -54,6 +54,7 @@ model Doctor {
   createdAt    DateTime       @default(now())
   availability Availability[] // เวลาว่างของหมอแต่ละคน
   appointments Appointment[] // การจองของหมอ
+  meetLink     String?
 }
 
 model Admin {
