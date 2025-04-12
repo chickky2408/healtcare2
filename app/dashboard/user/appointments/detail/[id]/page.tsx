@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function AppointmentDetailPage() {
   const { id } = useParams()
@@ -63,15 +64,15 @@ export default function AppointmentDetailPage() {
         </div>
 
         {(appointment.type === 'VIDEO_CALL') && (
-          <a href="/telemedicine" className="block mt-6 text-center text-blue-600 font-semibold underline">
+          <Link href="/telemedicine" className="block mt-6 text-center text-blue-600 font-semibold underline">
             Join Video Call
-          </a>
+          </Link>
         )}
 
         {(appointment.type === 'AI_DIAGNOSIS') && (
-          <a href="/ai-analysis" className="block mt-6 text-center text-purple-600 font-semibold underline">
+          <Link href="/ai-analysis" className="block mt-6 text-center text-purple-600 font-semibold underline">
             Go to AI Analysis
-          </a>
+          </Link>
         )}
 
         <div className="text-center mt-6">
