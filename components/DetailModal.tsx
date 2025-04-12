@@ -104,6 +104,7 @@
 
 import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
+import Link from 'next/link'
 // import { Appointment } from '@/types/appointment'
 
 type Appointment = {
@@ -174,21 +175,21 @@ export default function DetailModal({
 
                 <div className="mt-4 flex gap-3">
                   {isVideoCall && (
-                    <a
+                    <Link
                       href={`/telemedicine/${appointment.doctor.id}`}
                       className="text-sm text-blue-600 underline"
                     >
                       Join Video Call
-                    </a>
+                    </Link>
                   )}
 
                   {isAiAnalysis && (
-                    <a
+                    <Link
                       href="/ai-analysis"
                       className="text-sm text-green-600 underline"
                     >
                       Go to AI Diagnosis
-                    </a>
+                    </Link>
                   )}
                 </div>
 
