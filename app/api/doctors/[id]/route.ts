@@ -1,29 +1,26 @@
-// File: /app/api/doctors/[id]/route.ts
-
 import { PrismaClient } from '@prisma/client'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 const prisma = new PrismaClient()
 
 export async function GET(
-  _req: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const doctorId = params.id
+
   try {
     const doctor = await prisma.doctor.findUnique({
-      where: { id: params.id },
+      where: { id: doctorId },
     })
 
     if (!doctor) {
-      return NextResponse.json({ error: 'Doctor not found' }, { status: 404 })
+      return NextResponse.json({ message: 'Doctor not found' }, { status: 404 })
     }
 
-    return NextResponse.json({ doctor })
+    return NextResponse.json(doctor)
   } catch (error) {
-    console.error('[GET /api/doctors/[id]] Error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch doctor' },
-      { status: 500 }
-    )
+    console.error(error)
+    return NextResponse.json({ message: 'Server error' }, { status: 500 })
   }
 }

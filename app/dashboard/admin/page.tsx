@@ -1,35 +1,60 @@
-// ✅ Admin Dashboard
-// app/dashboard/admin/page.tsx
 'use client'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-type User = {
+type Appointment = {
   id: string
-  name: string
-  email: string
-  role: 'USER' | 'DOCTOR' | 'ADMIN'
+  patientName: string
+  patientEmail: string
+  date: string
+  time: string
+  type: string
+  doctor: {
+    name: string
+    specialty: string
+  }
+  symptoms?: string
 }
 
 export default function AdminDashboard() {
-  const [user, setUser] = useState<User | null>(null)
+  const [appointments, setAppointments] = useState<Appointment[]>([])
   const router = useRouter()
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (!storedUser) return router.push('/login')
-    const parsed: User = JSON.parse(storedUser)
+    const stored = localStorage.getItem('user')
+    if (!stored) return router.push('/login')
+
+    const parsed = JSON.parse(stored)
     if (parsed.role !== 'ADMIN') return router.push('/login')
-    setUser(parsed)
+
+    fetch('/api/appointments/all')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.appointments) setAppointments(data.appointments)
+      })
   }, [router])
 
-  if (!user) return null
-
   return (
-    <div className="min-h-screen flex justify-center items-center bg-red-50">
-      <div className="bg-white p-6 rounded-xl shadow-lg text-center">
-        <h1 className="text-2xl font-bold text-red-700">Admin Dashboard</h1>
-        <p className="text-gray-600 mt-2">Welcome Admin {user.name}</p>
+    <div className="min-h-screen bg-yellow-50 p-6">
+      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
+        <h1 className="text-2xl font-bold text-yellow-700 mb-6">Admin Dashboard</h1>
+
+        {appointments.length === 0 ? (
+          <p className="text-gray-500">No appointments found.</p>
+        ) : (
+          <ul className="space-y-4">
+            {appointments.map((a) => (
+              <li key={a.id} className="border p-4 rounded-md shadow-sm bg-gray-50">
+                <p><b>👤 Patient:</b> {a.patientName} ({a.patientEmail})</p>
+                <p><b>🧑‍⚕️ Doctor:</b> {a.doctor.name} ({a.doctor.specialty})</p>
+                <p><b>📅 Date:</b> {new Date(a.date).toLocaleDateString()} at {a.time}</p>
+                <p><b>📋 Type:</b> {a.type}</p>
+                <p><b>📝 Symptoms:</b> {a.symptoms || 'N/A'}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   )
