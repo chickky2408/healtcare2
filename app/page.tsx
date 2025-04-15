@@ -42,6 +42,7 @@ export default function HomePage() {
         </div>
         <Image
   src="https://images.unsplash.com/photo-1588776814546-ec7e4a3c4195"
+  
   alt="doctor"
   width={500}
   height={500}

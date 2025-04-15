@@ -51,3 +51,58 @@ export async function POST(req: Request) {
     }
   })
 }
+
+
+
+
+
+
+
+// import { NextResponse } from 'next/server'
+// import { PrismaClient } from '@prisma/client'
+
+// const prisma = new PrismaClient()
+
+// export async function POST(req: Request) {
+//   try {
+//     const { email, password } = await req.json()
+
+//     // Try User
+//     let account = await prisma.user.findUnique({ where: { email } })
+//     if (account && account.password === password) {
+//       return NextResponse.json({
+//         id: account.id,
+//         name: account.name,
+//         email: account.email,
+//         role: 'USER',
+//       })
+//     }
+
+//     // Try Doctor
+//     account = await prisma.doctor.findUnique({ where: { email } })
+//     if (account && account.password === password) {
+//       return NextResponse.json({
+//         id: account.id,
+//         name: account.name,
+//         email: account.email,
+//         role: 'DOCTOR',
+//       })
+//     }
+
+//     // Try Admin
+//     account = await prisma.admin.findUnique({ where: { email } })
+//     if (account && account.password === password) {
+//       return NextResponse.json({
+//         id: account.id,
+//         name: account.name,
+//         email: account.email,
+//         role: 'ADMIN',
+//       })
+//     }
+
+//     return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 })
+//   } catch (err) {
+//     console.error('Login error:', err)
+//     return NextResponse.json({ message: 'Server error' }, { status: 500 })
+//   }
+// }
