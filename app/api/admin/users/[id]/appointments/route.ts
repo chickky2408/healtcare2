@@ -26,24 +26,26 @@
 // }
 
 
-
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 export async function GET(req: NextRequest) {
-  const url = new URL(req.url)
-  const id = url.pathname.split('/').at(-2) // หรือดึงจาก `req.nextUrl.pathname` ก็ได้
+  const id = req.nextUrl.pathname.split('/').at(-2) // หรือใช้ req.nextUrl.searchParams.get('id') ก็ได้หากใช้ query string
 
   if (!id) {
     return NextResponse.json({ error: 'Missing user ID' }, { status: 400 })
   }
 
-  const appointments = await prisma.appointment.findMany({
-    where: { patientEmail: id },
-    include: { doctor: true },
-  })
+  try {
+    const appointments = await prisma.appointment.findMany({
+      where: { patientEmail: id },
+      include: { doctor: true },
+    })
 
-  return NextResponse.json({ appointments })
+    return NextResponse.json({ appointments })
+  } catch  {
+    return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 })
+  }
 }
