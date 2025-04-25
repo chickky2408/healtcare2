@@ -35,9 +35,9 @@ const prisma = new PrismaClient()
 
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const doctorId = context.params.id
+  const doctorId = params.id;
 
   try {
     const doctor = await prisma.doctor.findUnique({
