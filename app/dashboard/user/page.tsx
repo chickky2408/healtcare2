@@ -59,7 +59,7 @@ export default function UserDashboardPage() {
     <div className="flex min-h-screen bg-blue-50">
       {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-b from-blue-600 to-blue-700 text-white px-6 py-8 space-y-4">
-        <h2 className="text-2xl font-bold mb-8">🦷 DentalEase</h2>
+        <h2 className="text-2xl font-bold mb-8">🦷 HealthCare+</h2>
         <nav className="space-y-3 text-sm">
           <button onClick={() => router.push('/dashboard/user/appointments')} className="block w-full text-left font-medium bg-white/10 px-3 py-2 rounded hover:bg-white/20">
             🗓️ Appointments

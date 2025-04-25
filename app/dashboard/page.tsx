@@ -852,6 +852,29 @@ interface User {
   role: string
 }
 
+//playAlert sound
+
+const playAlertSound = () => {
+  const audio = new Audio('/alert.wav')
+  audio.play()
+}
+
+const checkUpcomingAppointments = (appointments: Appointment[]) => {
+  const now = new Date()
+  const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000)
+  const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000)
+
+  const upcoming = appointments.filter((a) => {
+    const apptDateTime = new Date(`${a.date}T${a.time}`)
+    return apptDateTime >= oneHourLater && apptDateTime <= twoHoursLater
+  })
+
+  if (upcoming.length > 0) {
+    playAlertSound()
+    alert(`🔔 You have ${upcoming.length} appointment(s) within the next 1–2 hours.`)
+  }
+}
+
 export default function UserDashboardPage() {
   const [user, setUser] = useState<User | null>(null)
   const [appointments, setAppointments] = useState<Appointment[]>([])
@@ -871,7 +894,10 @@ export default function UserDashboardPage() {
       body: JSON.stringify({ email: parsed.email }),
     })
       .then(res => res.json())
-      .then(data => setAppointments(data.appointments))
+      .then(data => {
+        setAppointments(data.appointments)
+        checkUpcomingAppointments(data.appointments)  // Check for upcoming appointments
+      })
   }, [router])
 
   const cancelAppointment = async (id: string) => {
@@ -891,7 +917,7 @@ export default function UserDashboardPage() {
     <div className="flex flex-col md:flex-row min-h-screen bg-blue-50">
       {/* Sidebar */}
       <div className="w-full md:w-64 bg-white shadow-md p-6 flex md:flex-col justify-between md:justify-start items-center md:items-start md:space-y-6 space-x-4 md:space-x-0">
-        <h2 className="text-2xl font-bold text-blue-700 mb-2 md:mb-8">DentalEase</h2>
+        <h2 className="text-2xl font-bold text-blue-700 mb-2 md:mb-8">HealthCare+</h2>
         <ul className="flex md:flex-col gap-4 w-full">
           <li>
             <button onClick={() => router.push('/booking')} className="w-full text-left text-blue-600 hover:underline">
