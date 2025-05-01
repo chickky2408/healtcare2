@@ -88,20 +88,50 @@
 
 
 
+// import { NextRequest, NextResponse } from 'next/server'
+// import { PrismaClient } from '@prisma/client'
+
+// const prisma = new PrismaClient()
+
+// export async function GET(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   const appointmentId = params.id
+//   try {
+//     const appointment = await prisma.appointment.findUnique({
+//       where: { id: appointmentId },
+//       include: { doctor: true },
+//     })
+
+//     if (!appointment) {
+//       return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+//     }
+
+//     return NextResponse.json(appointment)
+//   } catch (error) {
+//     console.error(error)
+//     return NextResponse.json({ error: 'Server error' }, { status: 500 })
+//   }
+// }
+
+
+// 2 may 2024
+
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: { id: string } }
 ) {
-  const { id: appointmentId } = context.params // ✅ ถูกต้อง
+  const appointmentId = params.id
   try {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
-      include: { doctor: true }, // ✅ เพิ่มตรงนี้
+      include: { doctor: true },
     })
 
     if (!appointment) {

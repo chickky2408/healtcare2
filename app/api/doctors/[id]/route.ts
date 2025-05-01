@@ -7,7 +7,7 @@
 //   request: NextRequest,
 //   { params }: { params: { id: string } }
 // ) {
-//   const doctorId = params.id
+//   const doctorId = params.id;
 
 //   try {
 //     const doctor = await prisma.doctor.findUnique({
@@ -24,7 +24,6 @@
 //     return NextResponse.json({ message: 'Server error' }, { status: 500 })
 //   }
 // }
-
 
 
 
