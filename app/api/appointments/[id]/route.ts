@@ -123,11 +123,18 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
+type Props = {
+  params: {
+    id: string
+  }
+}
+
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  props: Props
 ) {
-  const appointmentId = params.id
+  const appointmentId = props.params.id
+  
   try {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
