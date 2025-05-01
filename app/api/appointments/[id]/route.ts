@@ -24,33 +24,93 @@
 // }
 
 
+// import { NextRequest, NextResponse } from 'next/server'
+// import { PrismaClient } from '@prisma/client'
+
+// const prisma = new PrismaClient()
+
+// export async function GET(request: NextRequest) {
+//   const url = new URL(request.url)
+//   const id = url.pathname.split('/').pop() // ดึง id จาก path
+
+//   if (!id) {
+//     return NextResponse.json({ message: 'Appointment ID not provided' }, { status: 400 })
+//   }
+
+//   try {
+//     const appointment = await prisma.appointment.findUnique({
+//       where: { id },
+//       include: {
+//         doctor: true,
+//       },
+//     })
+
+//     if (!appointment) {
+//       return NextResponse.json({ message: 'Appointment not found' }, { status: 404 })
+//     }
+
+//     return NextResponse.json(appointment)
+//   } catch {
+//     return NextResponse.json({ message: 'Error fetching appointment' }, { status: 500 })
+//   }
+// }
+
+
+
+//1 may 2024
+
+// import { PrismaClient } from '@prisma/client'
+// import { NextRequest, NextResponse } from 'next/server'
+
+// const prisma = new PrismaClient()
+
+// export async function GET(_: NextRequest, context: { params: { id: string } }) {
+//   const id = context.params.id
+
+//   try {
+//     const appointment = await prisma.appointment.findUnique({
+//       where: { id },
+//       include: {
+//         doctor: true
+//       }
+//     })
+
+//     if (!appointment) {
+//       return NextResponse.json({ message: 'Appointment not found' }, { status: 404 })
+//     }
+
+//     return NextResponse.json(appointment)
+//   } catch (error) {
+//     console.error(error)
+//     return NextResponse.json({ message: 'Server error' }, { status: 500 })
+//   }
+// }
+
+
+
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-export async function GET(request: NextRequest) {
-  const url = new URL(request.url)
-  const id = url.pathname.split('/').pop() // ดึง id จาก path
-
-  if (!id) {
-    return NextResponse.json({ message: 'Appointment ID not provided' }, { status: 400 })
-  }
-
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
+  const { id: appointmentId } = context.params // ✅ ถูกต้อง
   try {
     const appointment = await prisma.appointment.findUnique({
-      where: { id },
-      include: {
-        doctor: true,
-      },
+      where: { id: appointmentId },
+      include: { doctor: true }, // ✅ เพิ่มตรงนี้
     })
 
     if (!appointment) {
-      return NextResponse.json({ message: 'Appointment not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
     }
 
     return NextResponse.json(appointment)
-  } catch {
-    return NextResponse.json({ message: 'Error fetching appointment' }, { status: 500 })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
