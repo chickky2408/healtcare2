@@ -28,6 +28,7 @@ export default function LoginPage() {
       const data = await res.json()
       if (res.ok) {
         localStorage.setItem('user', JSON.stringify(data.user))
+        localStorage.setItem('userId', data.user.id)  //add new line 3 may 2024
 
         const role = data.user.role
         if (role === 'USER') {

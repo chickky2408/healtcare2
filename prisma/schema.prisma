@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String      @id @default(cuid())
+  email     String      @unique
   password  String
   name      String
   // role      Role     @default(USER)
-  createdAt DateTime @default(now())
+  createdAt DateTime    @default(now())
+  diagnoses Diagnosis[]
 }
 
 // enum Role {
@@ -70,6 +71,7 @@ model Appointment {
   type         TreatmentType
   symptoms     String
   createdAt    DateTime      @default(now())
+  diagnoses    Diagnosis[]
 }
 
 enum TreatmentType {
@@ -78,4 +80,18 @@ enum TreatmentType {
   ORTHODONTIC
   AI_DIAGNOSIS
   SURGERY
+}
+
+// AIDiagnosis
+
+model Diagnosis {
+  id            String       @id @default(uuid())
+  imagePath     String
+  result        String
+  confidence    Float
+  createdAt     DateTime     @default(now())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  appointmentId String? // optional
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
 }
