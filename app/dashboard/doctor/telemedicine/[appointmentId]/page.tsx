@@ -50,7 +50,22 @@ export default function DoctorTelemedicineDetail() {
         <p><strong>Treatment:</strong> {appointment.type}</p>
         <p><strong>Symptoms:</strong> {appointment.symptoms || 'N/A'}</p>
 
-        {appointment.doctor?.meetLink ? (
+        {/* {appointment.doctor?.meetLink ? (
+          <a
+            href={appointment.doctor.meetLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+          >
+            Join Video Call
+          </a>
+        ) : (
+          <p className="mt-4 text-red-500">No Meet link available</p>
+        )} */}
+
+
+
+        {appointment.type === 'VIDEO_CALL' && appointment.doctor?.meetLink ? (
           <a
             href={appointment.doctor.meetLink}
             target="_blank"
@@ -62,6 +77,9 @@ export default function DoctorTelemedicineDetail() {
         ) : (
           <p className="mt-4 text-red-500">No Meet link available</p>
         )}
+
+
+
       </div>
     </div>
   )
