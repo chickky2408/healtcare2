@@ -8,20 +8,15 @@ datasource db {
 }
 
 model User {
-  id        String      @id @default(cuid())
-  email     String      @unique
-  password  String
-  name      String
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String
   // role      Role     @default(USER)
-  createdAt DateTime    @default(now())
-  diagnoses Diagnosis[]
+  createdAt     DateTime       @default(now())
+  diagnoses     Diagnosis[]
+  notifications Notification[]
 }
-
-// enum Role {
-//   USER
-//   DOCTOR
-//   ADMIN
-// }
 
 model Doctor {
   id           String         @id @default(cuid())
@@ -94,4 +89,14 @@ model Diagnosis {
   user          User         @relation(fields: [userId], references: [id])
   appointmentId String? // optional
   appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  userId    String
+  notified  Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
 }
