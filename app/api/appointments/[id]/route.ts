@@ -118,23 +118,19 @@
 
 // 2 may 2024
 
+// app/api/appointments/[id]/route.ts
+
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-type Props = {
-  params: {
-    id: string
-  }
-}
-
-// ✅ แก้ให้ถูกต้องตาม App Router (Vercel จะ build ผ่าน)
+// ✅ GET: Get appointment by ID
 export async function GET(
   _request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const appointmentId = context.params.id
+  const appointmentId = params.id
 
   try {
     const appointment = await prisma.appointment.findUnique({
@@ -153,17 +149,18 @@ export async function GET(
   }
 }
 
-//6may2024
+// ✅ DELETE: Delete appointment by ID
 export async function DELETE(
   _request: NextRequest,
-  props: Props
+  { params }: { params: { id: string } }
 ) {
-  const appointmentId = props.params.id
+  const appointmentId = params.id
 
   try {
     await prisma.appointment.delete({
       where: { id: appointmentId },
     })
+
     return NextResponse.json({ message: 'Appointment deleted successfully' })
   } catch (error) {
     console.error(error)
