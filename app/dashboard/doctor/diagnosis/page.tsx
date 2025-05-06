@@ -25,9 +25,9 @@ export default function DoctorDiagnosisPage() {
 
   if (error) 
     
-    return <div>เกิดข้อผิดพลาด</div>
+    return <div>Invalid...</div>
   if (!data) 
-    return <div>กำลังโหลดผลวิเคราะห์...</div>
+    return <div>Loading Result...</div>
   
   return (
     <div className="p-6">
@@ -35,11 +35,11 @@ export default function DoctorDiagnosisPage() {
       <div className="grid gap-4">
         {data.map((item: DiagnosisType) => (
           <div key={item.id} className="border p-4 rounded-lg shadow">
-            <p><strong>ผู้ป่วย:</strong> {item.user?.name} ({item.user?.email})</p>
-            <p><strong>ผลวิเคราะห์:</strong> {item.result}</p>
-            <p><strong>ความแม่นยำ:</strong> {item.confidence.toFixed(2)}%</p>
-            <p><strong>วันที่วิเคราะห์:</strong> {new Date(item.createdAt).toLocaleString()}</p>
-            <p><strong>รูปภาพ:</strong></p>
+            <p><strong>User:</strong> {item.user?.name} ({item.user?.email})</p>
+            <p><strong>Result:</strong> {item.result}</p>
+            <p><strong>Confidence:</strong> {item.confidence.toFixed(2)}%</p>
+            <p><strong>Date:</strong> {new Date(item.createdAt).toLocaleString()}</p>
+            <p><strong>Image:</strong></p>
             <img
               src={`/uploads/${item.imagePath}`}
               alt="Dental AI Image"
