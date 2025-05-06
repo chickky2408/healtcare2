@@ -118,19 +118,17 @@
 
 // 2 may 2024
 
-// app/api/appointments/[id]/route.ts
-
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-// ✅ GET: Get appointment by ID
+// ✅ ใช้ context แบบ object literal
 export async function GET(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
-  const appointmentId = params.id
+  const appointmentId = context.params.id
 
   try {
     const appointment = await prisma.appointment.findUnique({
@@ -149,12 +147,11 @@ export async function GET(
   }
 }
 
-// ✅ DELETE: Delete appointment by ID
 export async function DELETE(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
-  const appointmentId = params.id
+  const appointmentId = context.params.id
 
   try {
     await prisma.appointment.delete({
