@@ -129,12 +129,13 @@ type Props = {
   }
 }
 
+// ✅ แก้ให้ถูกต้องตาม App Router (Vercel จะ build ผ่าน)
 export async function GET(
   _request: NextRequest,
-  props: Props
+  context: { params: { id: string } }
 ) {
-  const appointmentId = props.params.id
-  
+  const appointmentId = context.params.id
+
   try {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
