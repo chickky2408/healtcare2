@@ -67,6 +67,7 @@ model Appointment {
   symptoms     String
   createdAt    DateTime      @default(now())
   diagnoses    Diagnosis[]
+  messages     Message[]     @relation("AppointmentMessages")
 }
 
 enum TreatmentType {
@@ -99,4 +100,13 @@ model Notification {
   userId    String
   notified  Boolean  @default(false)
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id            String      @id @default(cuid())
+  text          String
+  timestamp     DateTime    @default(now())
+  senderId      String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], name: "AppointmentMessages")
+  appointmentId String
 }

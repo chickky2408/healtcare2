@@ -151,3 +151,21 @@ export async function GET(
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
+
+//6may2024
+export async function DELETE(
+  _request: NextRequest,
+  props: Props
+) {
+  const appointmentId = props.params.id
+
+  try {
+    await prisma.appointment.delete({
+      where: { id: appointmentId },
+    })
+    return NextResponse.json({ message: 'Appointment deleted successfully' })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: 'Failed to delete appointment' }, { status: 500 })
+  }
+}

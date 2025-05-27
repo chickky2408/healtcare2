@@ -25,7 +25,7 @@ try:
         label = prediction.get("class", "ไม่พบการจำแนก")
         confidence = round(prediction.get("confidence", 0.0), 2)
     else:
-        label = "ไม่พบสิ่งผิดปกติ"
+        label = "No abnormalities found"
         confidence = 0.0
 
     print(json.dumps({
@@ -42,3 +42,5 @@ except Exception as e:
         "confidence": 0.0,
         "message": str(e)
     }))
+
+

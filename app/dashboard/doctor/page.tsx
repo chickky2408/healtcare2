@@ -150,6 +150,14 @@ export default function DoctorDashboardPage() {
                   >
                     Detail
                   </button>
+
+                  <button
+                    onClick={() => router.push(`/dashboard/doctor/chat/${a.id}`)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded text-sm font-semibold"
+                  >
+                    💬 Chat
+                  </button>
+                  
                 </div>
               </div>
             ))}

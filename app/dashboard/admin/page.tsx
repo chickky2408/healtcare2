@@ -1,61 +1,39 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
-type Appointment = {
-  id: string
-  patientName: string
-  patientEmail: string
-  date: string
-  time: string
-  type: string
-  doctor: {
+export default function AdminDashboardPage() {
+  interface Admin {
     name: string
-    specialty: string
+    email: string
+    role: string
   }
-  symptoms?: string
-}
 
-export default function AdminDashboard() {
-  const [appointments, setAppointments] = useState<Appointment[]>([])
-  const router = useRouter()
+  const [admin, setAdmin] = useState<Admin | null>(null)
 
   useEffect(() => {
     const stored = localStorage.getItem('user')
-    if (!stored) return router.push('/login')
-
-    const parsed = JSON.parse(stored)
-    if (parsed.role !== 'ADMIN') return router.push('/login')
-
-    fetch('/api/appointments/all')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.appointments) setAppointments(data.appointments)
-      })
-  }, [router])
+    if (stored) {
+      const user = JSON.parse(stored)
+      if (user.role !== 'ADMIN') {
+        window.location.href = '/login'
+      } else {
+        setAdmin(user)
+      }
+    } else {
+      window.location.href = '/login'
+    }
+  }, [])
 
   return (
-    <div className="min-h-screen bg-yellow-50 p-6">
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-yellow-700 mb-6">Admin Dashboard</h1>
-
-        {appointments.length === 0 ? (
-          <p className="text-gray-500">No appointments found.</p>
-        ) : (
-          <ul className="space-y-4">
-            {appointments.map((a) => (
-              <li key={a.id} className="border p-4 rounded-md shadow-sm bg-gray-50">
-                <p><b>👤 Patient:</b> {a.patientName} ({a.patientEmail})</p>
-                <p><b>🧑‍⚕️ Doctor:</b> {a.doctor.name} ({a.doctor.specialty})</p>
-                <p><b>📅 Date:</b> {new Date(a.date).toLocaleDateString()} at {a.time}</p>
-                <p><b>📋 Type:</b> {a.type}</p>
-                <p><b>📝 Symptoms:</b> {a.symptoms || 'N/A'}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold text-blue-700 mb-4">Welcome, Admin</h1>
+      {admin && (
+        <div className="bg-white p-4 rounded shadow text-gray-700">
+          <p><strong>Name:</strong> {admin.name}</p>
+          <p><strong>Email:</strong> {admin.email}</p>
+        </div>
+      )}
     </div>
   )
 }
