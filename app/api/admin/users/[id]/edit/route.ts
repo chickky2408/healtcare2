@@ -31,7 +31,7 @@ import prisma from "@/lib/db";
 
 export async function PUT(
   request: Request,
-  context: { params: { id: string } } // ← แบบที่ Next ยอมรับ
+  context: { params: { id: string } } 
 ) {
   const userId = context.params.id;
 
@@ -41,7 +41,7 @@ export async function PUT(
   try {
     const updated = await prisma.user.update({
       where: { id: userId },
-      data: { name, email, password }, // (แนะนำ: ควร hash password ในภายหลัง)
+      data: { name, email, password }, 
     });
 
     return NextResponse.json(updated, { status: 200 });
