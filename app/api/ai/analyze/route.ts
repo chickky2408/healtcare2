@@ -63,6 +63,96 @@
 //ver2 p2
 
 // app/api/ai/analyze/route.ts
+// import { NextResponse } from "next/server";
+// import { writeFile } from "fs/promises";
+// import fs from "fs";
+// import path from "path";
+// import { spawn } from "child_process";
+
+// export const dynamic = "force-dynamic";
+// export const runtime = "nodejs";
+
+// export async function POST(request: Request) {
+//   try {
+//     const form = await request.formData();
+
+//     // รับไฟล์จาก field name "image" (รองรับ 1 รูป)
+//     const file = form.get("image") as File | null;
+//     if (!file || file.size === 0) {
+//       return NextResponse.json({ error: "No image file received" }, { status: 400 });
+//     }
+
+//     // สร้างโฟลเดอร์อัปโหลด
+//     const uploadsDir = path.join(process.cwd(), "public", "uploads");
+//     if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
+
+//     // เซฟไฟล์ด้วยชื่อ unique และ sanitize
+//     const safeName = `${Date.now()}_${file.name.replace(/[^\w.\-]+/g, "_")}`;
+//     const absImagePath = path.join(uploadsDir, safeName);
+//     const bytes = Buffer.from(await file.arrayBuffer());
+//     await writeFile(absImagePath, bytes);
+
+//     // ---- เรียก Python ด้วย "absolute path" ไปยังสคริปต์ ----
+//     // ถ้า analyze.py อยู่ "รากโปรเจ็กต์" ให้ใช้บรรทัดนี้:
+//     const scriptPath = path.join(process.cwd(), "analyze.py");
+//     // ถ้าอยู่ public/analyze.py ให้เปลี่ยนเป็น:
+//     // const scriptPath = path.join(process.cwd(), "public", "analyze.py");
+
+//     // สั่งรัน
+//     const child = spawn("python3", [scriptPath, absImagePath], {
+//       stdio: ["ignore", "pipe", "pipe"],
+//     });
+
+//     let stdout = "";
+//     let stderr = "";
+
+//     child.stdout.on("data", (d) => (stdout += d.toString()));
+//     child.stderr.on("data", (d) => (stderr += d.toString()));
+
+//     // handle กรณีสคริปต์รันไม่ขึ้น (เช่น python3 ไม่มี)
+//     child.on("error", (err) => {
+//       console.error("spawn error:", err);
+//     });
+
+//     const code: number = await new Promise((resolve) => child.on("close", resolve));
+
+//     if (code !== 0) {
+//       console.error("analyze.py exit code:", code, "stderr:", stderr, "stdout:", stdout);
+//       return NextResponse.json(
+//         { error: "analysis_failed", detail: stderr || stdout || "no output" },
+//         { status: 500 }
+//       );
+//     }
+
+//     // คาดหวังให้ analyze.py พิมพ์ JSON เช่น {"label":"cavity","confidence":0.92}
+//     let parsed: any;
+//     try {
+//       parsed = JSON.parse(stdout.trim());
+//     } catch (e) {
+//       console.error("Invalid JSON from analyze.py:", stdout);
+//       return NextResponse.json(
+//         { error: "invalid_python_output", detail: stdout },
+//         { status: 500 }
+//       );
+//     }
+
+//     // ส่งผลลัพธ์กลับ (เส้นทางรูปให้ฝั่ง UI ใช้แสดงได้)
+//     return NextResponse.json({
+//       result: parsed.label,
+//       confidence: parsed.confidence,
+//       imagePath: `/uploads/${safeName}`,
+//     });
+//   } catch (e: any) {
+//     console.error("AI analyze API error:", e);
+//     return NextResponse.json({ error: "server_error", detail: String(e?.message || e) }, { status: 500 });
+//   }
+// }
+
+
+
+
+// fix bug python
+
 import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import fs from "fs";
@@ -75,72 +165,61 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   try {
     const form = await request.formData();
-
-    // รับไฟล์จาก field name "image" (รองรับ 1 รูป)
     const file = form.get("image") as File | null;
     if (!file || file.size === 0) {
       return NextResponse.json({ error: "No image file received" }, { status: 400 });
     }
 
-    // สร้างโฟลเดอร์อัปโหลด
     const uploadsDir = path.join(process.cwd(), "public", "uploads");
     if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
 
-    // เซฟไฟล์ด้วยชื่อ unique และ sanitize
     const safeName = `${Date.now()}_${file.name.replace(/[^\w.\-]+/g, "_")}`;
     const absImagePath = path.join(uploadsDir, safeName);
     const bytes = Buffer.from(await file.arrayBuffer());
     await writeFile(absImagePath, bytes);
 
-    // ---- เรียก Python ด้วย "absolute path" ไปยังสคริปต์ ----
-    // ถ้า analyze.py อยู่ "รากโปรเจ็กต์" ให้ใช้บรรทัดนี้:
-    const scriptPath = path.join(process.cwd(), "analyze.py");
-    // ถ้าอยู่ public/analyze.py ให้เปลี่ยนเป็น:
-    // const scriptPath = path.join(process.cwd(), "public", "analyze.py");
+    // ใช้ python จาก venv (หรือกำหนดผ่าน env)
+    const pythonBin =
+      process.env.PYTHON_BIN ||
+      path.join(process.cwd(), ".venv", "bin", process.platform === "win32" ? "python.exe" : "python");
 
-    // สั่งรัน
-    const child = spawn("python3", [scriptPath, absImagePath], {
+    const scriptPath = path.join(process.cwd(), "analyze.py");
+
+    const child = spawn(pythonBin, [scriptPath, absImagePath], {
       stdio: ["ignore", "pipe", "pipe"],
+      env: { ...process.env }, // ใช้ .env.local (ROBOFLOW_API_KEY เป็นต้น)
     });
 
     let stdout = "";
     let stderr = "";
-
     child.stdout.on("data", (d) => (stdout += d.toString()));
     child.stderr.on("data", (d) => (stderr += d.toString()));
-
-    // handle กรณีสคริปต์รันไม่ขึ้น (เช่น python3 ไม่มี)
-    child.on("error", (err) => {
-      console.error("spawn error:", err);
-    });
+    child.on("error", (err) => { console.error("spawn error:", err); });
 
     const code: number = await new Promise((resolve) => child.on("close", resolve));
 
     if (code !== 0) {
       console.error("analyze.py exit code:", code, "stderr:", stderr, "stdout:", stdout);
       return NextResponse.json(
-        { error: "analysis_failed", detail: stderr || stdout || "no output" },
+        { error: "analysis_failed", detail: stderr || stdout || "no output", code },
         { status: 500 }
       );
     }
 
-    // คาดหวังให้ analyze.py พิมพ์ JSON เช่น {"label":"cavity","confidence":0.92}
     let parsed: any;
     try {
       parsed = JSON.parse(stdout.trim());
-    } catch (e) {
+    } catch {
       console.error("Invalid JSON from analyze.py:", stdout);
-      return NextResponse.json(
-        { error: "invalid_python_output", detail: stdout },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "invalid_python_output", detail: stdout }, { status: 500 });
     }
 
-    // ส่งผลลัพธ์กลับ (เส้นทางรูปให้ฝั่ง UI ใช้แสดงได้)
     return NextResponse.json({
       result: parsed.label,
       confidence: parsed.confidence,
       imagePath: `/uploads/${safeName}`,
+      // debug optional:
+      // diag: parsed.__diag,
     });
   } catch (e: any) {
     console.error("AI analyze API error:", e);
