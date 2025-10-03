@@ -33,7 +33,7 @@ import prisma from '@/lib/db'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { imagePath, result, confidence, userId, appointmentId } = body
+    const { imagePath, result, confidence, userId, appointmentId, explanation } = body
 
     if (!userId || !imagePath || !result) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
         confidence,
         userId,
         appointmentId,
+        ...(explanation && { explanation }),
       },
     })
 

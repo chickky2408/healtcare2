@@ -479,23 +479,283 @@
 
 // fix bug 
 
+// 'use client'
+
+// import { useEffect, useState } from 'react'
+// import { useRouter } from 'next/navigation'
+// import axios from 'axios'
+// import { motion } from 'framer-motion'
+// import { Brain, Upload, Image as ImageIcon, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
+
+// export default function AiAnalysisPage() {
+//   const router = useRouter()
+//   const [allowed, setAllowed] = useState(false)
+//   const [result, setResult] = useState('')
+//   const [confidence, setConfidence] = useState(0)
+//   const [images, setImages] = useState<File[]>([])
+//   const [preview, setPreview] = useState<string | null>(null)
+//   const [loading, setLoading] = useState(false)
+//   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
+//   useEffect(() => {
+//     const user = JSON.parse(localStorage.getItem('user') || '{}')
+//     if (!user?.email) {
+//       alert('Please log in again.')
+//       router.push('/login')
+//       return
+//     }
+//     const checkEligibility = async () => {
+//       const res = await fetch(`/api/user/appointments?userEmail=${user.email}`)
+//       const data = await res.json()
+//       if (data.length > 0) setAllowed(true)
+//       else {
+//         alert('Please book an AI analysis appointment first.')
+//         router.push('/dashboard/user')
+//       }
+//     }
+//     checkEligibility()
+//   }, [router])
+
+//   // const handleSubmit = async () => {
+//   //   const user = JSON.parse(localStorage.getItem('user') || '{}')
+//   //   if (!user?.id || images.length === 0) {
+//   //     alert('Please select an image file.')
+//   //     return
+//   //   }
+
+//   //   setLoading(true)
+//   //   setMsg(null)
+
+//   //   const formData = new FormData()
+//   //   formData.append('image', images[0])
+
+//   //   try {
+//   //     const res = await axios.post('/api/ai/analyze', formData)
+//   //     setResult(res.data.result)
+//   //     setConfidence(res.data.confidence)
+
+//   //     await axios.post('/api/diagnosis/save', {
+//   //       imagePath: res.data.imagePath || images[0].name,
+//   //       result: res.data.result,
+//   //       confidence: res.data.confidence,
+//   //       userId: user.id,
+//   //     })
+//   //     setMsg({ type: 'success', text: 'Analysis completed & saved' })
+//   //   } catch (err: any) {
+//   //     const detail =
+//   //       err?.response?.data?.detail ||
+//   //       err?.response?.data?.error ||
+//   //       err?.message ||
+//   //       'Unknown error'
+//   //     alert('Error during analysis: ' + detail)
+//   //     setMsg({ type: 'error', text: String(detail) })
+//   //     console.error(err?.response?.data || err)
+//   //   } finally {
+//   //     setLoading(false)
+//   //   }
+//   // }
+
+
+//   const handleSubmit = async () => {
+//     const user = JSON.parse(localStorage.getItem('user') || '{}');
+//     if (!user?.id || images.length === 0) {
+//       alert('Please select an image file.');
+//       return;
+//     }
+  
+//     setLoading(true);
+//     setMsg(null);
+  
+//     const formData = new FormData();
+//     // ✅ ใช้คีย์ 'images' ให้ตรง API (รองรับหลายไฟล์ได้ ในที่นี้ส่งรูปแรก)
+//     formData.append('images', images[0]);
+  
+//     try {
+//       const res = await axios.post('/api/ai/analyze', formData, {
+//         headers: { 'Content-Type': 'multipart/form-data' },
+//       });
+  
+//       // ✅ อ่านผลจากรูปแบบใหม่ { results: [...] }
+//       const top = res.data?.results?.[0];
+//       if (!top) {
+//         throw new Error('no output');
+//       }
+  
+//       setResult(top.label);
+//       setConfidence(top.confidence);
+  
+//       await axios.post('/api/diagnosis/save', {
+//         imagePath: top.imagePath || images[0].name,
+//         result: top.label,
+//         confidence: top.confidence,
+//         userId: user.id,
+//       });
+  
+//       setMsg({ type: 'success', text: 'Analysis completed & saved' });
+//     } catch (err: unknown) {
+//       // จัดการข้อความ error ให้ดูง่าย
+//       const axiosErr = err as { response?: { data?: any; status?: number } ; message?: string };
+//       const detail =
+//         axiosErr?.response?.data?.detail ||
+//         axiosErr?.response?.data?.error ||
+//         axiosErr?.message ||
+//         'Unknown error';
+//       alert('Error during analysis: ' + detail);
+//       setMsg({ type: 'error', text: String(detail) });
+//       console.error(axiosErr?.response?.data || axiosErr);
+//     } finally {
+//       setLoading(false);
+//     }
+//   }
+
+
+
+//   if (!allowed) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center text-blue-100 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800">
+//         Checking permission...
+//       </div>
+//     )
+//   }
+
+//   const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } } }
+//   const item = { hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 16 } } }
+
+//   return (
+//     <div className="min-h-screen relative overflow-hidden">
+//       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800" />
+//       <div className="absolute inset-0 opacity-30 pointer-events-none">
+//         <motion.div className="absolute top-20 left-24 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"
+//           animate={{ x: [0, 90, 0], y: [0, -40, 0], scale: [1, 1.15, 1] }}
+//           transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }} />
+//         <motion.div className="absolute bottom-24 right-24 w-56 h-56 bg-purple-400/20 rounded-full blur-3xl"
+//           animate={{ x: [0, -100, 0], y: [0, 60, 0], scale: [1, 0.85, 1] }}
+//           transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }} />
+//       </div>
+
+//       <div className="relative z-10 min-h-screen px-4 py-8 lg:py-12">
+//         <div className="max-w-4xl mx-auto">
+//           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
+//             <button onClick={() => router.back()} className="group flex items-center gap-2 text-blue-200 hover:text-white transition-colors mb-6 mx-auto">
+//               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+//               <span className="font-medium">Back</span>
+//             </button>
+//             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl mb-5 shadow-lg">
+//               <Brain className="w-10 h-10 text-white" />
+//             </div>
+//             <h1 className="text-4xl lg:text-5xl font-black text-white">Teeth AI Analysis</h1>
+//             <p className="text-blue-100 mt-2">Upload a clear image of your teeth (upper/lower)</p>
+//           </motion.div>
+
+//           <motion.div variants={container} initial="hidden" animate="visible" className="relative">
+//             <motion.div variants={item} className="relative bg-white/10 backdrop-blur-xl p-8 lg:p-10 rounded-3xl border border-white/20 shadow-2xl">
+//               <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-20 blur" />
+
+//               {msg && (
+//                 <motion.div variants={item}
+//                   className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-2xl border ${
+//                     msg.type === 'success'
+//                       ? 'bg-green-500/15 border-green-400/30 text-green-100'
+//                       : 'bg-red-500/15 border-red-400/30 text-red-100'
+//                   }`}>
+//                   {msg.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+//                   <span>{msg.text}</span>
+//                 </motion.div>
+//               )}
+
+//               <motion.div variants={item} className="flex flex-col sm:flex-row gap-4 items-center mb-6">
+//                 <label className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white cursor-pointer transition font-medium">
+//                   <Upload className="w-5 h-5" />
+//                   Choose File
+//                   <input
+//                     type="file"
+//                     accept="image/*"
+//                     className="hidden"
+//                     onChange={(e) => {
+//                       const fileList = Array.from(e.target.files || [])
+//                       setImages(fileList)
+//                       if (fileList[0]) setPreview(URL.createObjectURL(fileList[0]))
+//                     }}
+//                   />
+//                 </label>
+//                 <span className="text-blue-100 text-sm">{images[0]?.name || 'No file chosen'}</span>
+//               </motion.div>
+
+//               <div className="grid md:grid-cols-2 gap-8">
+//                 <motion.div variants={item} className="bg-white/10 rounded-2xl p-4 border border-white/20">
+//                   {preview ? (
+//                     <img src={preview} alt="Preview" className="rounded-xl shadow-lg max-h-80 w-full object-contain" />
+//                   ) : (
+//                     <div className="h-40 flex flex-col items-center justify-center text-blue-200">
+//                       <ImageIcon className="w-10 h-10 mb-2" />
+//                       <span className="text-sm">Image preview will appear here</span>
+//                     </div>
+//                   )}
+//                 </motion.div>
+
+//                 <motion.div variants={item} className="flex flex-col justify-between gap-4">
+//                   <button
+//                     onClick={handleSubmit}
+//                     disabled={loading}
+//                     className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 shadow-lg transition">
+//                     <Brain className="w-5 h-5" />
+//                     {loading ? 'Analyzing...' : 'Analyze with AI'}
+//                   </button>
+
+//                   {result && (
+//                     <div className="bg-green-500/15 border border-green-400/30 rounded-2xl p-4 text-green-100">
+//                       <h2 className="font-semibold mb-2">Analysis Result</h2>
+//                       <p className="mb-1"><strong>Diagnosis:</strong> {result}</p>
+//                       <p className="mb-3"><strong>Confidence:</strong> {(confidence * 100).toFixed(2)}%</p>
+//                       <div className="w-full h-2 rounded bg-white/20 overflow-hidden">
+//                         <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500" style={{ width: `${Math.min(100, Math.max(0, confidence * 100))}%` }} />
+//                       </div>
+//                     </div>
+//                   )}
+//                 </motion.div>
+//               </div>
+//             </motion.div>
+//           </motion.div>
+//         </div>
+//       </div>
+
+//       <style jsx global>{`
+//         ::-webkit-scrollbar { width: 8px; }
+//         ::-webkit-scrollbar-track { background: rgba(255,255,255,0.08); }
+//         ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #3b82f6, #8b5cf6); border-radius: 4px; }
+//         ::-webkit-scrollbar-thumb:hover { background: linear-gradient(to bottom, #2563eb, #7c3aed); }
+//       `}</style>
+//     </div>
+//   )
+// }
+
+
+
+
+
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { Brain, Upload, Image as ImageIcon, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
+
+type Msg = { type: 'success' | 'error'; text: string } | null
 
 export default function AiAnalysisPage() {
   const router = useRouter()
+
   const [allowed, setAllowed] = useState(false)
   const [result, setResult] = useState('')
   const [confidence, setConfidence] = useState(0)
   const [images, setImages] = useState<File[]>([])
   const [preview, setPreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [msg, setMsg] = useState<Msg>(null)
+  const [explanation, setExplanation] = useState<string | null>(null);
+
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -506,8 +766,8 @@ export default function AiAnalysisPage() {
     }
     const checkEligibility = async () => {
       const res = await fetch(`/api/user/appointments?userEmail=${user.email}`)
-      const data = await res.json()
-      if (data.length > 0) setAllowed(true)
+      const data = (await res.json()) as unknown[]
+      if (Array.isArray(data) && data.length > 0) setAllowed(true)
       else {
         alert('Please book an AI analysis appointment first.')
         router.push('/dashboard/user')
@@ -527,29 +787,42 @@ export default function AiAnalysisPage() {
     setMsg(null)
 
     const formData = new FormData()
-    formData.append('image', images[0])
+    // ✅ ต้องใช้ key 'images' ให้ตรงกับ API
+    formData.append('images', images[0])
 
     try {
-      const res = await axios.post('/api/ai/analyze', formData)
-      setResult(res.data.result)
-      setConfidence(res.data.confidence)
+      const res = await axios.post('/api/ai/analyze', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      // API ส่งกลับเป็น { results: [{ label, confidence, imagePath?, explanation? }, ...] }
+      const top = (res.data?.results?.[0] ?? null) as
+        | { label: string; confidence: number; imagePath?: string; explanation?: string }
+        | null
+
+      if (!top) throw new Error('no output')
+
+      setResult(top.label)
+      setConfidence(top.confidence)
+      setExplanation(top.explanation || null);
 
       await axios.post('/api/diagnosis/save', {
-        imagePath: res.data.imagePath || images[0].name,
-        result: res.data.result,
-        confidence: res.data.confidence,
+        imagePath: top.imagePath || images[0].name,
+        result: top.label,
+        confidence: top.confidence,
         userId: user.id,
+        explanation: top.explanation ?? null,
       })
+
       setMsg({ type: 'success', text: 'Analysis completed & saved' })
-    } catch (err: any) {
+    } catch (err) {
+      const e = err as { response?: { data?: { error?: string; detail?: string } }; message?: string }
       const detail =
-        err?.response?.data?.detail ||
-        err?.response?.data?.error ||
-        err?.message ||
-        'Unknown error'
+        e?.response?.data?.detail || e?.response?.data?.error || e?.message || 'Unknown error'
       alert('Error during analysis: ' + detail)
       setMsg({ type: 'error', text: String(detail) })
-      console.error(err?.response?.data || err)
+      // eslint-disable-next-line no-console
+      console.error(e?.response?.data || e)
     } finally {
       setLoading(false)
     }
@@ -563,25 +836,46 @@ export default function AiAnalysisPage() {
     )
   }
 
-  const container = { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } } }
-  const item = { hidden: { y: 20, opacity: 0 }, visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 16 } } }
+  const container = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
+  }
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 100, damping: 16 } },
+  }
+
+  {explanation && (
+    <div className="mt-3 text-blue-50/90 text-sm leading-6 whitespace-pre-wrap">
+      {explanation}
+    </div>
+  )}
+
+
 
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800" />
       <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <motion.div className="absolute top-20 left-24 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"
+        <motion.div
+          className="absolute top-20 left-24 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"
           animate={{ x: [0, 90, 0], y: [0, -40, 0], scale: [1, 1.15, 1] }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }} />
-        <motion.div className="absolute bottom-24 right-24 w-56 h-56 bg-purple-400/20 rounded-full blur-3xl"
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-24 right-24 w-56 h-56 bg-purple-400/20 rounded-full blur-3xl"
           animate={{ x: [0, -100, 0], y: [0, 60, 0], scale: [1, 0.85, 1] }}
-          transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }} />
+          transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }}
+        />
       </div>
 
       <div className="relative z-10 min-h-screen px-4 py-8 lg:py-12">
         <div className="max-w-4xl mx-auto">
           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-            <button onClick={() => router.back()} className="group flex items-center gap-2 text-blue-200 hover:text-white transition-colors mb-6 mx-auto">
+            <button
+              onClick={() => router.back()}
+              className="group flex items-center gap-2 text-blue-200 hover:text-white transition-colors mb-6 mx-auto"
+            >
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
               <span className="font-medium">Back</span>
             </button>
@@ -593,16 +887,21 @@ export default function AiAnalysisPage() {
           </motion.div>
 
           <motion.div variants={container} initial="hidden" animate="visible" className="relative">
-            <motion.div variants={item} className="relative bg-white/10 backdrop-blur-xl p-8 lg:p-10 rounded-3xl border border-white/20 shadow-2xl">
+            <motion.div
+              variants={item}
+              className="relative bg-white/10 backdrop-blur-xl p-8 lg:p-10 rounded-3xl border border-white/20 shadow-2xl"
+            >
               <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-20 blur" />
 
               {msg && (
-                <motion.div variants={item}
+                <motion.div
+                  variants={item}
                   className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-2xl border ${
                     msg.type === 'success'
                       ? 'bg-green-500/15 border-green-400/30 text-green-100'
                       : 'bg-red-500/15 border-red-400/30 text-red-100'
-                  }`}>
+                  }`}
+                >
                   {msg.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
                   <span>{msg.text}</span>
                 </motion.div>
@@ -629,7 +928,10 @@ export default function AiAnalysisPage() {
               <div className="grid md:grid-cols-2 gap-8">
                 <motion.div variants={item} className="bg-white/10 rounded-2xl p-4 border border-white/20">
                   {preview ? (
-                    <img src={preview} alt="Preview" className="rounded-xl shadow-lg max-h-80 w-full object-contain" />
+                    <div className="relative w-full h-80">
+                      {/* ใช้ next/image เพื่อลด LCP warning; blob URL ต้องใส่ unoptimized */}
+                      <Image src={preview} alt="Preview" fill className="rounded-xl shadow-lg object-contain" unoptimized />
+                    </div>
                   ) : (
                     <div className="h-40 flex flex-col items-center justify-center text-blue-200">
                       <ImageIcon className="w-10 h-10 mb-2" />
@@ -642,7 +944,8 @@ export default function AiAnalysisPage() {
                   <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 shadow-lg transition">
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 shadow-lg transition"
+                  >
                     <Brain className="w-5 h-5" />
                     {loading ? 'Analyzing...' : 'Analyze with AI'}
                   </button>
@@ -650,10 +953,17 @@ export default function AiAnalysisPage() {
                   {result && (
                     <div className="bg-green-500/15 border border-green-400/30 rounded-2xl p-4 text-green-100">
                       <h2 className="font-semibold mb-2">Analysis Result</h2>
-                      <p className="mb-1"><strong>Diagnosis:</strong> {result}</p>
-                      <p className="mb-3"><strong>Confidence:</strong> {(confidence * 100).toFixed(2)}%</p>
+                      <p className="mb-1">
+                        <strong>Diagnosis:</strong> {result}
+                      </p>
+                      <p className="mb-3">
+                        <strong>Confidence:</strong> {(confidence * 100).toFixed(2)}%
+                      </p>
                       <div className="w-full h-2 rounded bg-white/20 overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-green-400 to-emerald-500" style={{ width: `${Math.min(100, Math.max(0, confidence * 100))}%` }} />
+                        <div
+                          className="h-full bg-gradient-to-r from-green-400 to-emerald-500"
+                          style={{ width: `${Math.min(100, Math.max(0, confidence * 100))}%` }}
+                        />
                       </div>
                     </div>
                   )}
