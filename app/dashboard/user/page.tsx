@@ -1142,6 +1142,261 @@
 
 //ver3
 
+// 'use client';
+
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/navigation';
+// import { treatmentPrices } from '@/lib/treatmentPrices';
+// import { QRCodeCanvas } from 'qrcode.react';
+// import NotificationBell from './components/NotificationBell';
+// import { differenceInCalendarDays, parseISO } from 'date-fns';
+// import { motion } from 'framer-motion';
+
+// interface Appointment {
+//   id: string;
+//   date: string;
+//   time: string;
+//   type: string;
+//   doctor: { id: string; name: string; specialty: string };
+// }
+
+// interface User {
+//   id: string;
+//   name: string;
+//   email: string;
+//   role: string;
+// }
+
+// export default function UserDashboardPage() {
+//   const router = useRouter();
+//   const [user, setUser] = useState<User | null>(null);
+//   const [appointments, setAppointments] = useState<Appointment[]>([]);
+//   const [selected, setSelected] = useState<Appointment | null>(null);
+//   const [showAlert, setShowAlert] = useState(false);
+
+//   useEffect(() => {
+//     const stored = localStorage.getItem('user');
+//     if (!stored) return router.push('/login');
+//     const parsed: User = JSON.parse(stored);
+//     if (parsed.role !== 'USER') return router.push('/login');
+//     setUser(parsed);
+
+//     (async () => {
+//       const res = await fetch('/api/appointments/user', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ email: parsed.email }),
+//       });
+//       const data = await res.json();
+//       setAppointments(data.appointments || []);
+//       const today = new Date();
+//       const hasToday = (data.appointments || []).some((a: Appointment) => {
+//         const d = parseISO(a.date);
+//         return differenceInCalendarDays(d, today) === 0;
+//       });
+//       if (hasToday) {
+//         setShowAlert(true);
+//         new Audio('/alert.wav').play().catch(() => {});
+//       }
+//     })();
+//   }, [router]);
+
+//   const cancelAppointment = async (id: string) => {
+//     if (!confirm('Cancel this appointment?')) return;
+//     const res = await fetch('/api/appointments/delete', {
+//       method: 'DELETE',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ id }),
+//     });
+//     if (res.ok) setAppointments((p) => p.filter((x) => x.id !== id));
+//     else alert('Failed to cancel. Please try again.');
+//   };
+
+//   return (
+//     <div className="min-h-screen relative overflow-hidden">
+//       {/* On-brand background */}
+//       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800" />
+//       <div className="absolute inset-0 opacity-25">
+//         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent animate-pulse" />
+//       </div>
+
+//       <div className="relative z-10 flex min-h-screen">
+//         {/* Sidebar */}
+//         <aside className="hidden md:block w-72 bg-white/5 backdrop-blur-xl border-r border-white/10 p-6">
+//           <h2 className="text-2xl font-extrabold text-white mb-8">🦷 HealthCare+</h2>
+//           <nav className="space-y-2">
+//             <button
+//               onClick={() => router.push('/dashboard/user/appointments')}
+//               className="w-full text-left px-4 py-2 rounded-xl bg-white/10 text-white hover:bg-white/20"
+//             >
+//               🗓️ Appointments
+//             </button>
+//             <button
+//               onClick={() => router.push('/dashboard/user/telemedicine')}
+//               className="w-full text-left px-4 py-2 rounded-xl text-blue-100 hover:bg-white/10"
+//             >
+//               🎥 Telemedicine
+//             </button>
+//             <button
+//               onClick={() => router.push('/dashboard/user/ai-analysis')}
+//               className="w-full text-left px-4 py-2 rounded-xl text-blue-100 hover:bg-white/10"
+//             >
+//               🤖 AI Analysis
+//             </button>
+//             <button
+//               onClick={() => router.push('/dashboard/user/profile')}
+//               className="w-full text-left px-4 py-2 rounded-xl text-blue-100 hover:bg-white/10"
+//             >
+//               🙍‍♂️ My Profile
+//             </button>
+//           </nav>
+//         </aside>
+
+//         {/* Main */}
+//         <main className="flex-1 p-6 md:p-10">
+//           {user && (
+//             <div className="flex items-center justify-between mb-6">
+//               <div>
+//                 <h1 className="text-3xl md:text-4xl font-black text-white">
+//                   Welcome, {user.name}!
+//                 </h1>
+//                 <p className="text-blue-200 text-sm">Email: {user.email}</p>
+//               </div>
+//               <div className="flex items-center gap-3">
+//                 <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white font-bold uppercase">
+//                   {user.name[0]}
+//                 </div>
+//                 <NotificationBell userId={user.id} />
+//                 <button
+//                   onClick={() => {
+//                     localStorage.removeItem('user');
+//                     router.push('/login');
+//                   }}
+//                   className="px-3 py-1.5 rounded-xl bg-white/10 text-blue-100 hover:bg-white/20"
+//                 >
+//                   ⏏ Logout
+//                 </button>
+//               </div>
+//             </div>
+//           )}
+
+//           {showAlert && (
+//             <div className="mb-4 text-center">
+//               <div className="inline-block bg-yellow-300/90 text-red-900 font-bold px-4 py-2 rounded-xl shadow">
+//                 🔔 You have an appointment today!
+//               </div>
+//             </div>
+//           )}
+
+//           <div className="flex items-center justify-between mb-4">
+//             <h2 className="text-xl font-semibold text-white">Your Appointments</h2>
+//             <button
+//               onClick={() => router.push('/booking')}
+//               className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-xl"
+//             >
+//               ➕ Add Appointment
+//             </button>
+//           </div>
+
+//           {appointments.length === 0 ? (
+//             <p className="text-blue-100">No appointments found.</p>
+//           ) : (
+//             <div className="space-y-4">
+//               {appointments.map((a) => (
+//                 <motion.div
+//                   key={a.id}
+//                   initial={{ opacity: 0, y: 16 }}
+//                   animate={{ opacity: 1, y: 0 }}
+//                   transition={{ duration: 0.25 }}
+//                   className="bg-white/10 backdrop-blur-xl border border-white/15 p-5 rounded-2xl shadow hover:bg-white/15"
+//                 >
+//                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+//                     <div className="space-y-1 text-blue-50">
+//                       <h3 className="font-semibold text-lg text-white">
+//                         📅{' '}
+//                         {new Date(a.date).toLocaleDateString(undefined, {
+//                           weekday: 'long',
+//                           year: 'numeric',
+//                           month: 'long',
+//                           day: 'numeric',
+//                         })}{' '}
+//                         at {a.time}
+//                       </h3>
+//                       <p className="text-blue-100 text-sm">
+//                         🧑‍⚕️ Dr. {a.doctor.name} ({a.doctor.specialty})
+//                       </p>
+//                       <p className="text-blue-200 text-sm">📋 {a.type}</p>
+//                       <p className="text-white font-medium mt-1">
+//                         💸 {treatmentPrices[a.type] || 0} THB
+//                       </p>
+//                     </div>
+
+//                     <div className="flex flex-wrap gap-2">
+//                       <button
+//                         onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
+//                         className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
+//                       >
+//                         ✏️ Edit
+//                       </button>
+//                       <button
+//                         onClick={() => cancelAppointment(a.id)}
+//                         className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
+//                       >
+//                         ❌ Cancel
+//                       </button>
+//                       <button
+//                         onClick={() => setSelected(a)}
+//                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
+//                       >
+//                         💳 QR Pay
+//                       </button>
+//                       <button
+//                         onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
+//                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
+//                       >
+//                         💬 Chat
+//                       </button>
+//                     </div>
+//                   </div>
+//                 </motion.div>
+//               ))}
+//             </div>
+//           )}
+
+//           {selected && (
+//             <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+//               <div className="bg-white p-6 rounded-2xl shadow-2xl text-center w-80">
+//                 <h3 className="text-xl font-semibold mb-4">Scan to Pay</h3>
+//                 <div className="flex justify-center">
+//                   <QRCodeCanvas
+//                     value={`00020101021129370016A000000677010111011300660123456789802TH53037645406${
+//                       treatmentPrices[selected.type] || 0
+//                     }.005802TH6304ABCD`}
+//                     size={180}
+//                   />
+//                 </div>
+//                 <p className="mt-2 text-gray-700">
+//                   💳 {treatmentPrices[selected.type] || 0} THB
+//                 </p>
+//                 <button
+//                   onClick={() => setSelected(null)}
+//                   className="mt-4 bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-xl"
+//                 >
+//                   Close
+//                 </button>
+//               </div>
+//             </div>
+//           )}
+//         </main>
+//       </div>
+//     </div>
+//   );
+// }
+
+
+
+//ver4 - blue
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -1150,7 +1405,12 @@ import { treatmentPrices } from '@/lib/treatmentPrices';
 import { QRCodeCanvas } from 'qrcode.react';
 import NotificationBell from './components/NotificationBell';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Menu, X, Calendar, Video, Brain, User as UserIcon, 
+  LogOut, Plus, Edit, Trash2, CreditCard, MessageCircle, 
+  Clock, Bell, Home
+} from 'lucide-react';
 
 interface Appointment {
   id: string;
@@ -1173,6 +1433,7 @@ export default function UserDashboardPage() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [showAlert, setShowAlert] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
@@ -1202,193 +1463,370 @@ export default function UserDashboardPage() {
   }, [router]);
 
   const cancelAppointment = async (id: string) => {
-    if (!confirm('Cancel this appointment?')) return;
+    if (!confirm('Are you sure you want to cancel this appointment?')) return;
     const res = await fetch('/api/appointments/delete', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id }),
     });
-    if (res.ok) setAppointments((p) => p.filter((x) => x.id !== id));
-    else alert('Failed to cancel. Please try again.');
+    if (res.ok) {
+      setAppointments((p) => p.filter((x) => x.id !== id));
+      alert('Appointment cancelled successfully');
+    } else {
+      alert('Failed to cancel. Please try again.');
+    }
   };
 
+  const menuItems = [
+    { icon: Home, label: 'Dashboard', path: '/dashboard/user', active: true },
+    { icon: Calendar, label: 'Appointments Detail', path: '/dashboard/user/appointments' },
+    { icon: Video, label: 'Telemedicine', path: '/dashboard/user/telemedicine' },
+    { icon: Brain, label: 'AI Analysis', path: '/dashboard/user/ai-analysis' },
+    { icon: UserIcon, label: 'My Profile', path: '/dashboard/user/profile' },
+  ];
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* On-brand background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800" />
-      <div className="absolute inset-0 opacity-25">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent animate-pulse" />
-      </div>
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          />
+        )}
+      </AnimatePresence>
 
-      <div className="relative z-10 flex min-h-screen">
-        {/* Sidebar */}
-        <aside className="hidden md:block w-72 bg-white/5 backdrop-blur-xl border-r border-white/10 p-6">
-          <h2 className="text-2xl font-extrabold text-white mb-8">🦷 HealthCare+</h2>
-          <nav className="space-y-2">
-            <button
-              onClick={() => router.push('/dashboard/user/appointments')}
-              className="w-full text-left px-4 py-2 rounded-xl bg-white/10 text-white hover:bg-white/20"
-            >
-              🗓️ Appointments
-            </button>
-            <button
-              onClick={() => router.push('/dashboard/user/telemedicine')}
-              className="w-full text-left px-4 py-2 rounded-xl text-blue-100 hover:bg-white/10"
-            >
-              🎥 Telemedicine
-            </button>
-            <button
-              onClick={() => router.push('/dashboard/user/ai-analysis')}
-              className="w-full text-left px-4 py-2 rounded-xl text-blue-100 hover:bg-white/10"
-            >
-              🤖 AI Analysis
-            </button>
-            <button
-              onClick={() => router.push('/dashboard/user/profile')}
-              className="w-full text-left px-4 py-2 rounded-xl text-blue-100 hover:bg-white/10"
-            >
-              🙍‍♂️ My Profile
-            </button>
-          </nav>
-        </aside>
-
-        {/* Main */}
-        <main className="flex-1 p-6 md:p-10">
-          {user && (
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-black text-white">
-                  Welcome, {user.name}!
-                </h1>
-                <p className="text-blue-200 text-sm">Email: {user.email}</p>
-              </div>
+      {/* Sidebar - Always visible on desktop */}
+      <aside className={`
+        fixed md:static inset-y-0 left-0 z-50 w-72 
+        bg-white shadow-2xl md:shadow-xl
+        transform transition-all duration-300 ease-in-out
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
+        <div className="flex flex-col h-full">
+          {/* Logo Header */}
+          <div className="p-6 border-b border-gray-100">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white font-bold uppercase">
-                  {user.name[0]}
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-xl">H+</span>
                 </div>
-                <NotificationBell userId={user.id} />
-                <button
-                  onClick={() => {
-                    localStorage.removeItem('user');
-                    router.push('/login');
-                  }}
-                  className="px-3 py-1.5 rounded-xl bg-white/10 text-blue-100 hover:bg-white/20"
-                >
-                  ⏏ Logout
-                </button>
+                <h2 className="text-xl font-bold text-gray-800">HealthCare+</h2>
               </div>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="md:hidden text-gray-500 hover:text-gray-700 p-1"
+              >
+                <X size={24} />
+              </button>
             </div>
-          )}
-
-          {showAlert && (
-            <div className="mb-4 text-center">
-              <div className="inline-block bg-yellow-300/90 text-red-900 font-bold px-4 py-2 rounded-xl shadow">
-                🔔 You have an appointment today!
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-white">Your Appointments</h2>
-            <button
-              onClick={() => router.push('/booking')}
-              className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-xl"
-            >
-              ➕ Add Appointment
-            </button>
           </div>
 
-          {appointments.length === 0 ? (
-            <p className="text-blue-100">No appointments found.</p>
-          ) : (
-            <div className="space-y-4">
-              {appointments.map((a) => (
-                <motion.div
-                  key={a.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="bg-white/10 backdrop-blur-xl border border-white/15 p-5 rounded-2xl shadow hover:bg-white/15"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="space-y-1 text-blue-50">
-                      <h3 className="font-semibold text-lg text-white">
-                        📅{' '}
-                        {new Date(a.date).toLocaleDateString(undefined, {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}{' '}
-                        at {a.time}
-                      </h3>
-                      <p className="text-blue-100 text-sm">
-                        🧑‍⚕️ Dr. {a.doctor.name} ({a.doctor.specialty})
-                      </p>
-                      <p className="text-blue-200 text-sm">📋 {a.type}</p>
-                      <p className="text-white font-medium mt-1">
-                        💸 {treatmentPrices[a.type] || 0} THB
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
-                        className="bg-yellow-400 hover:bg-yellow-500 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
-                      >
-                        ✏️ Edit
-                      </button>
-                      <button
-                        onClick={() => cancelAppointment(a.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
-                      >
-                        ❌ Cancel
-                      </button>
-                      <button
-                        onClick={() => setSelected(a)}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
-                      >
-                        💳 QR Pay
-                      </button>
-                      <button
-                        onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1.5 rounded-md text-sm font-semibold"
-                      >
-                        💬 Chat
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-
-          {selected && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-              <div className="bg-white p-6 rounded-2xl shadow-2xl text-center w-80">
-                <h3 className="text-xl font-semibold mb-4">Scan to Pay</h3>
-                <div className="flex justify-center">
-                  <QRCodeCanvas
-                    value={`00020101021129370016A000000677010111011300660123456789802TH53037645406${
-                      treatmentPrices[selected.type] || 0
-                    }.005802TH6304ABCD`}
-                    size={180}
-                  />
+          {/* User Profile Card */}
+          {user && (
+            <div className="p-6 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                  {user.name.charAt(0).toUpperCase()}
                 </div>
-                <p className="mt-2 text-gray-700">
-                  💳 {treatmentPrices[selected.type] || 0} THB
-                </p>
-                <button
-                  onClick={() => setSelected(null)}
-                  className="mt-4 bg-gray-200 hover:bg-gray-300 text-black px-4 py-2 rounded-xl"
-                >
-                  Close
-                </button>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-gray-800 truncate text-lg">{user.name}</p>
+                  <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                </div>
               </div>
             </div>
           )}
+
+          {/* Navigation Menu */}
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            {menuItems.map((item, index) => (
+              <motion.button
+                key={item.path}
+                onClick={() => {
+                  router.push(item.path);
+                  setSidebarOpen(false);
+                }}
+                className={`
+                  w-full flex items-center gap-3 px-4 py-3.5 rounded-xl 
+                  transition-all duration-200 group
+                  ${item.active 
+                    ? 'bg-blue-600 text-white shadow-md' 
+                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                  }
+                `}
+                whileHover={{ x: item.active ? 0 : 5 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <item.icon size={20} className={item.active ? 'text-white' : 'text-gray-500 group-hover:text-blue-600'} />
+                <span className="font-medium">{item.label}</span>
+              </motion.button>
+            ))}
+          </nav>
+
+          {/* Logout Button */}
+          <div className="p-4 border-t border-gray-100">
+            <button
+              onClick={() => {
+                localStorage.removeItem('user');
+                router.push('/login');
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+            >
+              <LogOut size={20} />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-h-screen">
+        {/* Top Header */}
+        <header className="bg-blue-80 backdrop-blur-md shadow-sm sticky top-0 z-30 border-b border-gray-100">
+          <div className="flex items-center justify-between px-4 md:px-8 py-4">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="md:hidden text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Menu size={24} />
+              </button>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+                  Welcome back, {user?.name?.split(' ')[0]}!
+                </h1>
+                <p className="text-sm text-gray-600">Manage your healthcare appointments</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {user && <NotificationBell userId={user.id} />}
+            </div>
+          </div>
+        </header>
+
+        {/* Alert Banner */}
+        {showAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-3 text-center font-semibold shadow-lg flex items-center justify-center gap-2"
+          >
+            <Bell size={20} />
+            You have an appointment today!
+          </motion.div>
+        )}
+
+        {/* Main Content Area */}
+        <main className="flex-1 p-4 md:p-8">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white p-6 rounded-2xl shadow-md border border-blue-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1 font-medium">Total Appointments</p>
+                  <p className="text-4xl font-bold text-gray-800">{appointments.length}</p>
+                </div>
+                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Calendar className="text-blue-600" size={28} />
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="bg-white p-6 rounded-2xl shadow-md border border-green-100 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-600 mb-1 font-medium">Upcoming</p>
+                  <p className="text-4xl font-bold text-gray-800">
+                    {appointments.filter(a => new Date(`${a.date}T${a.time}`) > new Date()).length}
+                  </p>
+                </div>
+                <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                  <Clock className="text-green-600" size={28} />
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-2xl shadow-lg text-white hover:shadow-xl transition-shadow"
+            >
+              <p className="text-sm text-blue-100 mb-3 font-medium">Quick Action</p>
+              <button
+                onClick={() => router.push('/booking')}
+                className="flex items-center gap-2 bg-white text-blue-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition-colors w-full justify-center"
+              >
+                <Plus size={20} />
+                Book New Appointment
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Appointments List */}
+          <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-gray-800">Your Appointments</h2>
+                <button
+                  onClick={() => router.push('/booking')}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                >
+                  <Plus size={20} />
+                  <span className="hidden sm:inline">Add Appointment</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6">
+              {appointments.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Calendar className="text-gray-400" size={40} />
+                  </div>
+                  <p className="text-gray-600 text-lg mb-6">No appointments found</p>
+                  <button
+                    onClick={() => router.push('/booking')}
+                    className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
+                  >
+                    Book Your First Appointment
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {appointments.map((a, index) => (
+                    <motion.div
+                      key={a.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.08 }}
+                      className="group bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                    >
+                      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div className="flex-1 space-y-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                              <Calendar className="text-white" size={22} />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex flex-wrap items-center gap-2 mb-1">
+                                <span className="text-lg font-bold text-gray-800">
+                                  {new Date(a.date).toLocaleDateString('en-US', { 
+                                    weekday: 'long', 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                  })}
+                                </span>
+                                <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full font-semibold">
+                                  {a.time}
+                                </span>
+                              </div>
+                              <p className="text-gray-700 font-semibold text-base">
+                                Dr. {a.doctor.name}
+                              </p>
+                              <p className="text-sm text-gray-500">{a.doctor.specialty}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-2 ml-15">
+                            <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1.5 rounded-full font-medium">
+                              {a.type}
+                            </span>
+                            <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-semibold">
+                              {treatmentPrices[a.type] || 0} THB
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
+                            className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-amber-600 transition-colors shadow-sm hover:shadow-md"
+                          >
+                            <Edit size={18} />
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => cancelAppointment(a.id)}
+                            className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-rose-600 transition-colors shadow-sm hover:shadow-md"
+                          >
+                            <Trash2 size={18} />
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => setSelected(a)}
+                            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
+                          >
+                            <CreditCard size={18} />
+                            QR Pay
+                          </button>
+                          <button
+                            onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
+                            className="flex items-center gap-2 bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-cyan-600 transition-colors shadow-sm hover:shadow-md"
+                          >
+                            <MessageCircle size={18} />
+                            Chat
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </main>
       </div>
+
+      {/* QR Payment Modal */}
+      {selected && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full"
+          >
+            <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">Scan to Pay</h3>
+            <p className="text-gray-600 text-center mb-6">Use your banking app to scan</p>
+            <div className="flex justify-center bg-gray-50 p-6 rounded-xl mb-6">
+              <QRCodeCanvas
+                value={`00020101021129370016A000000677010111011300660123456789802TH53037645406${
+                  treatmentPrices[selected.type] || 0
+                }.005802TH6304ABCD`}
+                size={200}
+                level="H"
+              />
+            </div>
+            <div className="text-center mb-6">
+              <p className="text-3xl font-bold text-blue-600">
+                {treatmentPrices[selected.type] || 0} THB
+              </p>
+              <p className="text-sm text-gray-600 mt-1">{selected.type}</p>
+            </div>
+            <button
+              onClick={() => setSelected(null)}
+              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-6 py-3 rounded-xl transition-colors"
+            >
+              Close
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

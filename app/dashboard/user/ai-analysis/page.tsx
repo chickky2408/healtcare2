@@ -731,7 +731,7 @@
 
 
 
-
+//mockup 
 
 'use client'
 
@@ -797,7 +797,7 @@ export default function AiAnalysisPage() {
 
       // API ส่งกลับเป็น { results: [{ label, confidence, imagePath?, explanation? }, ...] }
       const top = (res.data?.results?.[0] ?? null) as
-        | { label: string; confidence: number; imagePath?: string; explanation?: string }
+        | { label: string; confidence: number; imagePath?: string; explanation?: string; findings?: string[];}
         | null
 
       if (!top) throw new Error('no output')
@@ -812,6 +812,7 @@ export default function AiAnalysisPage() {
         confidence: top.confidence,
         userId: user.id,
         explanation: top.explanation ?? null,
+        findings: JSON.stringify(top.findings || []),
       })
 
       setMsg({ type: 'success', text: 'Analysis completed & saved' })
@@ -983,3 +984,11 @@ export default function AiAnalysisPage() {
     </div>
   )
 }
+
+
+
+
+
+//5 Oct 2025
+
+

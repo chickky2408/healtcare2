@@ -90,6 +90,8 @@ model Diagnosis {
   user          User         @relation(fields: [userId], references: [id])
   appointmentId String? // optional
   appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  explanation String?  // เพิ่มบรรทัดนี้
+  findings    String?  // เพิ่มบรรทัดนี้
 }
 
 model Notification {

@@ -27,13 +27,50 @@
 
 
 
+// import { NextRequest, NextResponse } from 'next/server'
+// import prisma from '@/lib/db'
+
+// export async function POST(req: NextRequest) {
+//   try {
+//     const body = await req.json()
+//     const { imagePath, result, confidence, userId, appointmentId, explanation } = body
+
+//     if (!userId || !imagePath || !result) {
+//       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+//     }
+
+//     const diagnosis = await prisma.diagnosis.create({
+//       data: {
+//         imagePath,
+//         result,
+//         confidence,
+//         userId,
+//         appointmentId,
+//         ...(explanation && { explanation }),
+//       },
+//     })
+
+    
+
+//     return NextResponse.json(diagnosis)
+//   } catch (error) {
+//     console.error(error)
+//     return NextResponse.json({ error: 'Failed to save diagnosis' }, { status: 500 })
+//   }
+// }
+
+
+
+
+//5 Oct 2025
+
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { imagePath, result, confidence, userId, appointmentId, explanation } = body
+    const { imagePath, result, confidence, userId, appointmentId, explanation, findings } = body
 
     if (!userId || !imagePath || !result) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -45,14 +82,15 @@ export async function POST(req: NextRequest) {
         result,
         confidence,
         userId,
-        appointmentId,
+        ...(appointmentId && { appointmentId }),
         ...(explanation && { explanation }),
+        ...(findings && { findings }), // เพิ่มบรรทัดนี้
       },
     })
 
     return NextResponse.json(diagnosis)
   } catch (error) {
-    console.error(error)
+    console.error('Save diagnosis error:', error)
     return NextResponse.json({ error: 'Failed to save diagnosis' }, { status: 500 })
   }
 }

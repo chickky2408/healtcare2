@@ -118,22 +118,82 @@
 
 // 2 may 2024
 
+// import { NextRequest, NextResponse } from 'next/server'
+// import { PrismaClient } from '@prisma/client'
+
+// const prisma = new PrismaClient()
+
+// type Props = {
+//   params: {
+//     id: string
+//   }
+// }
+
+// export async function GET(
+//   _request: NextRequest,
+//   props: Props
+// ) {
+
+ 
+//   const appointmentId = props.params.id
+  
+//   try {
+//     const appointment = await prisma.appointment.findUnique({
+//       where: { id: appointmentId },
+//       include: { doctor: true },
+//     })
+
+//     if (!appointment) {
+//       return NextResponse.json({ error: 'Appointment not found' }, { status: 404 })
+//     }
+
+//     return NextResponse.json(appointment)
+//   } catch (error) {
+//     console.error(error)
+//     return NextResponse.json({ error: 'Server error' }, { status: 500 })
+//   }
+// }
+
+// //6may2024
+// export async function DELETE(
+//   _request: NextRequest,
+//   props: Props
+// ) {
+//   const appointmentId = props.params.id
+
+//   try {
+//     await prisma.appointment.delete({
+//       where: { id: appointmentId },
+//     })
+//     return NextResponse.json({ message: 'Appointment deleted successfully' })
+//   } catch (error) {
+//     console.error(error)
+//     return NextResponse.json({ error: 'Failed to delete appointment' }, { status: 500 })
+//   }
+// }
+
+
+
+
+//4 oct 2025
+
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
 type Props = {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export async function GET(
   _request: NextRequest,
   props: Props
 ) {
-  const appointmentId = props.params.id
+  const params = await props.params
+  const appointmentId = params.id
   
   try {
     const appointment = await prisma.appointment.findUnique({
@@ -152,12 +212,12 @@ export async function GET(
   }
 }
 
-//6may2024
 export async function DELETE(
   _request: NextRequest,
   props: Props
 ) {
-  const appointmentId = props.params.id
+  const params = await props.params
+  const appointmentId = params.id
 
   try {
     await prisma.appointment.delete({

@@ -671,3 +671,12 @@ export default function TelemedicineDetailPage() {
     </div>
   )
 }
+
+
+
+
+
+
+// 4 Oct 2025
+
+
