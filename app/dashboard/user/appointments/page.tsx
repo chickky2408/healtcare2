@@ -1188,14 +1188,35 @@ export default function AppointmentsPage() {
       )
     }
 
-    const now = new Date()
-    if (filterStatus === 'upcoming') {
-      filtered = filtered.filter(appointment => new Date(`${appointment.date}T${appointment.time}`) >= now)
-    } else if (filterStatus === 'past') {
-      filtered = filtered.filter(appointment => new Date(`${appointment.date}T${appointment.time}`) < now)
-    }
+    // const now = new Date()
+    // if (filterStatus === 'upcoming') {
+    //   filtered = filtered.filter(appointment => new Date(`${appointment.date}T${appointment.time}`) >= now)
+    // } else if (filterStatus === 'past') {
+    //   filtered = filtered.filter(appointment => new Date(`${appointment.date}T${appointment.time}`) < now)
+    // }
 
-    setFilteredAppointments(filtered)
+    // setFilteredAppointments(filtered)
+
+    const now = new Date()
+if (filterStatus === 'upcoming') {
+  filtered = filtered.filter(appointment => {
+    const appointmentDate = new Date(appointment.date)
+    const [hours, minutes] = appointment.time.split(':').map(Number)
+    appointmentDate.setHours(hours, minutes, 0, 0)
+    return appointmentDate > now
+  })
+} else if (filterStatus === 'past') {
+  filtered = filtered.filter(appointment => {
+    const appointmentDate = new Date(appointment.date)
+    const [hours, minutes] = appointment.time.split(':').map(Number)
+    appointmentDate.setHours(hours, minutes, 0, 0)
+    return appointmentDate <= now
+  })
+}
+
+setFilteredAppointments(filtered)
+
+
   }, [appointments, searchTerm, filterStatus])
 
   const handleCancel = async () => {
@@ -1233,16 +1254,35 @@ export default function AppointmentsPage() {
     'AI_DIAGNOSIS': { icon: Heart, color: 'from-orange-500 to-red-500', label: 'AI Diagnosis' }
   }
 
-  const getStatusColor = (date: string, time: string) => {
-    const appointmentDateTime = new Date(`${date}T${time}`)
-    const now = new Date()
-    return appointmentDateTime >= now ? 'text-green-400' : 'text-gray-400'
-  }
+  // const getStatusColor = (date: string, time: string) => {
+  //   const appointmentDateTime = new Date(`${date}T${time}`)
+  //   const now = new Date()
+  //   return appointmentDateTime >= now ? 'text-green-400' : 'text-gray-400'
+  // }
 
-  const getStatusLabel = (date: string, time: string) => {
-    const appointmentDateTime = new Date(`${date}T${time}`)
+  // const getStatusLabel = (date: string, time: string) => {
+  //   const appointmentDateTime = new Date(`${date}T${time}`)
+  //   const now = new Date()
+  //   return appointmentDateTime >= now ? 'Upcoming' : 'Past'
+  // }
+
+
+  const getStatusColor = (date: string, time: string) => {
+    const appointmentDate = new Date(date)
+    const [hours, minutes] = time.split(':').map(Number)
+    appointmentDate.setHours(hours, minutes, 0, 0)
+    
     const now = new Date()
-    return appointmentDateTime >= now ? 'Upcoming' : 'Past'
+    return appointmentDate > now ? 'text-green-400' : 'text-gray-400'
+  }
+  
+  const getStatusLabel = (date: string, time: string) => {
+    const appointmentDate = new Date(date)
+    const [hours, minutes] = time.split(':').map(Number)
+    appointmentDate.setHours(hours, minutes, 0, 0)
+    
+    const now = new Date()
+    return appointmentDate > now ? 'Upcoming' : 'Past'
   }
 
   const containerVariants = {
@@ -1519,7 +1559,8 @@ export default function AppointmentsPage() {
                                   <Stethoscope className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                  <p className="font-bold text-white">Dr. {appointment.doctor.name}</p>
+                                  {/* <p className="font-bold text-white">Dr. {appointment.doctor.name}</p> */}
+                                  <p className="font-bold text-white">{appointment.doctor.name}</p>
                                   <p className="text-sm text-blue-200">{appointment.doctor.specialty}</p>
                                 </div>
                               </div>
@@ -1535,7 +1576,7 @@ export default function AppointmentsPage() {
                             whileTap={{ scale: 0.95 }}
                           >
                             <Edit3 className="w-4 h-4" />
-                            <span className="hidden sm:inline">Edit</span>
+                            {/* <span className="hidden sm:inline">Edit</span> */}
                           </motion.button>
                           
                           <motion.button
@@ -1545,7 +1586,7 @@ export default function AppointmentsPage() {
                             whileTap={{ scale: 0.95 }}
                           >
                             <Trash2 className="w-4 h-4" />
-                            <span className="hidden sm:inline">Cancel</span>
+                            {/* <span className="hidden sm:inline">Cancel</span> */}
                           </motion.button>
                           
                           <motion.button
@@ -1555,7 +1596,7 @@ export default function AppointmentsPage() {
                             whileTap={{ scale: 0.95 }}
                           >
                             <Eye className="w-4 h-4" />
-                            <span className="hidden sm:inline">Details</span>
+                            {/* <span className="hidden sm:inline">Details</span> */}
                           </motion.button>
                         </div>
                       </div>
@@ -1644,7 +1685,7 @@ export default function AppointmentsPage() {
           border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background: #2563eb;
+          background:rgb(235, 237, 241);
         }
       `}</style>
     </div>

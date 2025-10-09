@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
 }
 
 datasource db {
@@ -12,8 +13,10 @@ model User {
   email         String         @unique
   password      String
   name          String
-  // role      Role     @default(USER)
   createdAt     DateTime       @default(now())
+  allergies     String?
+  image         String?
+  phone         String?
   diagnoses     Diagnosis[]
   notifications Notification[]
 }
@@ -25,9 +28,11 @@ model Doctor {
   name         String
   specialty    String
   createdAt    DateTime       @default(now())
-  availability Availability[] // เวลาว่างของหมอแต่ละคน
-  appointments Appointment[] // การจองของหมอ
   meetLink     String?
+  appointments Appointment[]
+  availability Availability[]
+  phone        String?        // เพิ่มบรรทัดนี้ ถ้ายังไม่มี
+  image        String?        // เพิ่มบรรทัดนี้ ถ้ายังไม่มี
 }
 
 model Admin {
@@ -41,9 +46,9 @@ model Admin {
 model Availability {
   id        String     @id @default(cuid())
   doctorId  String
-  doctor    Doctor     @relation(fields: [doctorId], references: [id])
   date      DateTime
-  timeSlots TimeSlot[] // ใช้ model แทน array
+  doctor    Doctor     @relation(fields: [doctorId], references: [id])
+  timeSlots TimeSlot[]
 }
 
 model TimeSlot {
@@ -53,12 +58,9 @@ model TimeSlot {
   availability   Availability @relation(fields: [availabilityId], references: [id])
 }
 
-//appointment
-
 model Appointment {
   id           String        @id @default(cuid())
   doctorId     String
-  doctor       Doctor        @relation(fields: [doctorId], references: [id])
   patientName  String
   patientEmail String
   date         DateTime
@@ -66,19 +68,10 @@ model Appointment {
   type         TreatmentType
   symptoms     String
   createdAt    DateTime      @default(now())
+  doctor       Doctor        @relation(fields: [doctorId], references: [id])
   diagnoses    Diagnosis[]
   messages     Message[]     @relation("AppointmentMessages")
 }
-
-enum TreatmentType {
-  VIDEO_CALL
-  CLEANING
-  ORTHODONTIC
-  AI_DIAGNOSIS
-  SURGERY
-}
-
-// AIDiagnosis
 
 model Diagnosis {
   id            String       @id @default(uuid())
@@ -87,11 +80,11 @@ model Diagnosis {
   confidence    Float
   createdAt     DateTime     @default(now())
   userId        String
-  user          User         @relation(fields: [userId], references: [id])
-  appointmentId String? // optional
+  appointmentId String?
+  explanation   String?
+  findings      String?
   appointment   Appointment? @relation(fields: [appointmentId], references: [id])
-  explanation String?  // เพิ่มบรรทัดนี้
-  findings    String?  // เพิ่มบรรทัดนี้
+  user          User         @relation(fields: [userId], references: [id])
 }
 
 model Notification {
@@ -109,6 +102,14 @@ model Message {
   text          String
   timestamp     DateTime    @default(now())
   senderId      String
-  appointment   Appointment @relation(fields: [appointmentId], references: [id], name: "AppointmentMessages")
   appointmentId String
+  appointment   Appointment @relation("AppointmentMessages", fields: [appointmentId], references: [id])
+}
+
+enum TreatmentType {
+  VIDEO_CALL
+  CLEANING
+  ORTHODONTIC
+  AI_DIAGNOSIS
+  SURGERY
 }

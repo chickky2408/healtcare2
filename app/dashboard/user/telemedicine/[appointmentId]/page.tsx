@@ -357,19 +357,19 @@ export default function TelemedicineDetailPage() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Multi-layer Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-900 to-blue-800"></div>
       
       {/* Animated Background Overlay */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent animate-pulse"></div>
         <motion.div
-          className="absolute inset-0 bg-gradient-to-br from-transparent via-purple-500/10 to-transparent"
+          className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-500/10 to-transparent"
           animate={{ 
             background: [
-              "linear-gradient(45deg, transparent, rgba(139, 92, 246, 0.1), transparent)",
-              "linear-gradient(135deg, transparent, rgba(59, 130, 246, 0.1), transparent)",
-              "linear-gradient(225deg, transparent, rgba(139, 92, 246, 0.1), transparent)",
-              "linear-gradient(315deg, transparent, rgba(59, 130, 246, 0.1), transparent)"
+              "linear-gradient(45deg, transparent, rgba(79, 117, 207, 0.92), transparent)",
+              "linear-gradient(135deg, transparent, rgba(79, 117, 207, 0.92), transparent)",
+              "linear-gradient(225deg, transparent, rgba(79, 117, 207, 0.92), transparent)",
+              "linear-gradient(315deg, transparent, rgba(79, 117, 207, 0.92), transparent)"
             ]
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
@@ -574,7 +574,7 @@ export default function TelemedicineDetailPage() {
                       <Stethoscope className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                      <h4 className="text-2xl font-bold text-white mb-1">Dr. {appointment.doctor.name}</h4>
+                      <h4 className="text-2xl font-bold text-white mb-1"> {appointment.doctor.name}</h4>
                       <p className="text-blue-200 text-lg">{appointment.doctor.specialty}</p>
                     </div>
                   </div>
@@ -603,7 +603,7 @@ export default function TelemedicineDetailPage() {
                   </div>
                   
                   <h3 className="text-2xl font-bold text-white mb-4">Ready for Your Video Call?</h3>
-                  <p className="text-green-100 mb-8">Join your consultation with Dr. {appointment.doctor.name}</p>
+                  <p className="text-green-100 mb-8">Join your consultation with  {appointment.doctor.name}</p>
                   
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <motion.a

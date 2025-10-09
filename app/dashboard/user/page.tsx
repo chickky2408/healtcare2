@@ -1481,7 +1481,7 @@ export default function UserDashboardPage() {
     { icon: Home, label: 'Dashboard', path: '/dashboard/user', active: true },
     { icon: Calendar, label: 'Appointments Detail', path: '/dashboard/user/appointments' },
     { icon: Video, label: 'Telemedicine', path: '/dashboard/user/telemedicine' },
-    { icon: Brain, label: 'AI Analysis', path: '/dashboard/user/ai-analysis' },
+    { icon: Brain, label: 'AI Analysis', path: '/ai-analysis' },
     { icon: UserIcon, label: 'My Profile', path: '/dashboard/user/profile' },
   ];
 
@@ -1652,7 +1652,15 @@ export default function UserDashboardPage() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1 font-medium">Upcoming</p>
                   <p className="text-4xl font-bold text-gray-800">
-                    {appointments.filter(a => new Date(`${a.date}T${a.time}`) > new Date()).length}
+                    {/* {appointments.filter(a => new Date(`${a.date}T${a.time}`) > new Date()).length} */}
+                    {appointments.filter(a => {
+                      // แยกเอาแค่วันที่ (ตัดเวลาออก)
+                      const dateOnly = a.date.split('T')[0] // 2025-10-07
+                      // รวมวันที่กับเวลา
+                      const appointmentDateTime = new Date(`${dateOnly}T${a.time}:00`)
+                      const now = new Date()
+                      return appointmentDateTime > now
+                    }).length}
                   </p>
                 </div>
                 <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
@@ -1738,7 +1746,7 @@ export default function UserDashboardPage() {
                                 </span>
                               </div>
                               <p className="text-gray-700 font-semibold text-base">
-                                Dr. {a.doctor.name}
+                                {a.doctor.name}
                               </p>
                               <p className="text-sm text-gray-500">{a.doctor.specialty}</p>
                             </div>
@@ -1759,28 +1767,28 @@ export default function UserDashboardPage() {
                             className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-amber-600 transition-colors shadow-sm hover:shadow-md"
                           >
                             <Edit size={18} />
-                            Edit
+                            {/* Edit */}
                           </button>
                           <button
                             onClick={() => cancelAppointment(a.id)}
                             className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-rose-600 transition-colors shadow-sm hover:shadow-md"
                           >
                             <Trash2 size={18} />
-                            Cancel
+                            {/* Cancel */}
                           </button>
                           <button
                             onClick={() => setSelected(a)}
                             className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
                           >
                             <CreditCard size={18} />
-                            QR Pay
+                            {/* QR Pay */}
                           </button>
                           <button
                             onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
                             className="flex items-center gap-2 bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-cyan-600 transition-colors shadow-sm hover:shadow-md"
                           >
                             <MessageCircle size={18} />
-                            Chat
+                            {/* Chat */}
                           </button>
                         </div>
                       </div>

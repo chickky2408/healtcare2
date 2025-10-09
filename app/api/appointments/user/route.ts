@@ -39,6 +39,7 @@ export async function POST(req: Request) {
     },
     include: {
       doctor: true, // ดึงข้อมูลหมอมาด้วย
+      
     },
     orderBy: {
       date: 'asc',
