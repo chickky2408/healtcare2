@@ -1,6 +1,6 @@
 // app/api/user/profile/route.ts
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/db'
 
 export async function POST(req: Request) {
   try {
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
         phone: true,
         allergies: true,
         image: true,
-        role: true,
+        // role: true,
         createdAt: true,
       }
     })

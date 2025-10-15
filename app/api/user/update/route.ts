@@ -1,6 +1,6 @@
 // app/api/user/update/route.ts
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { prisma } from '@/lib/db'
 
 export async function PUT(req: Request) {
   try {
@@ -29,7 +29,7 @@ export async function PUT(req: Request) {
         phone: true,
         allergies: true,
         image: true,
-        role: true,
+        // role: true,
       }
     })
 
