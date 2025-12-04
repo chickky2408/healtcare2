@@ -20,10 +20,21 @@ export async function POST(req: Request) {
         email: true,
         name: true,
         phone: true,
+        phoneNumber: true,
         allergies: true,
         image: true,
-        // role: true,
+        profileImage: true,
         createdAt: true,
+        // Personal Information
+        gender: true,
+        dateOfBirth: true,
+        age: true,
+        weight: true,
+        // Dental History
+        hasDentalSurgery: true,
+        dentalSurgeryDetails: true,
+        previousDentalDiseases: true,
+        dentalTreatmentHistory: true,
       }
     })
 

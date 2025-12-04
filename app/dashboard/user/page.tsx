@@ -1406,11 +1406,21 @@ import { QRCodeCanvas } from 'qrcode.react';
 import NotificationBell from './components/NotificationBell';
 import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Menu, X, Calendar, Video, Brain, User as UserIcon, 
-  LogOut, Plus, Edit, Trash2, CreditCard, MessageCircle, 
-  Clock, Bell, Home
+import {
+  Menu, X, Calendar, Video, Brain, User as UserIcon,
+  LogOut, Plus, Edit, Trash2, CreditCard, MessageCircle,
+  Clock, Bell, Home, FileText
 } from 'lucide-react';
+import ThemeLanguageToggle from '@/app/components/ThemeLanguageToggle';
+
+interface Payment {
+  id: string;
+  status: 'PENDING' | 'PAID' | 'SUCCESSFUL' | 'REJECTED' | 'REFUNDED';
+  amount: number;
+  slipImagePath?: string;
+  paidAt?: string;
+  verifiedAt?: string;
+}
 
 interface Appointment {
   id: string;
@@ -1418,6 +1428,7 @@ interface Appointment {
   time: string;
   type: string;
   doctor: { id: string; name: string; specialty: string };
+  payment?: Payment;
 }
 
 interface User {
@@ -1425,6 +1436,8 @@ interface User {
   name: string;
   email: string;
   role: string;
+  profileImage?: string;
+  image?: string;
 }
 
 export default function UserDashboardPage() {
@@ -1434,15 +1447,39 @@ export default function UserDashboardPage() {
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [showAlert, setShowAlert] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [viewMode, setViewMode] = useState<'appointments' | 'payments'>('appointments');
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (!stored) return router.push('/login');
     const parsed: User = JSON.parse(stored);
     if (parsed.role !== 'USER') return router.push('/login');
-    setUser(parsed);
 
     (async () => {
+      // Fetch full user profile including profileImage
+      const profileRes = await fetch('/api/user/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: parsed.email }),
+      });
+      const profileData = await profileRes.json();
+
+      console.log('Profile Data:', profileData);
+      console.log('Profile Image:', profileData?.user?.profileImage);
+
+      if (profileData.success && profileData.user) {
+        const userWithImage: User = {
+          ...parsed,
+          profileImage: profileData.user.profileImage,
+          image: profileData.user.image
+        };
+        console.log('User with image:', userWithImage);
+        setUser(userWithImage);
+      } else {
+        setUser(parsed);
+      }
+
+      // Fetch appointments
       const res = await fetch('/api/appointments/user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1477,11 +1514,70 @@ export default function UserDashboardPage() {
     }
   };
 
+  const isPastAppointment = (date: string, time: string) => {
+    const appointmentDate = new Date(date);
+    const [hours, minutes] = time.split(':').map(Number);
+    appointmentDate.setHours(hours, minutes, 0, 0);
+
+    const now = new Date();
+    return appointmentDate <= now;
+  };
+
+  const getPaymentStatusBadge = (payment?: Payment) => {
+    if (!payment) {
+      return (
+        <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+          ⏳ ยังไม่ชำระ
+        </span>
+      );
+    }
+
+    switch (payment.status) {
+      case 'PENDING':
+        return (
+          <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            ⏳ รอชำระเงิน
+          </span>
+        );
+      case 'PAID':
+        return (
+          <span className="bg-yellow-100 text-yellow-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            🕒 รอตรวจสอบ
+          </span>
+        );
+      case 'SUCCESSFUL':
+        return (
+          <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            ✅ ชำระสำเร็จ
+          </span>
+        );
+      case 'REJECTED':
+        return (
+          <span className="bg-red-100 text-red-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            ❌ ถูกปฏิเสธ
+          </span>
+        );
+      case 'REFUNDED':
+        return (
+          <span className="bg-purple-100 text-purple-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            💰 คืนเงิน
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const handlePaymentClick = (appointment: Appointment) => {
+    router.push(`/payment?appointmentId=${appointment.id}`);
+  };
+
   const menuItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard/user', active: true },
     { icon: Calendar, label: 'Appointments Detail', path: '/dashboard/user/appointments' },
     { icon: Video, label: 'Telemedicine', path: '/dashboard/user/telemedicine' },
     { icon: Brain, label: 'AI Analysis', path: '/ai-analysis' },
+    { icon: FileText, label: 'My Information', path: '/dashboard/user/information' },
     { icon: UserIcon, label: 'My Profile', path: '/dashboard/user/profile' },
   ];
 
@@ -1530,9 +1626,17 @@ export default function UserDashboardPage() {
           {user && (
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
-                  {user.name.charAt(0).toUpperCase()}
-                </div>
+                {(user.image || user.profileImage) ? (
+                  <img
+                    src={user.image || user.profileImage}
+                    alt={user.name}
+                    className="w-14 h-14 rounded-full object-cover shadow-md"
+                  />
+                ) : (
+                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-gray-800 truncate text-lg">{user.name}</p>
                   <p className="text-sm text-gray-500 truncate">{user.email}</p>
@@ -1605,6 +1709,7 @@ export default function UserDashboardPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <ThemeLanguageToggle />
               {user && <NotificationBell userId={user.id} />}
             </div>
           </div>
@@ -1689,8 +1794,8 @@ export default function UserDashboardPage() {
           {/* Appointments List */}
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Your Appointments</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-800">Appointments & Payments</h2>
                 <button
                   onClick={() => router.push('/booking')}
                   className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
@@ -1699,25 +1804,52 @@ export default function UserDashboardPage() {
                   <span className="hidden sm:inline">Add Appointment</span>
                 </button>
               </div>
+
+              {/* View Mode Tabs */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setViewMode('appointments')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    viewMode === 'appointments'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  📅 Appointment
+                </button>
+                <button
+                  onClick={() => setViewMode('payments')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    viewMode === 'payments'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  💳 Transaction History
+                </button>
+              </div>
             </div>
 
             <div className="p-6">
-              {appointments.length === 0 ? (
-                <div className="text-center py-16">
-                  <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Calendar className="text-gray-400" size={40} />
+              {viewMode === 'appointments' ? (
+                appointments.length === 0 ? (
+                  <div className="text-center py-16">
+                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Calendar className="text-gray-400" size={40} />
+                    </div>
+                    <p className="text-gray-600 text-lg mb-6">No appointments found</p>
+                    <button
+                      onClick={() => router.push('/booking')}
+                      className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
+                    >
+                      Book Your First Appointment
+                    </button>
                   </div>
-                  <p className="text-gray-600 text-lg mb-6">No appointments found</p>
-                  <button
-                    onClick={() => router.push('/booking')}
-                    className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
-                  >
-                    Book Your First Appointment
-                  </button>
-                </div>
-              ) : (
+                ) : (
                 <div className="space-y-4">
-                  {appointments.map((a, index) => (
+                  {appointments
+                    .filter(a => !isPastAppointment(a.date, a.time))
+                    .map((a, index) => (
                     <motion.div
                       key={a.id}
                       initial={{ opacity: 0, y: 20 }}
@@ -1734,11 +1866,11 @@ export default function UserDashboardPage() {
                             <div className="flex-1">
                               <div className="flex flex-wrap items-center gap-2 mb-1">
                                 <span className="text-lg font-bold text-gray-800">
-                                  {new Date(a.date).toLocaleDateString('en-US', { 
-                                    weekday: 'long', 
-                                    year: 'numeric', 
-                                    month: 'long', 
-                                    day: 'numeric' 
+                                  {new Date(a.date).toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
                                   })}
                                 </span>
                                 <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full font-semibold">
@@ -1758,6 +1890,7 @@ export default function UserDashboardPage() {
                             <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-semibold">
                               {treatmentPrices[a.type] || 0} THB
                             </span>
+                            {getPaymentStatusBadge(a.payment)}
                           </div>
                         </div>
 
@@ -1777,11 +1910,11 @@ export default function UserDashboardPage() {
                             {/* Cancel */}
                           </button>
                           <button
-                            onClick={() => setSelected(a)}
+                            onClick={() => handlePaymentClick(a)}
                             className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
                           >
                             <CreditCard size={18} />
-                            {/* QR Pay */}
+                            {/* ชำระเงิน */}
                           </button>
                           <button
                             onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
@@ -1794,6 +1927,100 @@ export default function UserDashboardPage() {
                       </div>
                     </motion.div>
                   ))}
+                </div>
+              )
+              ) : (
+                // Payment History View
+                <div className="space-y-4">
+                  {appointments.filter(a => a.payment).length === 0 ? (
+                    <div className="text-center py-16">
+                      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CreditCard className="text-gray-400" size={40} />
+                      </div>
+                      <p className="text-gray-600 text-lg mb-2">Payment History Not Found</p>
+                      <p className="text-gray-500 text-sm">ชำระเงินสำหรับการนัดหมายของคุณเพื่อดูประวัติได้ที่นี่</p>
+                    </div>
+                  ) : (
+                    appointments.filter(a => a.payment).map((a, index) => (
+                      <motion.div
+                        key={a.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.08 }}
+                        className="group bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                      >
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                          <div className="flex-1 space-y-3">
+                            <div className="flex items-start gap-3">
+                              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                                <CreditCard className="text-white" size={22} />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  <span className="text-lg font-bold text-gray-800">
+                                    {new Date(a.date).toLocaleDateString('th-TH', {
+                                      year: 'numeric',
+                                      month: 'long',
+                                      day: 'numeric'
+                                    })}
+                                  </span>
+                                  <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full font-semibold">
+                                    {a.time}
+                                  </span>
+                                </div>
+                                <p className="text-gray-700 font-semibold text-base">
+                                  {a.doctor.name} - {a.doctor.specialty}
+                                </p>
+                                <p className="text-sm text-gray-600">{a.type}</p>
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2 ml-15">
+                              <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-semibold">
+                                Payment Total: {a.payment?.amount || treatmentPrices[a.type] || 0} Baht
+                              </span>
+                              {getPaymentStatusBadge(a.payment)}
+                              {a.payment?.paidAt && (
+                                <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full font-medium">
+                                  Payment Time: {new Date(a.payment.paidAt).toLocaleDateString('th-TH', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })}
+                                </span>
+                              )}
+                              {a.payment?.verifiedAt && (
+                                <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1.5 rounded-full font-medium">
+                                  Approved Time: {new Date(a.payment.verifiedAt).toLocaleDateString('th-TH', {
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {a.payment?.slipImagePath && (
+                              <button
+                                onClick={() => window.open(a.payment!.slipImagePath!, '_blank')}
+                                className="flex items-center gap-2 bg-purple-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm hover:shadow-md"
+                              >
+                                📄 View Slip
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handlePaymentClick(a)}
+                              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+                            >
+                              <CreditCard size={18} />
+                              View Detail
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
               )}
             </div>

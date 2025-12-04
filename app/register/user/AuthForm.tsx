@@ -688,7 +688,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Heart, Shield, Star, UserPlus, Check } from 'lucide-react'
+import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Heart, Shield, Star, UserPlus, Check, Phone } from 'lucide-react'
 
 export default function RegisterUserPage() {
   const router = useRouter()
@@ -700,6 +700,41 @@ export default function RegisterUserPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+
+  const [username, setUsername] = useState('')
+  const [gender, setGender] = useState('')
+  const [dateOfBirth, setDateOfBirth] = useState('')
+  const [age, setAge] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [weight, setWeight] = useState('')
+  const [height, setHeight] = useState('')
+  const [profileImage, setProfileImage] = useState('')
+  const [allergies, setAllergies] = useState('')
+
+  // Dental history fields
+  const [hasDentalSurgery, setHasDentalSurgery] = useState<string>('')
+  const [dentalSurgeryDetails, setDentalSurgeryDetails] = useState('')
+  const [previousDentalDiseases, setPreviousDentalDiseases] = useState('')
+  const [dentalTreatmentHistory, setDentalTreatmentHistory] = useState('')
+  // const [drugAllergies, setDrugAllergies] = useState('')
+  // const [currentSymptoms, setCurrentSymptoms] = useState('')
+  // const [chronicDiseases, setChronicDiseases] = useState('')
+  // const [foodAllergies, setFoodAllergies] = useState('')
+  // const [drugAllergies, setDrugAllergies] = useState('')
+  // const [currentSymptoms, setCurrentSymptoms] = useState('')
+  // const [chronicDiseases, setChronicDiseases] = useState('')
+  // const [foodAllergies, setFoodAllergies] = useState('')
+  // const [drugAllergies, setDrugAllergies] = useState('')
+  // const [currentSymptoms, setCurrentSymptoms] = useState('')
+  // const [chronicDiseases, setChronicDiseases] = useState('')
+  // const [foodAllergies, setFoodAllergies] = useState('')
+  // const [drugAllergies, setDrugAllergies] = useState('')
+  // const [currentSymptoms, setCurrentSymptoms] = useState('')
+  // const [chronicDiseases, setChronicDiseases] = useState('')
+  // const [foodAllergies, setFoodAllergies] = useState('')
+  // const [drugAllergies, setDrugAllergies] = useState('')
+  // const [currentSymptoms, setCurrentSymptoms] = useState('')
+  // const [chronicDiseases, setChronicDiseases] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -721,7 +756,24 @@ export default function RegisterUserPage() {
       const res = await fetch('/api/register/user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          username,
+          phoneNumber,
+          gender,
+          dateOfBirth,
+          age: age ? parseInt(age) : undefined,
+          weight: weight ? parseFloat(weight) : undefined,
+          height: height ? parseFloat(height) : undefined,
+          allergies,
+          // Dental history
+          hasDentalSurgery: hasDentalSurgery === 'yes',
+          dentalSurgeryDetails: hasDentalSurgery === 'yes' ? dentalSurgeryDetails : null,
+          previousDentalDiseases,
+          dentalTreatmentHistory
+        }),
       })
 
       const data = await res.json()
@@ -850,12 +902,12 @@ export default function RegisterUserPage() {
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-8 items-center">
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-start">
           
           {/* Left Side - Welcome Content */}
           <motion.div
-            className="hidden lg:block text-white space-y-6"
+            className="hidden lg:block text-white space-y-6 lg:sticky lg:top-8"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -934,95 +986,272 @@ export default function RegisterUserPage() {
           >
             {/* Glassmorphism Card */}
             <motion.div
-              className="relative bg-white/10 backdrop-blur-xl p-8 md:p-12 rounded-3xl border border-white/20 shadow-2xl"
+              className="relative bg-white/10 backdrop-blur-xl p-6 md:p-8 lg:p-10 rounded-3xl border border-white/20 shadow-2xl max-h-[85vh] overflow-y-auto"
               variants={itemVariants}
             >
               {/* Gradient Border Effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-300 to-blue-400 rounded-3xl blur opacity-20 -z-10"></div>
               
               {/* Header */}
-              <motion.div variants={itemVariants} className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6 shadow-lg">
-                  <UserPlus className="w-8 h-8 text-white" />
+              <motion.div variants={itemVariants} className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-4 shadow-lg">
+                  <UserPlus className="w-7 h-7 text-white" />
                 </div>
-                <h2 className="text-3xl font-black text-white mb-2">Create Account</h2>
-                <p className="text-blue-100 font-medium">Register as Healthcare User</p>
+                <h2 className="text-2xl md:text-3xl font-black text-white mb-1">Create Account</h2>
+                <p className="text-blue-100 text-sm">Register as Healthcare User</p>
               </motion.div>
 
               {/* Register Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Full Name Field */}
-                <motion.div variants={itemVariants} className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-blue-300" />
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Account Information Section */}
+                <motion.div variants={itemVariants} className="space-y-4">
+                  <h3 className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                    <div className="w-1 h-4 bg-blue-400 rounded-full"></div>
+                    Account Information
+                  </h3>
+
+                  {/* Full Name */}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+
+                  {/* Username */}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <User className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+                  </div>
+
+                  {/* Email */}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+                  </div>
+
+                  {/* Password & Confirm Password - 2 columns on desktop */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Lock className="h-5 w-5 text-blue-300" />
+                      </div>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-300 hover:text-white transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <Lock className="h-5 w-5 text-blue-300" />
+                      </div>
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-300 hover:text-white transition-colors"
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Personal Information Section */}
+                <motion.div variants={itemVariants} className="space-y-4 pt-2">
+                  <h3 className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                    <div className="w-1 h-4 bg-cyan-400 rounded-full"></div>
+                    Personal Information
+                  </h3>
+
+                  {/* Phone Number */}
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <Phone className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type="tel"
+                      placeholder="Phone Number"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+                  </div>
+
+                  {/* Gender & DOB - 2 columns */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    >
+                      <option value="" className="bg-blue-800">Select Gender</option>
+                      <option value="male" className="bg-blue-800">Male</option>
+                      <option value="female" className="bg-blue-800">Female</option>
+                      <option value="other" className="bg-blue-800">Other</option>
+                    </select>
+
+                    <input
+                      type="date"
+                      value={dateOfBirth}
+                      onChange={(e) => setDateOfBirth(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+                  </div>
+
+                  {/* Age & Weight - 2 columns */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="number"
+                      placeholder="Age"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+
+                    <input
+                      type="number"
+                      placeholder="Weight (kg)"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+                  </div>
+
+                  {/* Height */}
+                  <div className="relative">
+                    <input
+                      type="number"
+                      placeholder="Height (cm)"
+                      value={height}
+                      onChange={(e) => setHeight(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Medical Information Section */}
+                <motion.div variants={itemVariants} className="space-y-4 pt-2">
+                  <h3 className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                    <div className="w-1 h-4 bg-red-400 rounded-full"></div>
+                    Medical Information
+                  </h3>
+
+                  <textarea
+                    placeholder="Allergies (if any)"
+                    value={allergies}
+                    onChange={(e) => setAllergies(e.target.value)}
+                    rows={2}
+                    className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20 resize-none"
                   />
                 </motion.div>
 
-                {/* Email Field */}
-                <motion.div variants={itemVariants} className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-blue-300" />
-                  </div>
-                  <input
-                    type="email"
-                    placeholder="Enter your email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
-                  />
-                </motion.div>
+                {/* Dental History Section */}
+                <motion.div variants={itemVariants} className="space-y-4 pt-2">
+                  <h3 className="text-white font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+                    <div className="w-1 h-4 bg-green-400 rounded-full"></div>
+                    Dental History
+                  </h3>
 
-                {/* Password Field */}
-                <motion.div variants={itemVariants} className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-blue-300" />
+                  {/* Have you had dental surgery? */}
+                  <div className="relative">
+                    <label className="block text-blue-100 text-sm font-medium mb-2">Have you had dental surgery before?</label>
+                    <select
+                      value={hasDentalSurgery}
+                      onChange={(e) => setHasDentalSurgery(e.target.value)}
+                      className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    >
+                      <option value="" className="bg-blue-800">Select an option</option>
+                      <option value="yes" className="bg-blue-800">Yes</option>
+                      <option value="no" className="bg-blue-800">No</option>
+                    </select>
                   </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-14 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-300 hover:text-white transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
-                </motion.div>
 
-                {/* Confirm Password Field */}
-                <motion.div variants={itemVariants} className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-blue-300" />
+                  {/* Dental Surgery Details - Conditional */}
+                  {hasDentalSurgery === 'yes' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="relative"
+                    >
+                      <label className="block text-blue-100 text-sm font-medium mb-2">Surgery Details</label>
+                      <textarea
+                        placeholder="e.g., wisdom teeth extraction, root canal, implants"
+                        value={dentalSurgeryDetails}
+                        onChange={(e) => setDentalSurgeryDetails(e.target.value)}
+                        rows={2}
+                        className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20 resize-none"
+                      />
+                    </motion.div>
+                  )}
+
+                  {/* Previous Dental Diseases & Treatment History - 2 columns on larger screens */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <label className="block text-blue-100 text-sm font-medium mb-2">Previous Dental Diseases</label>
+                      <textarea
+                        placeholder="e.g., cavities, gum disease (optional)"
+                        value={previousDentalDiseases}
+                        onChange={(e) => setPreviousDentalDiseases(e.target.value)}
+                        rows={2}
+                        className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20 resize-none"
+                      />
+                    </div>
+
+                    <div className="relative">
+                      <label className="block text-blue-100 text-sm font-medium mb-2">Treatment History</label>
+                      <textarea
+                        placeholder="e.g., braces, fillings, crowns (optional)"
+                        value={dentalTreatmentHistory}
+                        onChange={(e) => setDentalTreatmentHistory(e.target.value)}
+                        rows={2}
+                        className="w-full px-4 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20 resize-none"
+                      />
+                    </div>
                   </div>
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-14 py-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-300 hover:text-white transition-colors"
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                  </button>
                 </motion.div>
 
                 {/* Register Button */}
@@ -1030,28 +1259,25 @@ export default function RegisterUserPage() {
                   variants={itemVariants}
                   type="submit"
                   disabled={loading}
-                  className="w-full relative group bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
+                  className="w-full relative group bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3.5 px-6 rounded-xl font-bold text-base shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: loading ? 1 : 0.98 }}
                 >
-                  <span className="relative z-10">
-                    {loading ? (
-                      <div className="flex items-center justify-center gap-2">
-                        <motion.div
-                          className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        />
-                        Creating Account...
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center gap-2">
-                        <UserPlus className="w-5 h-5" />
-                        Create Account
-                      </div>
-                    )}
-                  </span>
-                  <div className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  {loading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <motion.div
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                      <span>Creating Account...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2">
+                      <UserPlus className="w-5 h-5" />
+                      <span>Create Account</span>
+                    </div>
+                  )}
                 </motion.button>
               </form>
 
@@ -1060,9 +1286,9 @@ export default function RegisterUserPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`mt-6 p-4 rounded-xl border ${
-                    message.includes('successful') 
-                      ? 'bg-green-500/20 border-green-400/50 text-green-200' 
+                  className={`mt-4 p-3.5 rounded-xl border ${
+                    message.includes('successful')
+                      ? 'bg-green-500/20 border-green-400/50 text-green-200'
                       : 'bg-red-500/20 border-red-400/50 text-red-200'
                   }`}
                 >
@@ -1076,9 +1302,9 @@ export default function RegisterUserPage() {
               {/* Login Link */}
               <motion.div
                 variants={itemVariants}
-                className="text-center mt-8 pt-6 border-t border-white/20"
+                className="text-center mt-6 pt-5 border-t border-white/20"
               >
-                <p className="text-blue-100 font-medium">
+                <p className="text-blue-100 text-sm">
                   Already have an account?{' '}
                   <motion.a
                     href="/login"
@@ -1094,13 +1320,13 @@ export default function RegisterUserPage() {
               {/* Mobile Back Button */}
               <motion.button
                 onClick={() => router.push('/')}
-                className="lg:hidden w-full mt-6 flex items-center justify-center gap-2 text-blue-200 hover:text-white transition-colors duration-300 py-3 border border-white/20 rounded-2xl backdrop-blur-sm hover:bg-white/10"
+                className="lg:hidden w-full mt-5 flex items-center justify-center gap-2 text-blue-200 hover:text-white transition-colors duration-300 py-3 border border-white/20 rounded-xl backdrop-blur-sm hover:bg-white/10"
                 variants={itemVariants}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="font-medium">Back to Home</span>
+                <span className="font-medium text-sm">Back to Home</span>
               </motion.button>
             </motion.div>
           </motion.div>
@@ -1123,19 +1349,33 @@ export default function RegisterUserPage() {
           scroll-behavior: smooth;
         }
         
-        /* Custom scrollbar */
+        /* Custom scrollbar for form */
         ::-webkit-scrollbar {
-          width: 8px;
+          width: 6px;
+          height: 6px;
         }
         ::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-          background: #3b82f6;
-          border-radius: 4px;
+          background: linear-gradient(180deg, #60a5fa, #3b82f6);
+          border-radius: 10px;
+          transition: all 0.3s ease;
         }
         ::-webkit-scrollbar-thumb:hover {
-          background: #2563eb;
+          background: linear-gradient(180deg, #3b82f6, #2563eb);
+        }
+
+        /* Firefox scrollbar */
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: #3b82f6 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Prevent horizontal scroll */
+        body {
+          overflow-x: hidden;
         }
       `}</style>
     </div>

@@ -1197,24 +1197,38 @@ export default function AppointmentsPage() {
 
     // setFilteredAppointments(filtered)
 
+    // Status filter
     const now = new Date()
-if (filterStatus === 'upcoming') {
-  filtered = filtered.filter(appointment => {
-    const appointmentDate = new Date(appointment.date)
-    const [hours, minutes] = appointment.time.split(':').map(Number)
-    appointmentDate.setHours(hours, minutes, 0, 0)
-    return appointmentDate > now
-  })
-} else if (filterStatus === 'past') {
-  filtered = filtered.filter(appointment => {
-    const appointmentDate = new Date(appointment.date)
-    const [hours, minutes] = appointment.time.split(':').map(Number)
-    appointmentDate.setHours(hours, minutes, 0, 0)
-    return appointmentDate <= now
-  })
-}
+    if (filterStatus === 'upcoming') {
+      filtered = filtered.filter(appointment => {
+        const appointmentDate = new Date(appointment.date)
+        const [hours, minutes] = appointment.time.split(':').map(Number)
+        appointmentDate.setHours(hours, minutes, 0, 0)
+        return appointmentDate > now
+      })
+    } else if (filterStatus === 'past') {
+      filtered = filtered.filter(appointment => {
+        const appointmentDate = new Date(appointment.date)
+        const [hours, minutes] = appointment.time.split(':').map(Number)
+        appointmentDate.setHours(hours, minutes, 0, 0)
+        return appointmentDate <= now
+      })
+    }
 
-setFilteredAppointments(filtered)
+    // Sort by date (nearest first)
+    filtered = filtered.sort((a, b) => {
+      const dateA = new Date(a.date)
+      const [hoursA, minutesA] = a.time.split(':').map(Number)
+      dateA.setHours(hoursA, minutesA, 0, 0)
+
+      const dateB = new Date(b.date)
+      const [hoursB, minutesB] = b.time.split(':').map(Number)
+      dateB.setHours(hoursB, minutesB, 0, 0)
+
+      return dateA.getTime() - dateB.getTime()
+    })
+
+    setFilteredAppointments(filtered)
 
 
   }, [appointments, searchTerm, filterStatus])
@@ -1280,9 +1294,18 @@ setFilteredAppointments(filtered)
     const appointmentDate = new Date(date)
     const [hours, minutes] = time.split(':').map(Number)
     appointmentDate.setHours(hours, minutes, 0, 0)
-    
+
     const now = new Date()
     return appointmentDate > now ? 'Upcoming' : 'Past'
+  }
+
+  const isPastAppointment = (date: string, time: string) => {
+    const appointmentDate = new Date(date)
+    const [hours, minutes] = time.split(':').map(Number)
+    appointmentDate.setHours(hours, minutes, 0, 0)
+
+    const now = new Date()
+    return appointmentDate <= now
   }
 
   const containerVariants = {
@@ -1466,9 +1489,9 @@ setFilteredAppointments(filtered)
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="pl-12 pr-8 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 backdrop-blur-sm appearance-none"
                 >
-                  <option value="all" className="bg-gray-800">All Appointments</option>
-                  <option value="upcoming" className="bg-gray-800">Upcoming</option>
-                  <option value="past" className="bg-gray-800">Past</option>
+                  <option value="all" className="bg-gray-800">All</option>
+                  <option value="upcoming" className="bg-gray-800">Not Done (Soon)</option>
+                  <option value="past" className="bg-gray-800">Done (Finished)</option>
                 </select>
               </div>
             </div>
@@ -1513,30 +1536,33 @@ setFilteredAppointments(filtered)
                 {filteredAppointments.map((appointment, index) => {
                   const treatmentInfo = treatmentIcons[appointment.type as keyof typeof treatmentIcons] || treatmentIcons.VIDEO_CALL
                   const TreatmentIcon = treatmentInfo.icon
-                  
+                  const isPast = isPastAppointment(appointment.date, appointment.time)
+
                   return (
                     <motion.div
                       key={appointment.id}
                       variants={itemVariants}
-                      className="bg-white/10 backdrop-blur-lg p-6 lg:p-8 rounded-3xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300"
+                      className={`bg-white/10 backdrop-blur-lg p-6 lg:p-8 rounded-3xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 ${isPast ? 'opacity-75' : ''}`}
                       whileHover={{ y: -2 }}
                     >
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                         <div className="flex-1">
                           <div className="flex items-start gap-4 mb-4">
-                            <div className={`w-14 h-14 bg-gradient-to-r ${treatmentInfo.color} rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0`}>
+                            <div className={`w-14 h-14 bg-gradient-to-r ${treatmentInfo.color} rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0 ${isPast ? 'opacity-60' : ''}`}>
                               <TreatmentIcon className="w-7 h-7 text-white" />
                             </div>
-                            
+
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-3 mb-2">
-                                <h3 className="text-xl font-bold text-white">{treatmentInfo.label}</h3>
+                                <h3 className={`text-xl font-bold text-white ${isPast ? 'line-through opacity-70' : ''}`}>
+                                  {treatmentInfo.label}
+                                </h3>
                                 <span className={`text-sm font-medium ${getStatusColor(appointment.date, appointment.time)}`}>
                                   {getStatusLabel(appointment.date, appointment.time)}
                                 </span>
                               </div>
-                              
-                              <div className="flex items-center gap-4 text-blue-100 mb-3">
+
+                              <div className={`flex items-center gap-4 text-blue-100 mb-3 ${isPast ? 'line-through opacity-60' : ''}`}>
                                 <div className="flex items-center gap-2">
                                   <Calendar className="w-4 h-4" />
                                   <span className="font-medium">
@@ -1553,13 +1579,12 @@ setFilteredAppointments(filtered)
                                   <span className="font-medium">{appointment.time}</span>
                                 </div>
                               </div>
-                              
-                              <div className="flex items-center gap-3 text-blue-100">
+
+                              <div className={`flex items-center gap-3 text-blue-100 ${isPast ? 'line-through opacity-60' : ''}`}>
                                 <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full flex items-center justify-center flex-shrink-0">
                                   <Stethoscope className="w-5 h-5 text-white" />
                                 </div>
                                 <div>
-                                  {/* <p className="font-bold text-white">Dr. {appointment.doctor.name}</p> */}
                                   <p className="font-bold text-white">{appointment.doctor.name}</p>
                                   <p className="text-sm text-blue-200">{appointment.doctor.specialty}</p>
                                 </div>
@@ -1569,16 +1594,17 @@ setFilteredAppointments(filtered)
                         </div>
 
                         <div className="flex gap-3 flex-shrink-0">
-                          <motion.button
-                            onClick={() => router.push(`/dashboard/user/appointments/edit/${appointment.id}`)}
-                            className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 hover:text-amber-100 px-4 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 border border-amber-400/30"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Edit3 className="w-4 h-4" />
-                            {/* <span className="hidden sm:inline">Edit</span> */}
-                          </motion.button>
-                          
+                          {!isPast && (
+                            <motion.button
+                              onClick={() => router.push(`/dashboard/user/appointments/edit/${appointment.id}`)}
+                              className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 hover:text-amber-100 px-4 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 border border-amber-400/30"
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </motion.button>
+                          )}
+
                           <motion.button
                             onClick={() => openCancelModal(appointment)}
                             className="bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-red-100 px-4 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 border border-red-400/30"
@@ -1586,7 +1612,6 @@ setFilteredAppointments(filtered)
                             whileTap={{ scale: 0.95 }}
                           >
                             <Trash2 className="w-4 h-4" />
-                            {/* <span className="hidden sm:inline">Cancel</span> */}
                           </motion.button>
                           
                           <motion.button

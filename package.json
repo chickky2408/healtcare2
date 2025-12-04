@@ -13,16 +13,21 @@
     "@headlessui/react": "^2.2.1",
     "@prisma/client": "^6.17.1",
     "axios": "^1.9.0",
-    "bcryptjs": "^3.0.2",
+    "bcryptjs": "^3.0.3",
     "date-fns": "^4.1.0",
+    "form-data": "^4.0.5",
     "framer-motion": "^12.6.3",
     "lucide-react": "^0.507.0",
     "next": "15.2.4",
+    "nodemailer": "^7.0.11",
+    "promptpay-qr": "^0.5.0",
+    "qrcode": "^1.5.4",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
+    "roboflow": "^0.2.0",
     "swr": "^2.3.3"
   },
   "devDependencies": {
@@ -31,6 +36,7 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/date-fns": "^2.6.3",
     "@types/node": "^20.19.21",
+    "@types/nodemailer": "^7.0.4",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -40,8 +46,5 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5.8.3"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
   }
 }

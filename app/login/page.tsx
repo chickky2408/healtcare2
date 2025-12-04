@@ -828,6 +828,17 @@ export default function LoginPage() {
                   </button>
                 </motion.div>
 
+                {/* Forgot Password Link */}
+                <motion.div variants={itemVariants} className="text-right -mt-2">
+                  <motion.a
+                    href="/forgot-password"
+                    className="text-sm text-blue-200 hover:text-white transition-colors duration-300 font-medium"
+                    whileHover={{ x: 2 }}
+                  >
+                    Forgot Password?
+                  </motion.a>
+                </motion.div>
+
                 {/* Login Button */}
                 <motion.button
                   variants={itemVariants}

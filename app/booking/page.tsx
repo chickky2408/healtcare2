@@ -1529,10 +1529,11 @@ export default function BookingPage() {
       })
       
       const result = await res.json()
-      
+
       if (res.ok) {
-        setMessage('Appointment booked successfully! Redirecting...')
-        setTimeout(() => router.push('/dashboard/user?success=true'), 2000)
+        setMessage('Appointment booked successfully! Redirecting to payment...')
+        // Redirect to payment page with appointment ID
+        setTimeout(() => router.push(`/payment?appointmentId=${result.appointment.id}`), 1500)
       } else {
         setMessage(result.message || 'Booking failed. Please try again.')
       }

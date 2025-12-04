@@ -1140,7 +1140,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Users, UserPlus, Edit, Trash2, Stethoscope, Mail, Phone, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Users, UserPlus, Edit, Trash2, Stethoscope, Mail, Phone, X, CreditCard } from 'lucide-react'
 
 interface User {
   id: string
@@ -1182,10 +1183,10 @@ interface Appointment {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('users')
   const [users, setUsers] = useState<User[]>([])
   const [doctors, setDoctors] = useState<Doctor[]>([])
-  const [appointments, setAppointments] = useState<Appointment[]>([])
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState('')
   const [selectedItem, setSelectedItem] = useState<User | Doctor | null>(null)
@@ -1413,6 +1414,13 @@ export default function AdminDashboard() {
             <Stethoscope className="w-5 h-5" />
             <span>Doctors</span>
             <span className="bg-white/20 px-2 py-0.5 rounded-full text-sm">{doctors.length}</span>
+          </button>
+          <button
+            onClick={() => router.push('/dashboard/admin/payments')}
+            className="flex items-center gap-2 px-4 md:px-6 py-3 rounded-lg font-semibold transition-all whitespace-nowrap bg-white text-gray-600 hover:bg-gray-50 hover:shadow-md"
+          >
+            <CreditCard className="w-5 h-5" />
+            <span>💳 Payments</span>
           </button>
         </div>
 

@@ -757,6 +757,16 @@ export default function DoctorDashboardPage() {
                           <MessageSquare className="w-4 h-4" />
                           <span className="hidden sm:inline">Chat</span>
                         </motion.button>
+
+                        <motion.button
+                          onClick={() => router.push(`/dashboard/doctor/patient/${encodeURIComponent(appointment.patientEmail)}`)}
+                          className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-700 px-4 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 border border-purple-400/30"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <User className="w-4 h-4" />
+                          <span className="hidden sm:inline">Patient Info</span>
+                        </motion.button>
                       </div>
                     </div>
                   </motion.div>

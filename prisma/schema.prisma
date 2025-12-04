@@ -8,18 +8,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========== ENUMS ==========
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum TreatmentType {
+  VIDEO_CALL
+  CLEANING
+  ORTHODONTIC
+  AI_DIAGNOSIS
+  SURGERY
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  SUCCESSFUL
+  REJECTED
+  REFUNDED
+}
+
+// ========== USER MODEL (Updated) ==========
+
 model User {
   id            String         @id @default(cuid())
   email         String         @unique
   password      String
   name          String
   createdAt     DateTime       @default(now())
+  
+  // ข้อมูลส่วนตัวเพิ่มเติม
+  username      String?        @unique
+  gender        Gender?
+  dateOfBirth   DateTime?
+  age           Int?
+  phoneNumber   String?        @unique
+  weight        Float?
+  height        Float?
+  profileImage  String?
+  
+  // ข้อมูลทางการแพทย์ (เดิม)
   allergies     String?
   image         String?
   phone         String?
-  diagnoses     Diagnosis[]
-  notifications Notification[]
+  
+  // ข้อมูลทางการแพทย์ (ใหม่)
+  chronicDiseases    String[]      @default([])
+  foodAllergies      String[]      @default([])
+  drugAllergies      String[]      @default([])
+  currentSymptoms    String?
+
+  // ข้อมูลทางทันตกรรม (Dental History)
+  hasDentalSurgery   Boolean?      @default(false)
+  dentalSurgeryDetails String?
+  previousDentalDiseases String?
+  dentalTreatmentHistory String?
+
+  // Relations
+  address            Address?
+  surgeryHistory     SurgeryHistory[]
+  diagnoses          Diagnosis[]
+  notifications      Notification[]
+  passwordResetTokens PasswordResetToken[]
 }
+
+// ========== ADDRESS MODEL (New) ==========
+
+model Address {
+  id          String  @id @default(cuid())
+  userId      String  @unique
+  street      String?
+  district    String?
+  province    String?
+  postalCode  String?
+  fullAddress String?
+  
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ========== SURGERY HISTORY MODEL (New) ==========
+
+model SurgeryHistory {
+  id           String    @id @default(cuid())
+  userId       String
+  surgeryType  String
+  surgeryDate  DateTime?
+  hospital     String?
+  notes        String?
+  createdAt    DateTime  @default(now())
+  
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ========== DOCTOR MODEL (No Changes) ==========
 
 model Doctor {
   id           String         @id @default(cuid())
@@ -31,9 +117,11 @@ model Doctor {
   meetLink     String?
   appointments Appointment[]
   availability Availability[]
-  phone        String?        // เพิ่มบรรทัดนี้ ถ้ายังไม่มี
-  image        String?        // เพิ่มบรรทัดนี้ ถ้ายังไม่มี
+  phone        String?
+  image        String?
 }
+
+// ========== ADMIN MODEL (No Changes) ==========
 
 model Admin {
   id        String   @id @default(cuid())
@@ -42,6 +130,8 @@ model Admin {
   name      String
   createdAt DateTime @default(now())
 }
+
+// ========== AVAILABILITY & TIMESLOT (No Changes) ==========
 
 model Availability {
   id        String     @id @default(cuid())
@@ -58,6 +148,8 @@ model TimeSlot {
   availability   Availability @relation(fields: [availabilityId], references: [id])
 }
 
+// ========== APPOINTMENT (No Changes) ==========
+
 model Appointment {
   id           String        @id @default(cuid())
   doctorId     String
@@ -71,7 +163,10 @@ model Appointment {
   doctor       Doctor        @relation(fields: [doctorId], references: [id])
   diagnoses    Diagnosis[]
   messages     Message[]     @relation("AppointmentMessages")
+  payment      Payment?
 }
+
+// ========== DIAGNOSIS (No Changes) ==========
 
 model Diagnosis {
   id            String       @id @default(uuid())
@@ -87,6 +182,8 @@ model Diagnosis {
   user          User         @relation(fields: [userId], references: [id])
 }
 
+// ========== NOTIFICATION (No Changes) ==========
+
 model Notification {
   id        String   @id @default(cuid())
   message   String
@@ -97,6 +194,8 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
 }
 
+// ========== MESSAGE (No Changes) ==========
+
 model Message {
   id            String      @id @default(cuid())
   text          String
@@ -106,10 +205,40 @@ model Message {
   appointment   Appointment @relation("AppointmentMessages", fields: [appointmentId], references: [id])
 }
 
-enum TreatmentType {
-  VIDEO_CALL
-  CLEANING
-  ORTHODONTIC
-  AI_DIAGNOSIS
-  SURGERY
+// ========== PAYMENT MODEL ==========
+
+model Payment {
+  id              String        @id @default(cuid())
+  appointmentId   String        @unique
+  amount          Float
+  status          PaymentStatus @default(PENDING)
+  qrCodeData      String?       // PromptPay QR Code data
+  slipImagePath   String?       // Path to uploaded payment slip
+  paidAt          DateTime?     // When user uploaded slip
+  verifiedAt      DateTime?     // When admin verified
+  verifiedBy      String?       // Admin who verified
+  rejectionReason String?       // Reason if rejected
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  appointment     Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([appointmentId])
+}
+
+// ========== PASSWORD RESET TOKEN MODEL ==========
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
 }
