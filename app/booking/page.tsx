@@ -1408,7 +1408,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { 
+import {
   Calendar,
   Clock,
   User,
@@ -1425,6 +1425,7 @@ import {
   MessageSquare
 } from 'lucide-react'
 import { generateTimeSlots, isPastDateTime } from '@/lib/timeUtils'
+import { useApp } from '../contexts/AppContext'
 
 type Doctor = {
   id: string
@@ -1433,6 +1434,7 @@ type Doctor = {
 }
 
 export default function BookingPage() {
+  const { t, theme } = useApp()
   const [doctors, setDoctors] = useState<Doctor[]>([])
   const [selectedDoctor, setSelectedDoctor] = useState('')
   const [type, setType] = useState('')
@@ -1545,10 +1547,10 @@ export default function BookingPage() {
   }
 
   const treatmentOptions = [
-    { value: 'VIDEO_CALL', label: 'Video Consultation', icon: Video, color: 'from-green-500 to-emerald-500' },
-    { value: 'CLEANING', label: 'Dental Cleaning', icon: Sparkles, color: 'from-blue-500 to-cyan-500' },
-    { value: 'ORTHODONTIC', label: 'Orthodontic Care', icon: UserCheck, color: 'from-indigo-500 to-blue-500' },
-    { value: 'AI_DIAGNOSIS', label: 'AI Diagnosis', icon: Heart, color: 'from-orange-500 to-red-500' }
+    { value: 'VIDEO_CALL', label: t('treatment.videoCall'), icon: Video, color: 'from-green-500 to-emerald-500' },
+    { value: 'CLEANING', label: t('treatment.cleaning'), icon: Sparkles, color: 'from-blue-500 to-cyan-500' },
+    { value: 'ORTHODONTIC', label: t('treatment.orthodontic'), icon: UserCheck, color: 'from-indigo-500 to-blue-500' },
+    { value: 'AI_DIAGNOSIS', label: t('treatment.aiDiagnosis'), icon: Heart, color: 'from-orange-500 to-red-500' }
   ]
 
   const containerVariants = {
@@ -1581,9 +1583,9 @@ export default function BookingPage() {
   const selectedDoctorData = doctors?.find(d => d.id === selectedDoctor) || null
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-white dark:bg-slate-900">
       {/* Blue Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-blue-100 to-blue-50 dark:from-blue-900 dark:via-blue-800 dark:to-blue-900"></div>
       
       {/* Animated Background Overlay */}
       <div className="absolute inset-0 opacity-30">
@@ -1668,23 +1670,23 @@ export default function BookingPage() {
           >
             <motion.button
               onClick={() => router.push('/dashboard/user')}
-              className="group flex items-center gap-3 text-blue-200 hover:text-white transition-colors duration-300 mb-8 mx-auto"
+              className="group flex items-center gap-3 text-blue-700 dark:text-blue-200 hover:text-blue-900 dark:hover:text-white transition-colors duration-300 mb-8 mx-auto"
               whileHover={{ x: -5 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               <ArrowLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span className="font-medium">Back to Dashboard</span>
+              <span className="font-medium">{t('Back to Dashboard')}</span>
             </motion.button>
 
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-3xl mb-6 shadow-lg">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 dark:bg-blue-600 rounded-3xl mb-6 shadow-lg">
               <Calendar className="w-10 h-10 text-white" />
             </div>
-            
-            <h1 className="text-4xl lg:text-5xl font-black text-white mb-4">
-              Book Your Appointment
+
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-4">
+              {t('booking.title')}
             </h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              Schedule your consultation with our expert healthcare professionals
+            <p className="text-xl text-gray-700 dark:text-blue-100 max-w-2xl mx-auto">
+              {t('booking.subtitle')}
             </p>
           </motion.div>
 
@@ -1696,27 +1698,27 @@ export default function BookingPage() {
             className="relative"
           >
             <motion.div
-              className="relative bg-white/10 backdrop-blur-xl p-8 lg:p-12 rounded-3xl border border-white/20 shadow-2xl max-w-3xl mx-auto"
+              className="relative bg-white/90 dark:bg-white/10 backdrop-blur-xl p-8 lg:p-12 rounded-3xl border border-gray-200 dark:border-white/20 shadow-2xl max-w-3xl mx-auto"
               variants={itemVariants}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-300 to-blue-400 rounded-3xl blur opacity-20 -z-10"></div>
-              
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 dark:from-blue-400 dark:via-blue-300 dark:to-blue-400 rounded-3xl blur opacity-20 -z-10"></div>
+
               <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Doctor Selection */}
                 <motion.div variants={itemVariants} className="space-y-3">
-                  <label className="flex items-center gap-3 text-white font-bold text-lg">
-                    <Stethoscope className="w-5 h-5 text-blue-300" />
-                    Select Doctor
+                  <label className="flex items-center gap-3 text-gray-900 dark:text-white font-bold text-lg">
+                    <Stethoscope className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                    {t('booking.selectDoctor')}
                   </label>
                   <select
                     value={selectedDoctor}
                     onChange={(e) => setSelectedDoctor(e.target.value)}
-                    className="w-full p-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                    className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20"
                     required
                   >
-                    <option value="" className="bg-gray-800 text-white">-- Select Doctor --</option>
+                    <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">-- {t('booking.selectDoctorPlaceholder')} --</option>
                     {doctors.map((doctor) => (
-                      <option key={doctor.id} value={doctor.id} className="bg-gray-800 text-white">
+                      <option key={doctor.id} value={doctor.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                         {doctor.name} - {doctor.specialty}
                       </option>
                     ))}
@@ -1725,9 +1727,9 @@ export default function BookingPage() {
 
                 {/* Treatment Selection */}
                 <motion.div variants={itemVariants} className="space-y-4">
-                  <label className="flex items-center gap-3 text-white font-bold text-lg">
-                    <Heart className="w-5 h-5 text-blue-300" />
-                    Select Treatment
+                  <label className="flex items-center gap-3 text-gray-900 dark:text-white font-bold text-lg">
+                    <Heart className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                    {t('booking.selectTreatment')}
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {treatmentOptions.map((treatment) => (
@@ -1737,8 +1739,8 @@ export default function BookingPage() {
                         onClick={() => setType(treatment.value)}
                         className={`p-4 rounded-2xl border-2 transition-all duration-300 flex items-center gap-4 ${
                           type === treatment.value
-                            ? 'border-blue-400 bg-blue-400/20 shadow-lg'
-                            : 'border-white/20 bg-white/10 hover:bg-white/20 hover:border-white/40'
+                            ? 'border-blue-500 bg-blue-100 dark:bg-blue-400/20 shadow-lg'
+                            : 'border-gray-300 dark:border-white/20 bg-white dark:bg-white/10 hover:bg-gray-50 dark:hover:bg-white/20 hover:border-blue-300 dark:hover:border-white/40'
                         }`}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -1747,8 +1749,8 @@ export default function BookingPage() {
                           <treatment.icon className="w-6 h-6 text-white" />
                         </div>
                         <div className="text-left">
-                          <h3 className="font-bold text-white">{treatment.label}</h3>
-                          <p className="text-sm text-blue-200">Professional care</p>
+                          <h3 className="font-bold text-gray-900 dark:text-white">{treatment.label}</h3>
+                          <p className="text-sm text-gray-600 dark:text-blue-200">{t('booking.professionalCare')}</p>
                         </div>
                       </motion.button>
                     ))}
@@ -1758,44 +1760,44 @@ export default function BookingPage() {
                 {/* Date and Time */}
                 <div className="grid md:grid-cols-2 gap-6">
                   <motion.div variants={itemVariants} className="space-y-3">
-                    <label className="flex items-center gap-3 text-white font-bold text-lg">
-                      <Calendar className="w-5 h-5 text-blue-300" />
-                      Select Date
+                    <label className="flex items-center gap-3 text-gray-900 dark:text-white font-bold text-lg">
+                      <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                      {t('booking.selectDate')}
                     </label>
                     <input
                       type="date"
                       value={date}
                       min={todayDate}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full p-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                      className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20"
                       required
                     />
                   </motion.div>
 
                   <motion.div variants={itemVariants} className="space-y-3">
-                    <label className="flex items-center gap-3 text-white font-bold text-lg">
-                      <Clock className="w-5 h-5 text-blue-300" />
-                      Select Time
+                    <label className="flex items-center gap-3 text-gray-900 dark:text-white font-bold text-lg">
+                      <Clock className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                      {t('booking.selectTime')}
                     </label>
                     <select
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="w-full p-4 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20"
+                      className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20"
                       required
                     >
-                      <option value="" className="bg-gray-800 text-white">-- Select Time --</option>
-                      {generateTimeSlots().map((t) => {
-                        const isBooked = !availableTimes.includes(t)
-                        const isPast = date === todayDate && isPastDateTime(date, t)
+                      <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">-- {t('booking.selectTimePlaceholder')} --</option>
+                      {generateTimeSlots().map((timeSlot) => {
+                        const isBooked = !availableTimes.includes(timeSlot)
+                        const isPast = date === todayDate && isPastDateTime(date, timeSlot)
                         const isDisabled = isBooked || isPast
                         return (
-                          <option 
-                            key={t} 
-                            value={t} 
+                          <option
+                            key={timeSlot}
+                            value={timeSlot}
                             disabled={isDisabled}
-                            className={`bg-gray-800 ${isDisabled ? 'text-gray-500' : 'text-white'}`}
+                            className={`bg-white dark:bg-gray-800 ${isDisabled ? 'text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-white'}`}
                           >
-                            {t} {isBooked ? '(Booked)' : isPast ? '(Past)' : ''}
+                            {timeSlot} {isBooked ? `(${t('status.booked')})` : isPast ? `(${t('status.past')})` : ''}
                           </option>
                         )
                       })}
@@ -1805,17 +1807,17 @@ export default function BookingPage() {
 
                 {/* Symptoms */}
                 <motion.div variants={itemVariants} className="space-y-3">
-                  <label className="flex items-center gap-3 text-white font-bold text-lg">
-                    <MessageSquare className="w-5 h-5 text-blue-300" />
-                    Symptoms / Concerns
-                    <span className="text-sm text-blue-200 font-normal">(Optional)</span>
+                  <label className="flex items-center gap-3 text-gray-900 dark:text-white font-bold text-lg">
+                    <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-300" />
+                    {t('booking.symptoms')}
+                    <span className="text-sm text-gray-600 dark:text-blue-200 font-normal">({t('form.optional')})</span>
                   </label>
                   <textarea
                     value={symptoms}
                     onChange={(e) => setSymptoms(e.target.value)}
-                    className="w-full p-4 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-white/20 resize-none"
+                    className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20 resize-none"
                     rows={4}
-                    placeholder="Please describe your symptoms, concerns, or reason for the appointment..."
+                    placeholder={t('booking.symptomsPlaceholder')}
                   />
                 </motion.div>
 
@@ -1823,21 +1825,21 @@ export default function BookingPage() {
                 {(selectedDoctor || type || date || time) && (
                   <motion.div
                     variants={itemVariants}
-                    className="bg-white/10 border border-white/20 rounded-2xl p-6 space-y-4"
+                    className="bg-blue-50 dark:bg-white/10 border border-blue-200 dark:border-white/20 rounded-2xl p-6 space-y-4"
                   >
-                    <h3 className="text-white font-bold text-lg flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5 text-green-400" />
-                      Booking Summary
+                    <h3 className="text-gray-900 dark:text-white font-bold text-lg flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      {t('booking.summary')}
                     </h3>
-                    <div className="space-y-2 text-blue-100">
+                    <div className="space-y-2 text-gray-700 dark:text-blue-100">
                       {selectedDoctorData && (
-                        <p><strong>Doctor:</strong> Dr. {selectedDoctorData.name} ({selectedDoctorData.specialty})</p>
+                        <p><strong>{t('booking.doctor')}:</strong> Dr. {selectedDoctorData.name} ({selectedDoctorData.specialty})</p>
                       )}
                       {selectedTreatment && (
-                        <p><strong>Treatment:</strong> {selectedTreatment.label}</p>
+                        <p><strong>{t('booking.treatment')}:</strong> {selectedTreatment.label}</p>
                       )}
                       {date && (
-                        <p><strong>Date:</strong> {new Date(date).toLocaleDateString('en-US', {
+                        <p><strong>{t('booking.date')}:</strong> {new Date(date).toLocaleDateString('en-US', {
                           weekday: 'long',
                           year: 'numeric',
                           month: 'long',
@@ -1845,7 +1847,7 @@ export default function BookingPage() {
                         })}</p>
                       )}
                       {time && (
-                        <p><strong>Time:</strong> {time}</p>
+                        <p><strong>{t('booking.time')}:</strong> {time}</p>
                       )}
                     </div>
                   </motion.div>
@@ -1856,7 +1858,7 @@ export default function BookingPage() {
                   variants={itemVariants}
                   type="submit"
                   disabled={loading}
-                  className="w-full relative group bg-blue-600 hover:bg-blue-700 text-white py-6 px-8 rounded-2xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="w-full relative group bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white py-6 px-8 rounded-2xl font-bold text-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -1868,16 +1870,16 @@ export default function BookingPage() {
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         />
-                        Booking Appointment...
+                        {t('booking.bookingInProgress')}
                       </div>
                     ) : (
                       <div className="flex items-center justify-center gap-3">
                         <CheckCircle className="w-6 h-6" />
-                        Confirm Booking
+                        {t('booking.confirmBooking')}
                       </div>
                     )}
                   </span>
-                  <div className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-blue-700 dark:bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </motion.button>
               </form>
 
@@ -1887,9 +1889,9 @@ export default function BookingPage() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={`mt-8 p-4 rounded-2xl border flex items-center gap-3 ${
-                    message.includes('successful') 
-                      ? 'bg-green-500/20 border-green-400/50 text-green-200' 
-                      : 'bg-red-500/20 border-red-400/50 text-red-200'
+                    message.includes('successful')
+                      ? 'bg-green-100 dark:bg-green-500/20 border-green-400 dark:border-green-400/50 text-green-800 dark:text-green-200'
+                      : 'bg-red-100 dark:bg-red-500/20 border-red-400 dark:border-red-400/50 text-red-800 dark:text-red-200'
                   }`}
                 >
                   {message.includes('successful') ? (

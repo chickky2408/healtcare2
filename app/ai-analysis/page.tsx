@@ -6,6 +6,7 @@ import axios from 'axios'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Brain, Upload, Image as ImageIcon, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
+import { useApp } from '../contexts/AppContext'
 
 type AnalysisResult = {
   label: string
@@ -18,6 +19,7 @@ type AnalysisResult = {
 type Msg = { type: 'success' | 'error'; text: string } | null
 
 export default function AiAnalysisPage() {
+  const { t } = useApp()
   const router = useRouter()
   const [allowed, setAllowed] = useState(false)
   const [result, setResult] = useState<AnalysisResult | null>(null)
@@ -128,10 +130,10 @@ export default function AiAnalysisPage() {
 
   if (!allowed) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-blue-100 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-900 text-gray-900 dark:text-blue-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p>Checking permission...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-white mx-auto mb-4"></div>
+          <p>{t('ai.checkingPermission')}</p>
         </div>
       </div>
     )
@@ -147,8 +149,8 @@ export default function AiAnalysisPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-blue-800" />
+    <div className="min-h-screen relative overflow-hidden bg-white dark:bg-slate-900">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 dark:from-blue-900 dark:via-purple-900 dark:to-blue-800" />
       <div className="absolute inset-0 opacity-30 pointer-events-none">
         <motion.div
           className="absolute top-20 left-24 w-40 h-40 bg-blue-400/20 rounded-full blur-2xl"
@@ -167,25 +169,25 @@ export default function AiAnalysisPage() {
           <motion.div className="text-center mb-10" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
             <button
               onClick={() => router.back()}
-              className="group flex items-center gap-2 text-blue-200 hover:text-white transition-colors mb-6 mx-auto"
+              className="group flex items-center gap-2 text-blue-700 dark:text-blue-200 hover:text-blue-900 dark:hover:text-white transition-colors mb-6 mx-auto"
             >
               <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-medium">Back to Dashboard</span>
+              <span className="font-medium">{t('Back to Dashboard')}</span>
             </button>
-            
+
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-3xl mb-5 shadow-lg">
               <Brain className="w-10 h-10 text-white" />
             </div>
-            
-            <h1 className="text-4xl lg:text-5xl font-black text-white mb-2">Teeth AI Analysis</h1>
-            <p className="text-blue-100 max-w-2xl mx-auto">
-              Upload a clear photo of your teeth for AI-powered dental analysis
+
+            <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-2">{t('ai.title')}</h1>
+            <p className="text-gray-700 dark:text-blue-100 max-w-2xl mx-auto">
+              {t('ai.subtitle')}
             </p>
-            
-            <div className="mt-4 max-w-3xl mx-auto bg-yellow-500/10 border border-yellow-400/30 rounded-xl p-3 text-yellow-100 text-sm flex items-start gap-2">
+
+            <div className="mt-4 max-w-3xl mx-auto bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-400 dark:border-yellow-400/30 rounded-xl p-3 text-yellow-900 dark:text-yellow-100 text-sm flex items-start gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <p className="text-left">
-                <strong>Medical Disclaimer:</strong> This AI analysis is for informational purposes only. It does not replace professional dental diagnosis. Always consult a licensed dentist.
+                <strong>{t('ai.disclaimer')}:</strong> {t('ai.disclaimerText')}
               </p>
             </div>
           </motion.div>
@@ -193,17 +195,17 @@ export default function AiAnalysisPage() {
           <motion.div variants={container} initial="hidden" animate="visible" className="relative">
             <motion.div
               variants={item}
-              className="relative bg-white/10 backdrop-blur-xl p-8 lg:p-10 rounded-3xl border border-white/20 shadow-2xl"
+              className="relative bg-white/90 dark:bg-white/10 backdrop-blur-xl p-8 lg:p-10 rounded-3xl border border-gray-200 dark:border-white/20 shadow-2xl"
             >
-              <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 opacity-20 blur" />
+              <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-r from-blue-100 via-purple-100 to-blue-100 dark:from-blue-400 dark:via-purple-400 dark:to-blue-400 opacity-20 blur" />
 
               {msg && (
                 <motion.div
                   variants={item}
                   className={`mb-6 flex items-center gap-3 px-4 py-3 rounded-2xl border ${
                     msg.type === 'success'
-                      ? 'bg-green-500/15 border-green-400/30 text-green-100'
-                      : 'bg-red-500/15 border-red-400/30 text-red-100'
+                      ? 'bg-green-100 dark:bg-green-500/15 border-green-400 dark:border-green-400/30 text-green-800 dark:text-green-100'
+                      : 'bg-red-100 dark:bg-red-500/15 border-red-400 dark:border-red-400/30 text-red-800 dark:text-red-100'
                   }`}
                 >
                   {msg.type === 'success' ? <CheckCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
@@ -212,9 +214,9 @@ export default function AiAnalysisPage() {
               )}
 
               <motion.div variants={item} className="flex flex-col sm:flex-row gap-4 items-center mb-8">
-                <label className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white cursor-pointer transition font-medium">
+                <label className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-blue-100 dark:bg-white/10 hover:bg-blue-200 dark:hover:bg-white/20 border border-blue-300 dark:border-white/20 text-blue-900 dark:text-white cursor-pointer transition font-medium">
                   <Upload className="w-5 h-5" />
-                  Choose Image
+                  {t('ai.chooseImage')}
                   <input
                     type="file"
                     accept="image/*"
@@ -223,27 +225,27 @@ export default function AiAnalysisPage() {
                     disabled={loading}
                   />
                 </label>
-                <span className="text-blue-100 text-sm">
-                  {images[0]?.name || 'No file chosen'}
+                <span className="text-gray-700 dark:text-blue-100 text-sm">
+                  {images[0]?.name || t('ai.noFileChosen')}
                 </span>
               </motion.div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                <motion.div variants={item} className="bg-white/10 rounded-2xl p-4 border border-white/20">
+                <motion.div variants={item} className="bg-gray-50 dark:bg-white/10 rounded-2xl p-4 border border-gray-200 dark:border-white/20">
                   {preview ? (
                     <div className="relative w-full h-80">
-                      <Image 
-                        src={preview} 
-                        alt="Preview" 
-                        fill 
-                        className="rounded-xl shadow-lg object-contain" 
-                        unoptimized 
+                      <Image
+                        src={preview}
+                        alt="Preview"
+                        fill
+                        className="rounded-xl shadow-lg object-contain"
+                        unoptimized
                       />
                     </div>
                   ) : (
-                    <div className="h-80 flex flex-col items-center justify-center text-blue-200">
+                    <div className="h-80 flex flex-col items-center justify-center text-gray-500 dark:text-blue-200">
                       <ImageIcon className="w-16 h-16 mb-4" />
-                      <span className="text-sm">Image preview will appear here</span>
+                      <span className="text-sm">{t('ai.imagePreview')}</span>
                     </div>
                   )}
                 </motion.div>
@@ -255,26 +257,26 @@ export default function AiAnalysisPage() {
                     className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg transition"
                   >
                     <Brain className="w-5 h-5" />
-                    {loading ? 'Analyzing...' : 'Analyze with AI'}
+                    {loading ? t('ai.analyzing') : t('ai.analyzeButton')}
                   </button>
 
                   {result && (
-                    <div className="bg-white/10 border border-white/20 rounded-2xl p-6 text-white">
+                    <div className="bg-blue-50 dark:bg-white/10 border border-blue-200 dark:border-white/20 rounded-2xl p-6 text-gray-900 dark:text-white">
                       <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        <CheckCircle className="w-6 h-6 text-green-400" />
-                        Analysis Result
+                        <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+                        {t('ai.analysisResult')}
                       </h2>
-                      
+
                       <div className="space-y-3">
                         <div>
-                          <p className="text-blue-200 text-sm">Diagnosis</p>
+                          <p className="text-gray-600 dark:text-blue-200 text-sm">{t('ai.diagnosis')}</p>
                           <p className="text-lg font-semibold">{result.label.replace(/_/g, ' ')}</p>
                         </div>
-                        
+
                         <div>
-                          <p className="text-blue-200 text-sm mb-1">Confidence</p>
+                          <p className="text-gray-600 dark:text-blue-200 text-sm mb-1">{t('ai.confidence')}</p>
                           <div className="flex items-center gap-3">
-                            <div className="flex-1 h-2 rounded-full bg-white/20 overflow-hidden">
+                            <div className="flex-1 h-2 rounded-full bg-gray-300 dark:bg-white/20 overflow-hidden">
                               <div
                                 className="h-full bg-gradient-to-r from-green-400 to-emerald-500"
                                 style={{ width: `${Math.min(100, result.confidence * 100)}%` }}
@@ -286,11 +288,11 @@ export default function AiAnalysisPage() {
 
                         {result.findings && result.findings.length > 0 && (
                           <div>
-                            <p className="text-blue-200 text-sm mb-2">Findings</p>
+                            <p className="text-gray-600 dark:text-blue-200 text-sm mb-2">{t('ai.findings')}</p>
                             <ul className="space-y-1 text-sm">
                               {result.findings.map((finding, i) => (
                                 <li key={i} className="flex items-start gap-2">
-                                  <span className="text-blue-400 mt-1">•</span>
+                                  <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
                                   <span>{finding}</span>
                                 </li>
                               ))}
@@ -300,8 +302,8 @@ export default function AiAnalysisPage() {
 
                         {result.explanation && (
                           <div>
-                            <p className="text-blue-200 text-sm mb-2">Explanation</p>
-                            <p className="text-sm leading-relaxed text-blue-50/90">
+                            <p className="text-gray-600 dark:text-blue-200 text-sm mb-2">{t('ai.explanation')}</p>
+                            <p className="text-sm leading-relaxed text-gray-700 dark:text-blue-50/90">
                               {result.explanation}
                             </p>
                           </div>

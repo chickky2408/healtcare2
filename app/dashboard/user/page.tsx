@@ -1412,6 +1412,7 @@ import {
   Clock, Bell, Home, FileText
 } from 'lucide-react';
 import ThemeLanguageToggle from '@/app/components/ThemeLanguageToggle';
+import { useApp } from '../../contexts/AppContext';
 
 interface Payment {
   id: string;
@@ -1442,6 +1443,7 @@ interface User {
 
 export default function UserDashboardPage() {
   const router = useRouter();
+  const { t, theme } = useApp();
   const [user, setUser] = useState<User | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [selected, setSelected] = useState<Appointment | null>(null);
@@ -1526,7 +1528,7 @@ export default function UserDashboardPage() {
   const getPaymentStatusBadge = (payment?: Payment) => {
     if (!payment) {
       return (
-        <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+        <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
           ⏳ ยังไม่ชำระ
         </span>
       );
@@ -1535,32 +1537,32 @@ export default function UserDashboardPage() {
     switch (payment.status) {
       case 'PENDING':
         return (
-          <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            ⏳ รอชำระเงิน
+          <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            ⏳ Pending Payment
           </span>
         );
       case 'PAID':
         return (
-          <span className="bg-yellow-100 text-yellow-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            🕒 รอตรวจสอบ
+          <span className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            🕒 Under Review
           </span>
         );
       case 'SUCCESSFUL':
         return (
-          <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            ✅ ชำระสำเร็จ
+          <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            ✅ Paid Successfully
           </span>
         );
       case 'REJECTED':
         return (
-          <span className="bg-red-100 text-red-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            ❌ ถูกปฏิเสธ
+          <span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            ❌ Rejected
           </span>
         );
       case 'REFUNDED':
         return (
-          <span className="bg-purple-100 text-purple-700 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            💰 คืนเงิน
+          <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
+            💰 Refunded
           </span>
         );
       default:
@@ -1573,16 +1575,16 @@ export default function UserDashboardPage() {
   };
 
   const menuItems = [
-    { icon: Home, label: 'Dashboard', path: '/dashboard/user', active: true },
-    { icon: Calendar, label: 'Appointments Detail', path: '/dashboard/user/appointments' },
-    { icon: Video, label: 'Telemedicine', path: '/dashboard/user/telemedicine' },
-    { icon: Brain, label: 'AI Analysis', path: '/ai-analysis' },
-    { icon: FileText, label: 'My Information', path: '/dashboard/user/information' },
-    { icon: UserIcon, label: 'My Profile', path: '/dashboard/user/profile' },
+    { icon: Home, label: t('menu.dashboard'), path: '/dashboard/user', active: true },
+    { icon: Calendar, label: t('menu.appointmentsDetail'), path: '/dashboard/user/appointments' },
+    { icon: Video, label: t('menu.telemedicine'), path: '/dashboard/user/telemedicine' },
+    { icon: Brain, label: t('menu.aiAnalysis'), path: '/ai-analysis' },
+    { icon: FileText, label: t('menu.myInformation'), path: '/dashboard/user/information' },
+    { icon: UserIcon, label: t('menu.myProfile'), path: '/dashboard/user/profile' },
   ];
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -1598,24 +1600,24 @@ export default function UserDashboardPage() {
 
       {/* Sidebar - Always visible on desktop */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-50 w-72 
-        bg-white shadow-2xl md:shadow-xl
+        fixed md:static inset-y-0 left-0 z-50 w-72
+        bg-white dark:bg-slate-800 shadow-2xl md:shadow-xl
         transform transition-all duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Logo Header */}
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-gray-100 dark:border-slate-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-xl">H+</span>
                 </div>
-                <h2 className="text-xl font-bold text-gray-800">HealthCare+</h2>
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('common.healthcarePlus')}</h2>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="md:hidden text-gray-500 hover:text-gray-700 p-1"
+                className="md:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1"
               >
                 <X size={24} />
               </button>
@@ -1624,7 +1626,7 @@ export default function UserDashboardPage() {
 
           {/* User Profile Card */}
           {user && (
-            <div className="p-6 border-b border-gray-100">
+            <div className="p-6 border-b border-gray-100 dark:border-slate-700">
               <div className="flex items-center gap-3">
                 {(user.image || user.profileImage) ? (
                   <img
@@ -1638,8 +1640,8 @@ export default function UserDashboardPage() {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-gray-800 truncate text-lg">{user.name}</p>
-                  <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                  <p className="font-bold text-gray-800 dark:text-gray-100 truncate text-lg">{user.name}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{user.email}</p>
                 </div>
               </div>
             </div>
@@ -1655,11 +1657,11 @@ export default function UserDashboardPage() {
                   setSidebarOpen(false);
                 }}
                 className={`
-                  w-full flex items-center gap-3 px-4 py-3.5 rounded-xl 
+                  w-full flex items-center gap-3 px-4 py-3.5 rounded-xl
                   transition-all duration-200 group
-                  ${item.active 
-                    ? 'bg-blue-600 text-white shadow-md' 
-                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                  ${item.active
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400'
                   }
                 `}
                 whileHover={{ x: item.active ? 0 : 5 }}
@@ -1667,23 +1669,23 @@ export default function UserDashboardPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <item.icon size={20} className={item.active ? 'text-white' : 'text-gray-500 group-hover:text-blue-600'} />
+                <item.icon size={20} className={item.active ? 'text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400'} />
                 <span className="font-medium">{item.label}</span>
               </motion.button>
             ))}
           </nav>
 
           {/* Logout Button */}
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 border-t border-gray-100 dark:border-slate-700">
             <button
               onClick={() => {
                 localStorage.removeItem('user');
                 router.push('/login');
               }}
-              className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200"
+              className="w-full flex items-center gap-3 px-4 py-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-slate-700 rounded-xl transition-all duration-200"
             >
               <LogOut size={20} />
-              <span className="font-medium">Logout</span>
+              <span className="font-medium">{t('menu.logout')}</span>
             </button>
           </div>
         </div>
@@ -1692,20 +1694,20 @@ export default function UserDashboardPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top Header */}
-        <header className="bg-blue-80 backdrop-blur-md shadow-sm sticky top-0 z-30 border-b border-gray-100">
+        <header className="bg-white dark:bg-slate-800 backdrop-blur-md shadow-sm sticky top-0 z-30 border-b border-gray-100 dark:border-slate-700">
           <div className="flex items-center justify-between px-4 md:px-8 py-4">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="md:hidden text-gray-600 hover:text-gray-900 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="md:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
                 <Menu size={24} />
               </button>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-                  Welcome back, {user?.name?.split(' ')[0]}!
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
+                  {t('dashboard.welcome')}, {user?.name?.split(' ')[0]}!
                 </h1>
-                <p className="text-sm text-gray-600">Manage your healthcare appointments</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('common.manage')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -1720,10 +1722,10 @@ export default function UserDashboardPage() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-3 text-center font-semibold shadow-lg flex items-center justify-center gap-2"
+            className="bg-gradient-to-r from-amber-400 to-orange-500 dark:from-amber-600 dark:to-orange-700 text-white px-4 py-3 text-center font-semibold shadow-lg flex items-center justify-center gap-2"
           >
             <Bell size={20} />
-            You have an appointment today!
+            {t('common.today')}
           </motion.div>
         )}
 
@@ -1734,15 +1736,15 @@ export default function UserDashboardPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white p-6 rounded-2xl shadow-md border border-blue-100 hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-blue-100 dark:border-slate-700 hover:shadow-lg transition-shadow"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1 font-medium">Total Appointments</p>
-                  <p className="text-4xl font-bold text-gray-800">{appointments.length}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">{t('dashboard.totalAppointments')}</p>
+                  <p className="text-4xl font-bold text-gray-800 dark:text-gray-100">{appointments.length}</p>
                 </div>
-                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <Calendar className="text-blue-600" size={28} />
+                <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                  <Calendar className="text-blue-600 dark:text-blue-400" size={28} />
                 </div>
               </div>
             </motion.div>
@@ -1751,12 +1753,12 @@ export default function UserDashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white p-6 rounded-2xl shadow-md border border-green-100 hover:shadow-lg transition-shadow"
+              className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-green-100 dark:border-slate-700 hover:shadow-lg transition-shadow"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1 font-medium">Upcoming</p>
-                  <p className="text-4xl font-bold text-gray-800">
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1 font-medium">{t('dashboard.upcoming')}</p>
+                  <p className="text-4xl font-bold text-gray-800 dark:text-gray-100">
                     {/* {appointments.filter(a => new Date(`${a.date}T${a.time}`) > new Date()).length} */}
                     {appointments.filter(a => {
                       // แยกเอาแค่วันที่ (ตัดเวลาออก)
@@ -1768,8 +1770,8 @@ export default function UserDashboardPage() {
                     }).length}
                   </p>
                 </div>
-                <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
-                  <Clock className="text-green-600" size={28} />
+                <div className="w-14 h-14 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                  <Clock className="text-green-600 dark:text-green-400" size={28} />
                 </div>
               </div>
             </motion.div>
@@ -1778,30 +1780,30 @@ export default function UserDashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 rounded-2xl shadow-lg text-white hover:shadow-xl transition-shadow"
+              className="bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 p-6 rounded-2xl shadow-lg text-white hover:shadow-xl transition-shadow"
             >
-              <p className="text-sm text-blue-100 mb-3 font-medium">Quick Action</p>
+              <p className="text-sm text-blue-100 dark:text-blue-200 mb-3 font-medium">{t('dashboard.quickAction')}</p>
               <button
                 onClick={() => router.push('/booking')}
-                className="flex items-center gap-2 bg-white text-blue-600 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50 transition-colors w-full justify-center"
+                className="flex items-center gap-2 bg-white dark:bg-slate-100 text-blue-600 dark:text-blue-700 px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-50 dark:hover:bg-white transition-colors w-full justify-center"
               >
                 <Plus size={20} />
-                Book New Appointment
+                {t('dashboard.bookNew')}
               </button>
             </motion.div>
           </div>
 
           {/* Appointments List */}
-          <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-100 dark:border-slate-700 overflow-hidden">
+            <div className="p-6 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-white dark:from-slate-700 dark:to-slate-800">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-gray-800">Appointments & Payments</h2>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t('dashboard.appointments')} & Payments</h2>
                 <button
                   onClick={() => router.push('/booking')}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                  className="flex items-center gap-2 bg-blue-600 dark:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm"
                 >
                   <Plus size={20} />
-                  <span className="hidden sm:inline">Add Appointment</span>
+                  <span className="hidden sm:inline">{t('dashboard.addAppointment')}</span>
                 </button>
               </div>
 
@@ -1812,20 +1814,20 @@ export default function UserDashboardPage() {
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     viewMode === 'appointments'
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      : 'bg-white dark:bg-slate-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-500'
                   }`}
                 >
-                  📅 Appointment
+                  📅 {t('appointments.all')}
                 </button>
                 <button
                   onClick={() => setViewMode('payments')}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${
                     viewMode === 'payments'
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-gray-600 hover:bg-gray-100'
+                      : 'bg-white dark:bg-slate-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-500'
                   }`}
                 >
-                  💳 Transaction History
+                  💳 {t('dashboard.paymentHistory')}
                 </button>
               </div>
             </div>
@@ -1834,15 +1836,15 @@ export default function UserDashboardPage() {
               {viewMode === 'appointments' ? (
                 appointments.length === 0 ? (
                   <div className="text-center py-16">
-                    <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                      <Calendar className="text-gray-400" size={40} />
+                    <div className="w-24 h-24 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Calendar className="text-gray-400 dark:text-gray-500" size={40} />
                     </div>
-                    <p className="text-gray-600 text-lg mb-6">No appointments found</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-lg mb-6">{t('dashboard.noAppointments')}</p>
                     <button
                       onClick={() => router.push('/booking')}
-                      className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-md"
+                      className="bg-blue-600 dark:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-md"
                     >
-                      Book Your First Appointment
+                      {t('dashboard.bookFirst')}
                     </button>
                   </div>
                 ) : (
@@ -1855,7 +1857,7 @@ export default function UserDashboardPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.08 }}
-                      className="group bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                      className="group bg-gradient-to-br from-blue-50 to-white dark:from-slate-700 dark:to-slate-800 p-6 rounded-xl border border-blue-100 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-300"
                     >
                       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         <div className="flex-1 space-y-3">
@@ -1865,7 +1867,7 @@ export default function UserDashboardPage() {
                             </div>
                             <div className="flex-1">
                               <div className="flex flex-wrap items-center gap-2 mb-1">
-                                <span className="text-lg font-bold text-gray-800">
+                                <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
                                   {new Date(a.date).toLocaleDateString('en-US', {
                                     weekday: 'long',
                                     year: 'numeric',
@@ -1873,21 +1875,21 @@ export default function UserDashboardPage() {
                                     day: 'numeric'
                                   })}
                                 </span>
-                                <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full font-semibold">
+                                <span className="bg-blue-600 dark:bg-blue-700 text-white text-sm px-3 py-1 rounded-full font-semibold">
                                   {a.time}
                                 </span>
                               </div>
-                              <p className="text-gray-700 font-semibold text-base">
+                              <p className="text-gray-700 dark:text-gray-200 font-semibold text-base">
                                 {a.doctor.name}
                               </p>
-                              <p className="text-sm text-gray-500">{a.doctor.specialty}</p>
+                              <p className="text-sm text-gray-500 dark:text-gray-400">{a.doctor.specialty}</p>
                             </div>
                           </div>
                           <div className="flex flex-wrap gap-2 ml-15">
-                            <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1.5 rounded-full font-medium">
+                            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm px-3 py-1.5 rounded-full font-medium">
                               {a.type}
                             </span>
-                            <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-semibold">
+                            <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm px-3 py-1.5 rounded-full font-semibold">
                               {treatmentPrices[a.type] || 0} THB
                             </span>
                             {getPaymentStatusBadge(a.payment)}
@@ -1897,31 +1899,31 @@ export default function UserDashboardPage() {
                         <div className="flex flex-wrap gap-2">
                           <button
                             onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
-                            className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-amber-600 transition-colors shadow-sm hover:shadow-md"
+                            className="flex items-center gap-2 bg-amber-500 dark:bg-amber-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-amber-600 dark:hover:bg-amber-500 transition-colors shadow-sm hover:shadow-md"
                           >
                             <Edit size={18} />
-                            {/* Edit */}
+                            <span className="hidden sm:inline">{t('appointments.edit')}</span>
                           </button>
                           <button
                             onClick={() => cancelAppointment(a.id)}
-                            className="flex items-center gap-2 bg-rose-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-rose-600 transition-colors shadow-sm hover:shadow-md"
+                            className="flex items-center gap-2 bg-rose-500 dark:bg-rose-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-rose-600 dark:hover:bg-rose-500 transition-colors shadow-sm hover:shadow-md"
                           >
                             <Trash2 size={18} />
-                            {/* Cancel */}
+                            <span className="hidden sm:inline">{t('appointments.cancel')}</span>
                           </button>
                           <button
                             onClick={() => handlePaymentClick(a)}
-                            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
+                            className="flex items-center gap-2 bg-indigo-600 dark:bg-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors shadow-sm hover:shadow-md"
                           >
                             <CreditCard size={18} />
-                            {/* ชำระเงิน */}
+                            <span className="hidden sm:inline">{t('appointments.payment')}</span>
                           </button>
                           <button
                             onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
-                            className="flex items-center gap-2 bg-cyan-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-cyan-600 transition-colors shadow-sm hover:shadow-md"
+                            className="flex items-center gap-2 bg-cyan-500 dark:bg-cyan-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-cyan-600 dark:hover:bg-cyan-500 transition-colors shadow-sm hover:shadow-md"
                           >
                             <MessageCircle size={18} />
-                            {/* Chat */}
+                            <span className="hidden sm:inline">{t('appointments.chat')}</span>
                           </button>
                         </div>
                       </div>
@@ -1934,11 +1936,11 @@ export default function UserDashboardPage() {
                 <div className="space-y-4">
                   {appointments.filter(a => a.payment).length === 0 ? (
                     <div className="text-center py-16">
-                      <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <CreditCard className="text-gray-400" size={40} />
+                      <div className="w-24 h-24 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <CreditCard className="text-gray-400 dark:text-gray-500" size={40} />
                       </div>
-                      <p className="text-gray-600 text-lg mb-2">Payment History Not Found</p>
-                      <p className="text-gray-500 text-sm">ชำระเงินสำหรับการนัดหมายของคุณเพื่อดูประวัติได้ที่นี่</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-lg mb-2">Payment History Not Found</p>
+                      <p className="text-gray-500 dark:text-gray-500 text-sm">ชำระเงินสำหรับการนัดหมายของคุณเพื่อดูประวัติได้ที่นี่</p>
                     </div>
                   ) : (
                     appointments.filter(a => a.payment).map((a, index) => (
@@ -1947,41 +1949,41 @@ export default function UserDashboardPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.08 }}
-                        className="group bg-gradient-to-br from-blue-50 to-white p-6 rounded-xl border border-blue-100 hover:border-blue-300 hover:shadow-lg transition-all duration-300"
+                        className="group bg-gradient-to-br from-blue-50 to-white dark:from-slate-700 dark:to-slate-800 p-6 rounded-xl border border-blue-100 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-lg transition-all duration-300"
                       >
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                           <div className="flex-1 space-y-3">
                             <div className="flex items-start gap-3">
-                              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                              <div className="w-12 h-12 bg-blue-600 dark:bg-blue-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
                                 <CreditCard className="text-white" size={22} />
                               </div>
                               <div className="flex-1">
                                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                                  <span className="text-lg font-bold text-gray-800">
-                                    {new Date(a.date).toLocaleDateString('th-TH', {
+                                  <span className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                    {new Date(a.date).toLocaleDateString('en-US', {
                                       year: 'numeric',
                                       month: 'long',
                                       day: 'numeric'
                                     })}
                                   </span>
-                                  <span className="bg-blue-600 text-white text-sm px-3 py-1 rounded-full font-semibold">
+                                  <span className="bg-blue-600 dark:bg-blue-700 text-white text-sm px-3 py-1 rounded-full font-semibold">
                                     {a.time}
                                   </span>
                                 </div>
-                                <p className="text-gray-700 font-semibold text-base">
+                                <p className="text-gray-700 dark:text-gray-200 font-semibold text-base">
                                   {a.doctor.name} - {a.doctor.specialty}
                                 </p>
-                                <p className="text-sm text-gray-600">{a.type}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">{a.type}</p>
                               </div>
                             </div>
                             <div className="flex flex-wrap gap-2 ml-15">
-                              <span className="bg-green-100 text-green-700 text-sm px-3 py-1.5 rounded-full font-semibold">
+                              <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm px-3 py-1.5 rounded-full font-semibold">
                                 Payment Total: {a.payment?.amount || treatmentPrices[a.type] || 0} Baht
                               </span>
                               {getPaymentStatusBadge(a.payment)}
                               {a.payment?.paidAt && (
-                                <span className="bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full font-medium">
-                                  Payment Time: {new Date(a.payment.paidAt).toLocaleDateString('th-TH', {
+                                <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm px-3 py-1.5 rounded-full font-medium">
+                                  Payment Time: {new Date(a.payment.paidAt).toLocaleDateString('en-US', {
                                     day: 'numeric',
                                     month: 'short',
                                     year: 'numeric'
@@ -1989,8 +1991,8 @@ export default function UserDashboardPage() {
                                 </span>
                               )}
                               {a.payment?.verifiedAt && (
-                                <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1.5 rounded-full font-medium">
-                                  Approved Time: {new Date(a.payment.verifiedAt).toLocaleDateString('th-TH', {
+                                <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm px-3 py-1.5 rounded-full font-medium">
+                                  Approved Time: {new Date(a.payment.verifiedAt).toLocaleDateString('en-US', {
                                     day: 'numeric',
                                     month: 'short',
                                     year: 'numeric'
@@ -2004,14 +2006,14 @@ export default function UserDashboardPage() {
                             {a.payment?.slipImagePath && (
                               <button
                                 onClick={() => window.open(a.payment!.slipImagePath!, '_blank')}
-                                className="flex items-center gap-2 bg-purple-500 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-600 transition-colors shadow-sm hover:shadow-md"
+                                className="flex items-center gap-2 bg-purple-500 dark:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-600 dark:hover:bg-purple-600 transition-colors shadow-sm hover:shadow-md"
                               >
                                 📄 View Slip
                               </button>
                             )}
                             <button
                               onClick={() => handlePaymentClick(a)}
-                              className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md"
+                              className="flex items-center gap-2 bg-blue-600 dark:bg-blue-700 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md"
                             >
                               <CreditCard size={18} />
                               View Detail
@@ -2034,11 +2036,11 @@ export default function UserDashboardPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full"
+            className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-sm w-full"
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-2 text-center">Scan to Pay</h3>
-            <p className="text-gray-600 text-center mb-6">Use your banking app to scan</p>
-            <div className="flex justify-center bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2 text-center">Scan to Pay</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-6">Use your banking app to scan</p>
+            <div className="flex justify-center bg-gray-50 dark:bg-slate-700 p-6 rounded-xl mb-6">
               <QRCodeCanvas
                 value={`00020101021129370016A000000677010111011300660123456789802TH53037645406${
                   treatmentPrices[selected.type] || 0
@@ -2048,14 +2050,14 @@ export default function UserDashboardPage() {
               />
             </div>
             <div className="text-center mb-6">
-              <p className="text-3xl font-bold text-blue-600">
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                 {treatmentPrices[selected.type] || 0} THB
               </p>
-              <p className="text-sm text-gray-600 mt-1">{selected.type}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{selected.type}</p>
             </div>
             <button
               onClick={() => setSelected(null)}
-              className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-6 py-3 rounded-xl transition-colors"
+              className="w-full bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-800 dark:text-gray-200 font-semibold px-6 py-3 rounded-xl transition-colors"
             >
               Close
             </button>

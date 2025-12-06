@@ -536,8 +536,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Heart, Shield, Star } from 'lucide-react'
+import { useApp } from '../contexts/AppContext'
 
 export default function LoginPage() {
+  const { t } = useApp()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')

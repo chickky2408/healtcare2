@@ -1,5 +1,4 @@
-// @ts-ignore - Roboflow doesn't have TypeScript definitions
-const Roboflow = require('roboflow').Roboflow
+import { readFileSync } from 'fs'
 
 const ROBOFLOW_API_KEY = process.env.ROBOFLOW_API_KEY!
 const ROBOFLOW_WORKSPACE = process.env.ROBOFLOW_WORKSPACE || 'dental-disease-detection'
@@ -39,7 +38,7 @@ export interface AnalysisResult {
 }
 
 /**
- * Analyze dental X-ray image using Roboflow AI model
+ * Analyze dental X-ray image using Roboflow REST API
  */
 export async function analyzeDentalImage(imagePath: string): Promise<AnalysisResult> {
   try {
@@ -47,31 +46,44 @@ export async function analyzeDentalImage(imagePath: string): Promise<AnalysisRes
       throw new Error('ROBOFLOW_API_KEY is not configured')
     }
 
-    console.log('🔍 Analyzing image with Roboflow SDK...')
+    console.log('🔍 Analyzing image with Roboflow Inference API...')
     console.log(`Workspace: ${ROBOFLOW_WORKSPACE}`)
     console.log(`Model: ${ROBOFLOW_MODEL_ID}, Version: ${ROBOFLOW_VERSION}`)
 
-    // Initialize Roboflow SDK
-    const rf = new Roboflow({
-      publishable_key: ROBOFLOW_API_KEY
+    // Read image file and convert to base64
+    const imageBuffer = readFileSync(imagePath)
+    const base64Image = imageBuffer.toString('base64')
+
+    // Use Roboflow Hosted Inference API
+    const apiUrl = `https://detect.roboflow.com/${ROBOFLOW_MODEL_ID}/${ROBOFLOW_VERSION}`
+
+    console.log('📡 Sending request to Roboflow Hosted Inference API...')
+    console.log(`API URL: ${apiUrl}`)
+
+    // Send request with proper format for Roboflow Hosted Inference API
+    const response = await fetch(`${apiUrl}?api_key=${ROBOFLOW_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: base64Image,
     })
 
-    // Load the project and model
-    const project = await rf.workspace(ROBOFLOW_WORKSPACE).project(ROBOFLOW_MODEL_ID)
-    const model = project.version(parseInt(ROBOFLOW_VERSION))
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Roboflow API error: ${response.status} - ${errorText}`)
+    }
 
-    // Predict using the image path
-    const response = await model.detect(imagePath)
-
-    const predictions = response.predictions || []
+    const data: RoboflowResponse = await response.json()
+    const predictions = data.predictions || []
 
     // Calculate summary statistics
     const totalDetections = predictions.length
-    const detectedDiseases = [...new Set(predictions.map(p => p.class))]
-    const confidences = predictions.map(p => p.confidence)
+    const detectedDiseases = [...new Set(predictions.map((p: RoboflowPrediction) => p.class))]
+    const confidences = predictions.map((p: RoboflowPrediction) => p.confidence)
     const highestConfidence = confidences.length > 0 ? Math.max(...confidences) : 0
     const averageConfidence = confidences.length > 0
-      ? confidences.reduce((a, b) => a + b, 0) / confidences.length
+      ? confidences.reduce((a: number, b: number) => a + b, 0) / confidences.length
       : 0
 
     console.log('✅ Analysis complete!')
