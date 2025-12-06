@@ -173,7 +173,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-// Production deployment with environment variables
+// Production deployment with environment variables - v2
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
