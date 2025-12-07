@@ -4,6 +4,28 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --primary: #3b82f6;
+  --secondary: #8b5cf6;
+}
+
+[data-theme="dark"] {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --primary: #60a5fa;
+  --secondary: #a78bfa;
+}
+
+[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #171717;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --primary: #3b82f6;
+  --secondary: #8b5cf6;
 }
 
 @theme inline {
@@ -13,17 +35,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 @keyframes pulse-slow {
@@ -37,4 +53,36 @@ body {
 }
 .animate-pulse-slow {
   animation: pulse-slow 20s ease-in-out infinite;
+}
+
+/* Hide Next.js development indicator */
+#__next-build-watcher {
+  display: none !important;
+}
+
+nextjs-portal {
+  display: none !important;
+}
+
+/* Theme Variables */
+:root[data-theme="dark"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #334155;
+  --text-primary: #ffffff;
+  --text-secondary: #cbd5e1;
+  --accent-primary: #3b82f6;
+  --accent-secondary: #60a5fa;
+  --border-color: #475569;
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #f0f9f4;
+  --bg-secondary: #e8f5ed;
+  --bg-card: #ffffff;
+  --text-primary: #1a3a2e;
+  --text-secondary: #2d5f4c;
+  --accent-primary: #4ade80;
+  --accent-secondary: #86efac;
+  --border-color: #d1f0dd;
 }

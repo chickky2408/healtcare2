@@ -11,7 +11,6 @@ import {
   Filter,
   Download
 } from 'lucide-react'
-import { useApp } from '@/app/contexts/AppContext'
 
 type Payment = {
   id: string
@@ -38,7 +37,6 @@ type Payment = {
 }
 
 export default function AdminPaymentsPage() {
-  const { t } = useApp()
   const [payments, setPayments] = useState<Payment[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<string>('all')
@@ -243,7 +241,7 @@ export default function AdminPaymentsPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-medium text-gray-900">{t(`treatment.${payment.appointment.type}`)}</p>
+                        <p className="font-medium text-gray-900">{payment.appointment.type.replace('_', ' ')}</p>
                         <p className="text-sm text-gray-500">Dr. {payment.appointment.doctor.name}</p>
                       </div>
                     </td>
@@ -301,7 +299,7 @@ export default function AdminPaymentsPage() {
                   </div>
                   <div>
                     <p className="text-gray-600">Treatment</p>
-                    <p className="font-semibold">{t(`treatment.${selectedPayment.appointment.type}`)}</p>
+                    <p className="font-semibold">{selectedPayment.appointment.type.replace('_', ' ')}</p>
                   </div>
                   <div>
                     <p className="text-gray-600">Amount</p>

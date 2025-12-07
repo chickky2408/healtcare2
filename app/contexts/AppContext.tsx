@@ -64,18 +64,14 @@ const translations: Record<Language, Record<string, string>> = {
     'lang.zh': 'ZH',
 
     // Booking Page
-    'booking.title': 'Book Your Appointment',
-    'booking.subtitle': 'Schedule your consultation with our expert healthcare professionals',
+    'booking.title': 'Book an Appointment',
     'booking.selectTreatment': 'Select Treatment Type',
     'booking.selectDoctor': 'Select Doctor',
-    'booking.selectDoctorPlaceholder': 'Choose a doctor',
     'booking.selectDate': 'Select Date',
     'booking.selectTime': 'Select Time',
-    'booking.selectTimePlaceholder': 'Choose a time slot',
     'booking.patientInfo': 'Patient Information',
     'booking.appointmentDetails': 'Appointment Details',
     'booking.confirmBooking': 'Confirm Booking',
-    'booking.bookingInProgress': 'Booking Appointment...',
     'booking.success': 'Appointment booked successfully!',
     'booking.error': 'Failed to book appointment. Please try again.',
     'booking.selectDoctorFirst': 'Please select a doctor first',
@@ -83,15 +79,6 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.doctorSpecialty': 'Specialty',
     'booking.doctorExperience': 'Experience',
     'booking.years': 'years',
-    'booking.professionalCare': 'Professional Care',
-    'booking.symptoms': 'Symptoms / Concerns',
-    'booking.symptomsPlaceholder': 'Please describe your symptoms, concerns, or reason for the appointment...',
-    'booking.summary': 'Booking Summary',
-    'booking.doctor': 'Doctor',
-    'booking.treatment': 'Treatment',
-    'booking.date': 'Date',
-    'booking.time': 'Time',
-    'Back to Dashboard': 'Back to Dashboard',
 
     // Treatment Types
     'treatment.CLEANING': 'Teeth Cleaning',
@@ -103,10 +90,6 @@ const translations: Record<Language, Record<string, string>> = {
     'treatment.AI_DIAGNOSIS': 'AI Diagnosis',
     'treatment.CHECKUP': 'General Checkup',
     'treatment.CONSULTATION': 'Consultation',
-    'treatment.videoCall': 'Video Consultation',
-    'treatment.cleaning': 'Teeth Cleaning',
-    'treatment.orthodontic': 'Orthodontic Treatment',
-    'treatment.aiDiagnosis': 'AI Diagnosis',
 
     // Form Fields
     'form.name': 'Name',
@@ -295,8 +278,6 @@ const translations: Record<Language, Record<string, string>> = {
     'status.rescheduled': 'Rescheduled',
     'status.noShow': 'No Show',
     'status.inProgress': 'In Progress',
-    'status.booked': 'Booked',
-    'status.past': 'Past',
 
     // Action Buttons
     'action.save': 'Save',
@@ -437,18 +418,14 @@ const translations: Record<Language, Record<string, string>> = {
     'lang.zh': '中文',
 
     // Booking Page
-    'booking.title': 'จองนัดหมายของคุณ',
-    'booking.subtitle': 'นัดหมายกับผู้เชี่ยวชาญด้านสุขภาพของเรา',
+    'booking.title': 'จองนัดหมาย',
     'booking.selectTreatment': 'เลือกประเภทการรักษา',
     'booking.selectDoctor': 'เลือกแพทย์',
-    'booking.selectDoctorPlaceholder': 'เลือกแพทย์',
     'booking.selectDate': 'เลือกวันที่',
     'booking.selectTime': 'เลือกเวลา',
-    'booking.selectTimePlaceholder': 'เลือกช่วงเวลา',
     'booking.patientInfo': 'ข้อมูลผู้ป่วย',
     'booking.appointmentDetails': 'รายละเอียดการนัดหมาย',
     'booking.confirmBooking': 'ยืนยันการจอง',
-    'booking.bookingInProgress': 'กำลังจองนัดหมาย...',
     'booking.success': 'จองนัดหมายสำเร็จ!',
     'booking.error': 'ไม่สามารถจองนัดหมายได้ กรุณาลองใหม่อีกครั้ง',
     'booking.selectDoctorFirst': 'กรุณาเลือกแพทย์ก่อน',
@@ -456,15 +433,6 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.doctorSpecialty': 'ความเชี่ยวชาญ',
     'booking.doctorExperience': 'ประสบการณ์',
     'booking.years': 'ปี',
-    'booking.professionalCare': 'การดูแลอย่างมืออาชีพ',
-    'booking.symptoms': 'อาการ / ข้อกังวล',
-    'booking.symptomsPlaceholder': 'กรุณาอธิบายอาการ ข้อกังวล หรือเหตุผลในการนัดหมาย...',
-    'booking.summary': 'สรุปการจอง',
-    'booking.doctor': 'แพทย์',
-    'booking.treatment': 'การรักษา',
-    'booking.date': 'วันที่',
-    'booking.time': 'เวลา',
-    'Back to Dashboard': 'กลับไปที่แดชบอร์ด',
 
     // Treatment Types
     'treatment.CLEANING': 'ทำความสะอาดฟัน',
@@ -476,10 +444,6 @@ const translations: Record<Language, Record<string, string>> = {
     'treatment.AI_DIAGNOSIS': 'วินิจฉัย AI',
     'treatment.CHECKUP': 'ตรวจสุขภาพทั่วไป',
     'treatment.CONSULTATION': 'ให้คำปรึกษา',
-    'treatment.videoCall': 'ให้คำปรึกษาผ่านวิดีโอ',
-    'treatment.cleaning': 'ทำความสะอาดฟัน',
-    'treatment.orthodontic': 'จัดฟัน',
-    'treatment.aiDiagnosis': 'วินิจฉัยด้วย AI',
 
     // Form Fields
     'form.name': 'ชื่อ',
@@ -668,8 +632,6 @@ const translations: Record<Language, Record<string, string>> = {
     'status.rescheduled': 'เลื่อนนัดใหม่',
     'status.noShow': 'ไม่มาตามนัด',
     'status.inProgress': 'กำลังดำเนินการ',
-    'status.booked': 'จองแล้ว',
-    'status.past': 'ผ่านไปแล้ว',
 
     // Action Buttons
     'action.save': 'บันทึก',
@@ -810,18 +772,14 @@ const translations: Record<Language, Record<string, string>> = {
     'lang.zh': 'ZH',
 
     // Booking Page
-    'booking.title': '预约您的门诊',
-    'booking.subtitle': '与我们的专业医疗人员预约咨询',
+    'booking.title': '预约',
     'booking.selectTreatment': '选择治疗类型',
     'booking.selectDoctor': '选择医生',
-    'booking.selectDoctorPlaceholder': '选择医生',
     'booking.selectDate': '选择日期',
     'booking.selectTime': '选择时间',
-    'booking.selectTimePlaceholder': '选择时间段',
     'booking.patientInfo': '患者信息',
     'booking.appointmentDetails': '预约详情',
     'booking.confirmBooking': '确认预约',
-    'booking.bookingInProgress': '预约中...',
     'booking.success': '预约成功！',
     'booking.error': '预约失败，请重试',
     'booking.selectDoctorFirst': '请先选择医生',
@@ -829,15 +787,6 @@ const translations: Record<Language, Record<string, string>> = {
     'booking.doctorSpecialty': '专长',
     'booking.doctorExperience': '经验',
     'booking.years': '年',
-    'booking.professionalCare': '专业护理',
-    'booking.symptoms': '症状 / 疑虑',
-    'booking.symptomsPlaceholder': '请描述您的症状、疑虑或预约原因...',
-    'booking.summary': '预约摘要',
-    'booking.doctor': '医生',
-    'booking.treatment': '治疗',
-    'booking.date': '日期',
-    'booking.time': '时间',
-    'Back to Dashboard': '返回仪表板',
 
     // Treatment Types
     'treatment.CLEANING': '洁牙',
@@ -849,10 +798,6 @@ const translations: Record<Language, Record<string, string>> = {
     'treatment.AI_DIAGNOSIS': 'AI诊断',
     'treatment.CHECKUP': '常规检查',
     'treatment.CONSULTATION': '咨询',
-    'treatment.videoCall': '视频咨询',
-    'treatment.cleaning': '洁牙',
-    'treatment.orthodontic': '正畸治疗',
-    'treatment.aiDiagnosis': 'AI诊断',
 
     // Form Fields
     'form.name': '姓名',
@@ -1041,8 +986,6 @@ const translations: Record<Language, Record<string, string>> = {
     'status.rescheduled': '已改期',
     'status.noShow': '未出席',
     'status.inProgress': '进行中',
-    'status.booked': '已预约',
-    'status.past': '已过时',
 
     // Action Buttons
     'action.save': '保存',

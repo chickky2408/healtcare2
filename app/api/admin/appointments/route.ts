@@ -15,24 +15,57 @@
 
 
 // app/api/admin/appointments/route.ts
-import { NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+// import { NextResponse } from 'next/server'
+// import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+// const prisma = new PrismaClient()
+
+// export async function GET() {
+//   try {
+//     const appointments = await prisma.appointment.findMany({
+//       include: {
+//         doctor: true,
+        
+//       },
+//       orderBy: { date: 'desc' },
+//     })
+
+//     return NextResponse.json(appointments)
+//   } catch (error) {
+//     console.error('Error fetching appointments:', error)
+//     return NextResponse.json({ error: 'Failed to load appointments' }, { status: 500 })
+//   }
+// }
+
+
+//8 Oct 2025
+
+// app/api/admin/appointments/route.ts
+import { NextResponse } from 'next/server'
+import prisma from '@/lib/db'
 
 export async function GET() {
   try {
     const appointments = await prisma.appointment.findMany({
       include: {
-        doctor: true,
-        
+        doctor: {
+          select: {
+            name: true,
+            specialty: true
+          }
+        }
       },
-      orderBy: { date: 'desc' },
+      orderBy: {
+        createdAt: 'desc'
+      }
     })
-
+    
     return NextResponse.json(appointments)
   } catch (error) {
     console.error('Error fetching appointments:', error)
-    return NextResponse.json({ error: 'Failed to load appointments' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Failed to fetch appointments' },
+      { status: 500 }
+    )
   }
 }
