@@ -1,20 +1,73 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin-arm64"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
-// ========== ENUMS ==========
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  password      String
+  name          String
+  // role      Role     @default(USER)
+  createdAt     DateTime       @default(now())
+  diagnoses     Diagnosis[]
+  notifications Notification[]
+}
 
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-  PREFER_NOT_TO_SAY
+model Doctor {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  password     String
+  name         String
+  specialty    String
+  createdAt    DateTime       @default(now())
+  availability Availability[] // เวลาว่างของหมอแต่ละคน
+  appointments Appointment[] // การจองของหมอ
+  meetLink     String?
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+}
+
+model Availability {
+  id        String     @id @default(cuid())
+  doctorId  String
+  doctor    Doctor     @relation(fields: [doctorId], references: [id])
+  date      DateTime
+  timeSlots TimeSlot[] // ใช้ model แทน array
+}
+
+model TimeSlot {
+  id             String       @id @default(cuid())
+  time           String
+  availabilityId String
+  availability   Availability @relation(fields: [availabilityId], references: [id])
+}
+
+//appointment
+
+model Appointment {
+  id           String        @id @default(cuid())
+  doctorId     String
+  doctor       Doctor        @relation(fields: [doctorId], references: [id])
+  patientName  String
+  patientEmail String
+  date         DateTime
+  time         String
+  type         TreatmentType
+  symptoms     String
+  createdAt    DateTime      @default(now())
+  diagnoses    Diagnosis[]
+  messages     Message[]     @relation("AppointmentMessages")
 }
 
 enum TreatmentType {
@@ -25,148 +78,7 @@ enum TreatmentType {
   SURGERY
 }
 
-enum PaymentStatus {
-  PENDING
-  PAID
-  SUCCESSFUL
-  REJECTED
-  REFUNDED
-}
-
-// ========== USER MODEL (Updated) ==========
-
-model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  password      String
-  name          String
-  createdAt     DateTime       @default(now())
-  
-  // ข้อมูลส่วนตัวเพิ่มเติม
-  username      String?        @unique
-  gender        Gender?
-  dateOfBirth   DateTime?
-  age           Int?
-  phoneNumber   String?        @unique
-  weight        Float?
-  height        Float?
-  profileImage  String?
-  
-  // ข้อมูลทางการแพทย์ (เดิม)
-  allergies     String?
-  image         String?
-  phone         String?
-  
-  // ข้อมูลทางการแพทย์ (ใหม่)
-  chronicDiseases    String[]      @default([])
-  foodAllergies      String[]      @default([])
-  drugAllergies      String[]      @default([])
-  currentSymptoms    String?
-
-  // ข้อมูลทางทันตกรรม (Dental History)
-  hasDentalSurgery   Boolean?      @default(false)
-  dentalSurgeryDetails String?
-  previousDentalDiseases String?
-  dentalTreatmentHistory String?
-
-  // Relations
-  address            Address?
-  surgeryHistory     SurgeryHistory[]
-  diagnoses          Diagnosis[]
-  notifications      Notification[]
-  passwordResetTokens PasswordResetToken[]
-}
-
-// ========== ADDRESS MODEL (New) ==========
-
-model Address {
-  id          String  @id @default(cuid())
-  userId      String  @unique
-  street      String?
-  district    String?
-  province    String?
-  postalCode  String?
-  fullAddress String?
-  
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// ========== SURGERY HISTORY MODEL (New) ==========
-
-model SurgeryHistory {
-  id           String    @id @default(cuid())
-  userId       String
-  surgeryType  String
-  surgeryDate  DateTime?
-  hospital     String?
-  notes        String?
-  createdAt    DateTime  @default(now())
-  
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// ========== DOCTOR MODEL (No Changes) ==========
-
-model Doctor {
-  id           String         @id @default(cuid())
-  email        String         @unique
-  password     String
-  name         String
-  specialty    String
-  createdAt    DateTime       @default(now())
-  meetLink     String?
-  appointments Appointment[]
-  availability Availability[]
-  phone        String?
-  image        String?
-}
-
-// ========== ADMIN MODEL (No Changes) ==========
-
-model Admin {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  createdAt DateTime @default(now())
-}
-
-// ========== AVAILABILITY & TIMESLOT (No Changes) ==========
-
-model Availability {
-  id        String     @id @default(cuid())
-  doctorId  String
-  date      DateTime
-  doctor    Doctor     @relation(fields: [doctorId], references: [id])
-  timeSlots TimeSlot[]
-}
-
-model TimeSlot {
-  id             String       @id @default(cuid())
-  time           String
-  availabilityId String
-  availability   Availability @relation(fields: [availabilityId], references: [id])
-}
-
-// ========== APPOINTMENT (No Changes) ==========
-
-model Appointment {
-  id           String        @id @default(cuid())
-  doctorId     String
-  patientName  String
-  patientEmail String
-  date         DateTime
-  time         String
-  type         TreatmentType
-  symptoms     String
-  createdAt    DateTime      @default(now())
-  doctor       Doctor        @relation(fields: [doctorId], references: [id])
-  diagnoses    Diagnosis[]
-  messages     Message[]     @relation("AppointmentMessages")
-  payment      Payment?
-}
-
-// ========== DIAGNOSIS (No Changes) ==========
+// AIDiagnosis
 
 model Diagnosis {
   id            String       @id @default(uuid())
@@ -175,14 +87,10 @@ model Diagnosis {
   confidence    Float
   createdAt     DateTime     @default(now())
   userId        String
-  appointmentId String?
-  explanation   String?
-  findings      String?
-  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
   user          User         @relation(fields: [userId], references: [id])
+  appointmentId String? // optional
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
 }
-
-// ========== NOTIFICATION (No Changes) ==========
 
 model Notification {
   id        String   @id @default(cuid())
@@ -194,51 +102,11 @@ model Notification {
   user      User     @relation(fields: [userId], references: [id])
 }
 
-// ========== MESSAGE (No Changes) ==========
-
 model Message {
   id            String      @id @default(cuid())
   text          String
   timestamp     DateTime    @default(now())
   senderId      String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], name: "AppointmentMessages")
   appointmentId String
-  appointment   Appointment @relation("AppointmentMessages", fields: [appointmentId], references: [id])
-}
-
-// ========== PAYMENT MODEL ==========
-
-model Payment {
-  id              String        @id @default(cuid())
-  appointmentId   String        @unique
-  amount          Float
-  status          PaymentStatus @default(PENDING)
-  qrCodeData      String?       // PromptPay QR Code data
-  slipImagePath   String?       // Path to uploaded payment slip
-  paidAt          DateTime?     // When user uploaded slip
-  verifiedAt      DateTime?     // When admin verified
-  verifiedBy      String?       // Admin who verified
-  rejectionReason String?       // Reason if rejected
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  appointment     Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
-
-  @@index([status])
-  @@index([appointmentId])
-}
-
-// ========== PASSWORD RESET TOKEN MODEL ==========
-
-model PasswordResetToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  used      Boolean  @default(false)
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([token])
-  @@index([userId])
 }

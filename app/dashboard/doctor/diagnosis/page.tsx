@@ -60,8 +60,6 @@
 
 import useSWR from 'swr'
 import axios from 'axios'
-import { useState } from 'react'
-// import Image from 'next/image'
 
 type DiagnosisType = {
   id: string
@@ -129,10 +127,3 @@ export default function DoctorDiagnosisPage() {
     </div>
   )
 }
-
-
-
-
-// 7 Oct 2025
-
-

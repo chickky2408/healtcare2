@@ -1,31 +1,14 @@
-// import type { NextConfig } from "next";
-
-// const nextConfig: NextConfig = {
-//   images: {
-//     domains: ['images.unsplash.com'], // ✅ เพิ่ม domain ที่ใช้โหลดภาพ
-//   },
-// }
-
-
-// export default nextConfig;
-
-
-
-
-// version deploy 
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com'], // ✅ เพิ่ม domain ที่ใช้โหลดภาพ
   },
-};
+}
+
 
 export default nextConfig;
+
+
+
+

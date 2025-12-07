@@ -8,6 +8,7 @@ import {
   Heart, AlertCircle, Scissors, FileText, ArrowLeft, Shield,
   Clock, MapPin
 } from 'lucide-react'
+import { useApp } from '@/app/contexts/AppContext'
 
 interface UserProfile {
   id: string
@@ -30,6 +31,7 @@ interface UserProfile {
 }
 
 export default function UserInformationPage() {
+  const { t } = useApp()
   const router = useRouter()
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
@@ -154,7 +156,7 @@ export default function UserInformationPage() {
 
   const formatGender = (gender?: string) => {
     if (!gender) return 'Not specified'
-    return gender.charAt(0).toUpperCase() + gender.slice(1).toLowerCase().replace('_', ' ')
+    return t(`gender.${gender}`)
   }
 
   return (

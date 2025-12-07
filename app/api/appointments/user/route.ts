@@ -39,7 +39,6 @@ export async function POST(req: Request) {
     },
     include: {
       doctor: true, // ดึงข้อมูลหมอมาด้วย
-      payment: true, // ดึงข้อมูลการชำระเงินมาด้วย
     },
     orderBy: {
       date: 'asc',
@@ -59,15 +58,8 @@ export async function POST(req: Request) {
         id: a.doctor.id,
         name: a.doctor.name,
         specialty: a.doctor.specialty,
-      },
-      payment: a.payment ? {
-        id: a.payment.id,
-        status: a.payment.status,
-        amount: a.payment.amount,
-        slipImagePath: a.payment.slipImagePath,
-        paidAt: a.payment.paidAt,
-        verifiedAt: a.payment.verifiedAt,
-      } : null,
+
+      }
     })),
   })
 }
