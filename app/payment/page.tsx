@@ -15,6 +15,7 @@ import {
   User,
   Hash
 } from 'lucide-react'
+import { useApp } from '../contexts/AppContext'
 
 type Payment = {
   id: string
@@ -40,6 +41,7 @@ type BankDetails = {
 }
 
 function PaymentPageContent() {
+  const { t } = useApp()
   const router = useRouter()
   const searchParams = useSearchParams()
   const appointmentId = searchParams.get('appointmentId')
@@ -232,7 +234,7 @@ function PaymentPageContent() {
               </div>
               <div>
                 <p className="text-sm text-blue-300">Treatment Type</p>
-                <p className="font-semibold">{payment.appointment.type.replace('_', ' ')}</p>
+                <p className="font-semibold">{t(`treatment.${payment.appointment.type}`)}</p>
               </div>
               <div>
                 <p className="text-sm text-blue-300">Date & Time</p>
