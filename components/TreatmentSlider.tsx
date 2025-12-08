@@ -47,12 +47,14 @@ export default function TreatmentSlider() {
             transition={{ duration: 0.6 }}
             className="absolute inset-0 flex flex-col md:flex-row bg-white shadow-xl rounded-xl overflow-hidden"
           >
-            <div className="w-full md:w-1/2 relative">
+            <div className="w-full md:w-1/2 relative min-h-[200px]">
               <Image
                 src={treatments[index].image}
                 alt={treatments[index].title}
                 fill
                 className="object-cover"
+                unoptimized
+                priority
               />
             </div>
             <div className="w-full md:w-1/2 p-8 flex flex-col justify-center items-center">

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { Brain, Upload, Image as ImageIcon, ArrowLeft, CheckCircle, AlertCircle } from 'lucide-react'
+import { Brain, Upload, Image as ImageIcon, ArrowLeft, CheckCircle, AlertCircle, Camera } from 'lucide-react'
 import { useApp } from '../contexts/AppContext'
 
 type AnalysisResult = {
@@ -27,6 +27,10 @@ export default function AiAnalysisPage() {
   const [preview, setPreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<Msg>(null)
+  const [showCamera, setShowCamera] = useState(false)
+  const [stream, setStream] = useState<MediaStream | null>(null)
+  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null)
+  const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -35,7 +39,7 @@ export default function AiAnalysisPage() {
       router.push('/login')
       return
     }
-    
+
     const checkEligibility = async () => {
       const res = await fetch(`/api/user/appointments?userEmail=${user.email}`)
       const data = await res.json()
@@ -46,9 +50,67 @@ export default function AiAnalysisPage() {
         router.push('/dashboard/user')
       }
     }
-    
+
     checkEligibility()
   }, [router])
+
+  // Start camera
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' } // Use back camera on mobile
+      })
+      setStream(mediaStream)
+      if (videoRef) {
+        videoRef.srcObject = mediaStream
+      }
+      setShowCamera(true)
+    } catch (err) {
+      alert('Cannot access camera. Please allow camera permission.')
+      console.error(err)
+    }
+  }
+
+  // Stop camera
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop())
+      setStream(null)
+    }
+    setShowCamera(false)
+  }
+
+  // Capture photo from camera
+  const capturePhoto = () => {
+    if (!videoRef || !canvasRef) return
+
+    const context = canvasRef.getContext('2d')
+    if (!context) return
+
+    canvasRef.width = videoRef.videoWidth
+    canvasRef.height = videoRef.videoHeight
+    context.drawImage(videoRef, 0, 0)
+
+    canvasRef.toBlob((blob) => {
+      if (blob) {
+        const file = new File([blob], `camera-${Date.now()}.jpg`, { type: 'image/jpeg' })
+        setImages([file])
+        setPreview(URL.createObjectURL(file))
+        setResult(null)
+        setMsg(null)
+        stopCamera()
+      }
+    }, 'image/jpeg', 0.9)
+  }
+
+  // Cleanup camera on unmount
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [stream])
 
   const handleSubmit = async () => {
     console.log('🔵 handleSubmit called!', { images })
@@ -225,10 +287,66 @@ export default function AiAnalysisPage() {
                     disabled={loading}
                   />
                 </label>
+
+                <button
+                  onClick={startCamera}
+                  disabled={loading}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-green-100 dark:bg-green-500/20 hover:bg-green-200 dark:hover:bg-green-500/30 border border-green-300 dark:border-green-400/30 text-green-900 dark:text-green-100 transition font-medium disabled:opacity-50"
+                >
+                  <Camera className="w-5 h-5" />
+                  {t('Take Photo')}
+                </button>
+
                 <span className="text-gray-700 dark:text-blue-100 text-sm">
                   {images[0]?.name || t('No File Chosen')}
                 </span>
               </motion.div>
+
+              {/* Camera Modal */}
+              {showCamera && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+                >
+                  <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-2xl w-full">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">Take a Photo</h3>
+                      <button
+                        onClick={stopCamera}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="relative bg-black rounded-2xl overflow-hidden mb-4">
+                      <video
+                        ref={(ref) => {
+                          setVideoRef(ref)
+                          if (ref && stream) {
+                            ref.srcObject = stream
+                            ref.play()
+                          }
+                        }}
+                        autoPlay
+                        playsInline
+                        className="w-full h-auto"
+                      />
+                    </div>
+
+                    <canvas ref={setCanvasRef} className="hidden" />
+
+                    <button
+                      onClick={capturePhoto}
+                      className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-3 px-6 rounded-2xl font-bold flex items-center justify-center gap-2"
+                    >
+                      <Camera className="w-5 h-5" />
+                      Capture Photo
+                    </button>
+                  </div>
+                </motion.div>
+              )}
 
               <div className="grid md:grid-cols-2 gap-8">
                 <motion.div variants={item} className="bg-gray-50 dark:bg-white/10 rounded-2xl p-4 border border-gray-200 dark:border-white/20">
