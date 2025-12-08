@@ -669,8 +669,8 @@ export default function HomePage() {
           </motion.div>
           
           <nav className="hidden md:flex items-center gap-8 text-gray-700 text-sm font-medium">
-            {['About Us', 'Services', 'Location', 'Contact'].map((item, index) => (
-              <motion.a 
+            {['About Our Clinic', 'Our Services', 'Location', 'Contact Us'].map((item, index) => (
+              <motion.a
                 key={item}
                 href={`#${item.toLowerCase().replace(' ', '')}`}
                 className="relative hover:text-blue-600 transition-colors duration-300"
@@ -682,7 +682,7 @@ export default function HomePage() {
                 {item}
               </motion.a>
             ))}
-            
+
             <motion.button
               onClick={() => router.push('/login')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 font-medium"
@@ -692,7 +692,7 @@ export default function HomePage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5 }}
             >
-              Book Appointment
+              Schedule Appointment
             </motion.button>
           </nav>
 

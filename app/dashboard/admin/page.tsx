@@ -1386,8 +1386,8 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">🏥 Admin Dashboard</h1>
-          <p className="text-gray-600">Manage users and doctors in your healthcare system</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">🏥 Administration Dashboard</h1>
+          <p className="text-gray-600">Manage users and medical professionals in your healthcare system</p>
         </div>
 
         <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
@@ -1427,13 +1427,13 @@ export default function AdminDashboard() {
         {activeTab === 'users' && (
           <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">👥 User Management</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800">👥 Patient Management</h2>
               <button
                 onClick={() => openModal('addUser')}
                 className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all w-full sm:w-auto justify-center shadow-md hover:shadow-lg"
               >
                 <UserPlus className="w-5 h-5" />
-                Add User
+                Add New Patient
               </button>
             </div>
 
@@ -1450,7 +1450,7 @@ export default function AdminDashboard() {
                   {users.length === 0 ? (
                     <tr>
                       <td colSpan={3} className="px-6 py-8 text-center text-gray-500">
-                        No users found. Click "Add User" to create one.
+                        No patients found. Click "Add New Patient" to register a new patient.
                       </td>
                     </tr>
                   ) : (
@@ -1493,13 +1493,13 @@ export default function AdminDashboard() {
         {activeTab === 'doctors' && (
           <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">👨‍⚕️ Doctor Management</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800">👨‍⚕️ Medical Professional Management</h2>
               <button
                 onClick={() => openModal('addDoctor')}
                 className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-all w-full sm:w-auto justify-center shadow-md hover:shadow-lg"
               >
                 <UserPlus className="w-5 h-5" />
-                Add Doctor
+                Add New Doctor
               </button>
             </div>
 

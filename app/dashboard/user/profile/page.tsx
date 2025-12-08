@@ -766,7 +766,7 @@ export default function UserProfilePage() {
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter your full name"
+                    placeholder="Please enter your full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
@@ -782,7 +782,7 @@ export default function UserProfilePage() {
                   </label>
                   <input
                     type="tel"
-                    placeholder="Enter your phone number"
+                    placeholder="Please enter your phone number"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="w-full rounded-2xl px-4 py-3 bg-white/10 border border-white/20 text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-blue-400/50 transition"
@@ -796,7 +796,7 @@ export default function UserProfilePage() {
                     Allergy History
                   </label>
                   <textarea
-                    placeholder="List any drug allergies or medical conditions"
+                    placeholder="Please list any drug allergies or medical conditions you may have"
                     value={allergies}
                     onChange={(e) => setAllergies(e.target.value)}
                     rows={4}

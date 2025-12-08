@@ -198,7 +198,10 @@ export async function GET(
   try {
     const appointment = await prisma.appointment.findUnique({
       where: { id: appointmentId },
-      include: { doctor: true },
+      include: {
+        doctor: true,
+        payment: true
+      },
     })
 
     if (!appointment) {

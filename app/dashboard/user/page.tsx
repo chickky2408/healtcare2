@@ -1529,7 +1529,7 @@ export default function UserDashboardPage() {
     if (!payment) {
       return (
         <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-          ⏳ ยังไม่ชำระ
+          ยังไม่ชำระ
         </span>
       );
     }
@@ -1538,25 +1538,25 @@ export default function UserDashboardPage() {
       case 'PENDING':
         return (
           <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            ⏳ Pending Payment
+            Pending Payment
           </span>
         );
       case 'PAID':
         return (
           <span className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            🕒 Under Review
+            Under Review
           </span>
         );
       case 'SUCCESSFUL':
         return (
           <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            ✅ Paid Successfully
+            Paid Successfully
           </span>
         );
       case 'REJECTED':
         return (
           <span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm px-3 py-1.5 rounded-full font-medium flex items-center gap-1">
-            ❌ Rejected
+            Rejected
           </span>
         );
       case 'REFUNDED':
@@ -1600,20 +1600,20 @@ export default function UserDashboardPage() {
 
       {/* Sidebar - Always visible on desktop */}
       <aside className={`
-        fixed md:static inset-y-0 left-0 z-50 w-72
+        fixed md:static inset-y-0 left-0 z-50 w-full sm:w-80 md:w-72
         bg-white dark:bg-slate-800 shadow-2xl md:shadow-xl
         transform transition-all duration-300 ease-in-out
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         <div className="flex flex-col h-full">
           {/* Logo Header */}
-          <div className="p-6 border-b border-gray-100 dark:border-slate-700">
+          <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-slate-700">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-xl">H+</span>
                 </div>
-                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{t('common.healthcarePlus')}</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">{t('common.healthcarePlus')}</h2>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
@@ -1695,8 +1695,8 @@ export default function UserDashboardPage() {
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top Header */}
         <header className="bg-white dark:bg-slate-800 backdrop-blur-md shadow-sm sticky top-0 z-30 border-b border-gray-100 dark:border-slate-700">
-          <div className="flex items-center justify-between px-4 md:px-8 py-4">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between px-4 sm:px-6 md:px-8 py-3 sm:py-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
                 className="md:hidden text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
@@ -1704,10 +1704,10 @@ export default function UserDashboardPage() {
                 <Menu size={24} />
               </button>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
                   {t('dashboard.welcome')}, {user?.name?.split(' ')[0]}!
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{t('common.manage')}</p>
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">{t('common.manage')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -1817,7 +1817,7 @@ export default function UserDashboardPage() {
                       : 'bg-white dark:bg-slate-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-500'
                   }`}
                 >
-                  📅 {t('appointments.all')}
+                  {t('appointments.all')}
                 </button>
                 <button
                   onClick={() => setViewMode('payments')}
@@ -1827,7 +1827,7 @@ export default function UserDashboardPage() {
                       : 'bg-white dark:bg-slate-600 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-500'
                   }`}
                 >
-                  💳 {t('dashboard.paymentHistory')}
+                  {t('dashboard.paymentHistory')}
                 </button>
               </div>
             </div>
@@ -1918,13 +1918,6 @@ export default function UserDashboardPage() {
                             <CreditCard size={18} />
                             <span className="hidden sm:inline">{t('appointments.payment')}</span>
                           </button>
-                          <button
-                            onClick={() => router.push(`/dashboard/user/chat/${a.doctor.id}`)}
-                            className="flex items-center gap-2 bg-cyan-500 dark:bg-cyan-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-cyan-600 dark:hover:bg-cyan-500 transition-colors shadow-sm hover:shadow-md"
-                          >
-                            <MessageCircle size={18} />
-                            <span className="hidden sm:inline">{t('appointments.chat')}</span>
-                          </button>
                         </div>
                       </div>
                     </motion.div>
@@ -2008,7 +2001,7 @@ export default function UserDashboardPage() {
                                 onClick={() => window.open(a.payment!.slipImagePath!, '_blank')}
                                 className="flex items-center gap-2 bg-purple-500 dark:bg-purple-700 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-purple-600 dark:hover:bg-purple-600 transition-colors shadow-sm hover:shadow-md"
                               >
-                                📄 View Slip
+                                View Slip
                               </button>
                             )}
                             <button

@@ -1489,9 +1489,9 @@ export default function AppointmentsPage() {
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="pl-12 pr-8 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 backdrop-blur-sm appearance-none"
                 >
-                  <option value="all" className="bg-gray-800">All</option>
-                  <option value="upcoming" className="bg-gray-800">Not Done (Soon)</option>
-                  <option value="past" className="bg-gray-800">Done (Finished)</option>
+                  <option value="all" className="bg-gray-800">All Appointments</option>
+                  <option value="upcoming" className="bg-gray-800">Upcoming Appointments</option>
+                  <option value="past" className="bg-gray-800">Past Appointments</option>
                 </select>
               </div>
             </div>

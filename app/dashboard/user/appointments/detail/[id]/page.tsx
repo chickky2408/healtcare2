@@ -120,11 +120,15 @@ export default function AppointmentDetailPage() {
     doctor: {
       name: string
       specialty: string
+      meetLink?: string
     }
     patientName: string
     patientEmail: string
     type: 'VIDEO_CALL' | 'AI_DIAGNOSIS' | 'CLEANING' | 'ORTHODONTIC' | string
     symptoms?: string
+    payment?: {
+      status: 'PENDING' | 'PAID' | 'SUCCESSFUL' | 'REJECTED' | 'REFUNDED'
+    }
   }
 
   const [appointment, setAppointment] = useState<Appointment | null>(null)
@@ -424,13 +428,13 @@ export default function AppointmentDetailPage() {
               <div className="mt-8 space-y-3">
                 {appointment.type === 'VIDEO_CALL' && (
                   <motion.button
-                    onClick={() => router.push('/telemedicine')}
+                    onClick={() => router.push('/dashboard/user/telemedicine')}
                     className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3"
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     <Video className="w-6 h-6" />
-                    Join Video Call
+                    Go to Video Consultation
                   </motion.button>
                 )}
 

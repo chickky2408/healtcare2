@@ -59,6 +59,7 @@ export async function POST(req: Request) {
         id: a.doctor.id,
         name: a.doctor.name,
         specialty: a.doctor.specialty,
+        meetLink: a.doctor.meetLink,
       },
       payment: a.payment ? {
         id: a.payment.id,

@@ -1547,10 +1547,10 @@ export default function BookingPage() {
   }
 
   const treatmentOptions = [
-    { value: 'VIDEO_CALL', label: t('treatment.videoCall'), icon: Video, color: 'from-green-500 to-emerald-500' },
-    { value: 'CLEANING', label: t('treatment.cleaning'), icon: Sparkles, color: 'from-blue-500 to-cyan-500' },
-    { value: 'ORTHODONTIC', label: t('treatment.orthodontic'), icon: UserCheck, color: 'from-indigo-500 to-blue-500' },
-    { value: 'AI_DIAGNOSIS', label: t('treatment.aiDiagnosis'), icon: Heart, color: 'from-orange-500 to-red-500' }
+    { value: 'VIDEO_CALL', label: t('Video Call'), icon: Video, color: 'from-green-500 to-emerald-500' },
+    { value: 'CLEANING', label: t('Cleaning'), icon: Sparkles, color: 'from-blue-500 to-cyan-500' },
+    { value: 'ORTHODONTIC', label: t('Orthodontic'), icon: UserCheck, color: 'from-indigo-500 to-blue-500' },
+    { value: 'AI_DIAGNOSIS', label: t('AI Diagnosis'), icon: Heart, color: 'from-orange-500 to-red-500' }
   ]
 
   const containerVariants = {
@@ -1686,7 +1686,7 @@ export default function BookingPage() {
               {t('booking.title')}
             </h1>
             <p className="text-xl text-gray-700 dark:text-blue-100 max-w-2xl mx-auto">
-              {t('booking.subtitle')}
+              {t('')}
             </p>
           </motion.div>
 
@@ -1716,7 +1716,7 @@ export default function BookingPage() {
                     className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20"
                     required
                   >
-                    <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">-- {t('booking.selectDoctorPlaceholder')} --</option>
+                    <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">-- {t('Select Doctor')} --</option>
                     {doctors.map((doctor) => (
                       <option key={doctor.id} value={doctor.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                         {doctor.name} - {doctor.specialty}
@@ -1750,7 +1750,7 @@ export default function BookingPage() {
                         </div>
                         <div className="text-left">
                           <h3 className="font-bold text-gray-900 dark:text-white">{treatment.label}</h3>
-                          <p className="text-sm text-gray-600 dark:text-blue-200">{t('booking.professionalCare')}</p>
+                          <p className="text-sm text-gray-600 dark:text-blue-200">{t('Professional Consultant')}</p>
                         </div>
                       </motion.button>
                     ))}
@@ -1785,7 +1785,7 @@ export default function BookingPage() {
                       className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20"
                       required
                     >
-                      <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">-- {t('booking.selectTimePlaceholder')} --</option>
+                      <option value="" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">-- {t('Select Time')} --</option>
                       {generateTimeSlots().map((timeSlot) => {
                         const isBooked = !availableTimes.includes(timeSlot)
                         const isPast = date === todayDate && isPastDateTime(date, timeSlot)
@@ -1809,7 +1809,7 @@ export default function BookingPage() {
                 <motion.div variants={itemVariants} className="space-y-3">
                   <label className="flex items-center gap-3 text-gray-900 dark:text-white font-bold text-lg">
                     <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-300" />
-                    {t('booking.symptoms')}
+                    {t('Symptoms')}
                     <span className="text-sm text-gray-600 dark:text-blue-200 font-normal">({t('form.optional')})</span>
                   </label>
                   <textarea
@@ -1817,7 +1817,7 @@ export default function BookingPage() {
                     onChange={(e) => setSymptoms(e.target.value)}
                     className="w-full p-4 bg-white dark:bg-white/10 border border-gray-300 dark:border-white/20 rounded-2xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent backdrop-blur-sm transition-all duration-300 hover:bg-gray-50 dark:hover:bg-white/20 resize-none"
                     rows={4}
-                    placeholder={t('booking.symptomsPlaceholder')}
+                    placeholder={t('Tell me , If you have any symtoms... ')}
                   />
                 </motion.div>
 
@@ -1833,7 +1833,7 @@ export default function BookingPage() {
                     </h3>
                     <div className="space-y-2 text-gray-700 dark:text-blue-100">
                       {selectedDoctorData && (
-                        <p><strong>{t('booking.doctor')}:</strong> Dr. {selectedDoctorData.name} ({selectedDoctorData.specialty})</p>
+                        <p><strong>{t('booking.doctor')}:</strong>  {selectedDoctorData.name} ({selectedDoctorData.specialty})</p>
                       )}
                       {selectedTreatment && (
                         <p><strong>{t('booking.treatment')}:</strong> {selectedTreatment.label}</p>

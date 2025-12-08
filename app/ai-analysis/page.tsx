@@ -181,13 +181,13 @@ export default function AiAnalysisPage() {
 
             <h1 className="text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-2">{t('ai.title')}</h1>
             <p className="text-gray-700 dark:text-blue-100 max-w-2xl mx-auto">
-              {t('ai.subtitle')}
+              {t('')}
             </p>
 
             <div className="mt-4 max-w-3xl mx-auto bg-yellow-100 dark:bg-yellow-500/10 border border-yellow-400 dark:border-yellow-400/30 rounded-xl p-3 text-yellow-900 dark:text-yellow-100 text-sm flex items-start gap-2">
               <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
               <p className="text-left">
-                <strong>{t('ai.disclaimer')}:</strong> {t('ai.disclaimerText')}
+                <strong>{t('ai.disclaimer')}:</strong> {t('')}
               </p>
             </div>
           </motion.div>
@@ -216,7 +216,7 @@ export default function AiAnalysisPage() {
               <motion.div variants={item} className="flex flex-col sm:flex-row gap-4 items-center mb-8">
                 <label className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-blue-100 dark:bg-white/10 hover:bg-blue-200 dark:hover:bg-white/20 border border-blue-300 dark:border-white/20 text-blue-900 dark:text-white cursor-pointer transition font-medium">
                   <Upload className="w-5 h-5" />
-                  {t('ai.chooseImage')}
+                  {t('Choose Image')}
                   <input
                     type="file"
                     accept="image/*"
@@ -226,7 +226,7 @@ export default function AiAnalysisPage() {
                   />
                 </label>
                 <span className="text-gray-700 dark:text-blue-100 text-sm">
-                  {images[0]?.name || t('ai.noFileChosen')}
+                  {images[0]?.name || t('No File Chosen')}
                 </span>
               </motion.div>
 
@@ -245,7 +245,7 @@ export default function AiAnalysisPage() {
                   ) : (
                     <div className="h-80 flex flex-col items-center justify-center text-gray-500 dark:text-blue-200">
                       <ImageIcon className="w-16 h-16 mb-4" />
-                      <span className="text-sm">{t('ai.imagePreview')}</span>
+                      <span className="text-sm">{t('Image Preview')}</span>
                     </div>
                   )}
                 </motion.div>
@@ -257,19 +257,19 @@ export default function AiAnalysisPage() {
                     className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-bold text-lg text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg transition"
                   >
                     <Brain className="w-5 h-5" />
-                    {loading ? t('ai.analyzing') : t('ai.analyzeButton')}
+                    {loading ? t('ai.analyzing') : t('Analyze Button')}
                   </button>
 
                   {result && (
                     <div className="bg-blue-50 dark:bg-white/10 border border-blue-200 dark:border-white/20 rounded-2xl p-6 text-gray-900 dark:text-white">
                       <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
                         <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                        {t('ai.analysisResult')}
+                        {t('Analysis Result')}
                       </h2>
 
                       <div className="space-y-3">
                         <div>
-                          <p className="text-gray-600 dark:text-blue-200 text-sm">{t('ai.diagnosis')}</p>
+                          <p className="text-gray-600 dark:text-blue-200 text-sm">{t('AI Diagnosis')}</p>
                           <p className="text-lg font-semibold">{result.label.replace(/_/g, ' ')}</p>
                         </div>
 
@@ -302,7 +302,7 @@ export default function AiAnalysisPage() {
 
                         {result.explanation && (
                           <div>
-                            <p className="text-gray-600 dark:text-blue-200 text-sm mb-2">{t('ai.explanation')}</p>
+                            <p className="text-gray-600 dark:text-blue-200 text-sm mb-2">{t('Explanation')}</p>
                             <p className="text-sm leading-relaxed text-gray-700 dark:text-blue-50/90">
                               {result.explanation}
                             </p>

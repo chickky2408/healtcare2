@@ -289,6 +289,9 @@ type Appointment = {
     specialty: string
     meetLink?: string
   }
+  payment?: {
+    status: 'PENDING' | 'PAID' | 'SUCCESSFUL' | 'REJECTED' | 'REFUNDED'
+  }
 }
 
 type User = {
@@ -320,7 +323,7 @@ export default function TelemedicinePage() {
 
     setUser(parsed)
 
-    // Fetch telemedicine appointments
+    // Fetch telemedicine appointments with successful payment
     fetch('/api/appointments/user', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -362,26 +365,26 @@ export default function TelemedicinePage() {
     )
   }
 
-  // No appointment found
+  // No appointment found or payment not successful
   if (!appointment) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
         <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-12 text-center">
-          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <AlertCircle className="w-12 h-12 text-red-500" />
+          <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle className="w-12 h-12 text-orange-500" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">No Appointment Found</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">Video Consultation Not Available</h1>
           <p className="text-gray-600 mb-2 text-lg">
-            You need to book an appointment before accessing video call services.
+            You need to book a video call appointment and complete payment first.
           </p>
           <p className="text-gray-500 mb-8">
-            Please schedule a telemedicine appointment to use this feature.
+            Please schedule a telemedicine appointment and ensure your payment is successful to access this feature.
           </p>
-          <button 
-            onClick={() => router.push('/dashboard/user/appointments')}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 transform hover:scale-105"
+          <button
+            onClick={() => router.push('/booking')}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg"
           >
-            Book an Appointment
+            Book Video Call Appointment
           </button>
         </div>
       </div>
@@ -477,9 +480,9 @@ export default function TelemedicinePage() {
                 <Video className="w-12 h-12 text-blue-600" />
               </div>
               
-              <h1 className="text-4xl font-bold text-white mb-4">Ready for Your Video Call?</h1>
+              <h1 className="text-4xl font-bold text-white mb-4">Are You Ready for Your Video Consultation?</h1>
               <p className="text-blue-100 text-lg mb-10">
-                Join your consultation with {appointment.doctor.name}
+                Join your medical consultation with {appointment.doctor.name}
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
@@ -488,7 +491,7 @@ export default function TelemedicinePage() {
                   className="group w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2"
                 >
                   <Video className="w-5 h-5" />
-                  <span>Join Video Call</span>
+                  <span>Join Video Consultation</span>
                 </button>
 
                 <button
@@ -522,12 +525,12 @@ export default function TelemedicinePage() {
             <div className="w-24 h-24 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <AlertCircle className="w-12 h-12 text-orange-500" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Video Call Not Available</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mb-4">Video Consultation Not Available</h1>
             <p className="text-gray-600 mb-2">
-              The video call link for this appointment is not yet available.
+              The video consultation link for this appointment is not yet available.
             </p>
             <p className="text-gray-500">
-              Please check back closer to your appointment time or contact support.
+              Please check back closer to your appointment time or contact our support team.
             </p>
           </div>
         )}
@@ -535,8 +538,8 @@ export default function TelemedicinePage() {
         {/* Info Footer */}
         <div className="mt-6 bg-blue-50 rounded-2xl p-6 border border-blue-100">
           <p className="text-center text-gray-600 text-sm">
-            💡 <strong>Tip:</strong> Make sure your camera and microphone are working before joining the call. 
-            Please join the call a few minutes early to test your connection.
+            💡 <strong>Important Reminder:</strong> Please ensure your camera and microphone are working properly before joining the consultation.
+            We recommend joining a few minutes early to test your internet connection.
           </p>
         </div>
       </div>

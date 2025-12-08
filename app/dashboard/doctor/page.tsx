@@ -618,9 +618,9 @@ export default function DoctorDashboardPage() {
             transition={{ delay: 0.4 }}
           >
             {[
-              { icon: Calendar, label: 'Today\'s Appointments', value: appointments.length, color: 'blue' },
-              { icon: Users, label: 'Total Patients', value: new Set(appointments.map(a => a.patientEmail)).size, color: 'green' },
-              { icon: Activity, label: 'Active Now', value: notifications.filter(n => n.type === 'warning').length, color: 'purple' }
+              { icon: Calendar, label: 'Appointments Today', value: appointments.length, color: 'blue' },
+              { icon: Users, label: 'Total Number of Patients', value: new Set(appointments.map(a => a.patientEmail)).size, color: 'green' },
+              { icon: Activity, label: 'Currently Active', value: notifications.filter(n => n.type === 'warning').length, color: 'purple' }
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -654,7 +654,7 @@ export default function DoctorDashboardPage() {
             animate="visible"
           >
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-black text-gray-800">Today's Appointments</h2>
+              <h2 className="text-3xl font-black text-gray-800">Appointments for Today</h2>
             </div>
 
             {appointments.length === 0 ? (
@@ -665,9 +665,9 @@ export default function DoctorDashboardPage() {
                 <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Calendar className="w-12 h-12 text-blue-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">No appointments today</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-3">No Appointments Scheduled for Today</h3>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  You have a clear schedule today. Time to catch up on other tasks or take a well-deserved break!
+                  Your schedule is clear today. This is an excellent opportunity to catch up on administrative tasks or take a well-deserved break.
                 </p>
               </motion.div>
             ) : (

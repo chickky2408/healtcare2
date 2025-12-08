@@ -126,7 +126,7 @@ function PaymentPageContent() {
       const data = await res.json()
       if (res.ok) {
         setPayment(data.payment)
-        setMessage('✅ Payment successful! Waiting for admin verification')
+        setMessage('Payment successful! Waiting for admin verification')
         setSelectedFile(null)
         setPreviewUrl(null)
 
@@ -215,33 +215,33 @@ function PaymentPageContent() {
           {/* Title & Status */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">Payment</h1>
-              <p className="text-blue-200">Please complete payment to confirm your booking</p>
+              <h1 className="text-3xl font-bold text-white mb-2">Payment Processing</h1>
+              <p className="text-blue-200">Please complete the payment process to confirm your appointment</p>
             </div>
             {getStatusBadge(payment.status)}
           </div>
 
           {/* Appointment Info */}
           <div className="bg-white/10 rounded-2xl p-6 space-y-3">
-            <h2 className="text-xl font-bold text-white mb-4">Booking Details</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Appointment Information</h2>
             <div className="grid md:grid-cols-2 gap-4 text-blue-100">
               <div>
-                <p className="text-sm text-blue-300">Doctor</p>
-                <p className="font-semibold">Dr. {payment.appointment.doctor.name}</p>
+                <p className="text-sm text-blue-300">Attending Physician</p>
+                <p className="font-semibold"> {payment.appointment.doctor.name}</p>
                 <p className="text-sm">{payment.appointment.doctor.specialty}</p>
               </div>
               <div>
-                <p className="text-sm text-blue-300">Treatment Type</p>
+                <p className="text-sm text-blue-300">Treatment Category</p>
                 <p className="font-semibold">{payment.appointment.type.replace('_', ' ')}</p>
               </div>
               <div>
-                <p className="text-sm text-blue-300">Date & Time</p>
+                <p className="text-sm text-blue-300">Scheduled Date & Time</p>
                 <p className="font-semibold">
                   {new Date(payment.appointment.date).toLocaleDateString('en-US')} at {payment.appointment.time}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-blue-300">Amount</p>
+                <p className="text-sm text-blue-300">Payment Amount</p>
                 <p className="text-3xl font-bold text-white">
                   {payment.amount.toLocaleString('en-US')} ฿
                 </p>
@@ -251,12 +251,12 @@ function PaymentPageContent() {
 
           {/* Bank Details Section */}
           {payment.status === 'PENDING' && bankDetails && (
-            <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl p-6 border border-blue-400/30">
-              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                <Building2 className="w-6 h-6" />
-                Bank Account for Transfer
+            <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl p-4 sm:p-6 border border-blue-400/30">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <Building2 className="w-5 h-5 sm:w-6 sm:h-6" />
+                <span className="text-sm sm:text-base">Bank Account Information for Payment Transfer</span>
               </h2>
-              <div className="space-y-4 bg-white/10 rounded-xl p-6">
+              <div className="space-y-3 sm:space-y-4 bg-white/10 rounded-xl p-4 sm:p-6">
                 <div className="flex items-center gap-3">
                   <Building2 className="w-5 h-5 text-blue-300" />
                   <div>
@@ -281,7 +281,7 @@ function PaymentPageContent() {
               </div>
               <div className="mt-4 p-4 bg-yellow-500/20 border border-yellow-400/50 rounded-xl">
                 <p className="text-yellow-200 text-sm">
-                  💡 <strong>Instructions:</strong> Please transfer <span className="font-bold">{payment.amount.toLocaleString('en-US')} baht</span> and upload the payment slip below
+                  <strong>Payment Instructions:</strong> Please transfer <span className="font-bold">{payment.amount.toLocaleString('en-US')} baht</span> to the account above and upload your payment receipt below for verification
                 </p>
               </div>
             </div>
@@ -292,7 +292,7 @@ function PaymentPageContent() {
             <div className="bg-white/10 rounded-2xl p-6">
               <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                 <Upload className="w-6 h-6" />
-                Upload Payment Slip
+                Upload Payment Receipt
               </h2>
 
               <div className="space-y-4">
@@ -377,7 +377,7 @@ function PaymentPageContent() {
                 <div className="mt-4 p-4 bg-blue-500/20 border border-blue-400/50 rounded-xl text-center">
                   <Clock className="w-8 h-8 text-blue-300 mx-auto mb-2" />
                   <p className="text-blue-200">
-                    ✅ <strong>Slip Uploaded Successfully!</strong><br />
+                    <strong>Slip Uploaded Successfully!</strong><br />
                     Waiting for admin verification...
                   </p>
                 </div>
@@ -386,7 +386,7 @@ function PaymentPageContent() {
                 <div className="mt-4 p-4 bg-green-500/20 border border-green-400/50 rounded-xl text-center">
                   <CheckCircle className="w-8 h-8 text-green-300 mx-auto mb-2" />
                   <p className="text-green-200">
-                    🎉 <strong>Payment Successful!</strong><br />
+                    <strong>Payment Successful!</strong><br />
                     Your booking has been confirmed
                   </p>
                 </div>

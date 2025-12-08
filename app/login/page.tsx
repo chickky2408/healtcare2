@@ -787,12 +787,12 @@ export default function LoginPage() {
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-6 shadow-lg">
                   <User className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-3xl font-black text-white mb-2">Sign In</h2>
-                <p className="text-blue-100 font-medium">Access your healthcare dashboard</p>
+                <h2 className="text-3xl font-black text-white mb-2">User Login</h2>
+                <p className="text-blue-100 font-medium">Access your healthcare management system</p>
               </motion.div>
 
               {/* Login Form */}
-              <form onSubmit={handleLogin} className="space-y-6">
+              <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
                 {/* Email Field */}
                 <motion.div variants={itemVariants} className="relative">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -800,7 +800,7 @@ export default function LoginPage() {
                   </div>
                   <input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="Please enter your email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -815,7 +815,7 @@ export default function LoginPage() {
                   </div>
                   <input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder="Please enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -837,7 +837,7 @@ export default function LoginPage() {
                     className="text-sm text-blue-200 hover:text-white transition-colors duration-300 font-medium"
                     whileHover={{ x: 2 }}
                   >
-                    Forgot Password?
+                    Forgot your password?
                   </motion.a>
                 </motion.div>
 
@@ -858,10 +858,10 @@ export default function LoginPage() {
                           animate={{ rotate: 360 }}
                           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         />
-                        Signing in...
+                        Logging in...
                       </div>
                     ) : (
-                      'Sign In to Dashboard'
+                      'Login to System'
                     )}
                   </span>
                   <div className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

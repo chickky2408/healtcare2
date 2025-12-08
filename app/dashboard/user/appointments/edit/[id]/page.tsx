@@ -1220,7 +1220,7 @@ export default function EditAppointmentPage() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-lg">Current Appointment</h3>
-                  <p className="text-blue-200">Dr. {doctorName} - {doctorSpecialty}</p>
+                  <p className="text-blue-200">{doctorName} - {doctorSpecialty}</p>
                 </div>
               </div>
             </motion.div>
@@ -1333,7 +1333,7 @@ export default function EditAppointmentPage() {
                     </h3>
                     <div className="space-y-2 text-blue-100">
                       {doctorName && (
-                        <p><strong>Doctor:</strong> Dr. {doctorName} ({doctorSpecialty})</p>
+                        <p><strong>Doctor:</strong> {doctorName} ({doctorSpecialty})</p>
                       )}
                       {selectedTreatment && (
                         <p><strong>Treatment:</strong> {selectedTreatment.label}</p>
