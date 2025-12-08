@@ -169,7 +169,7 @@
 // }
 
 
-
+//good
 
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -194,24 +194,31 @@ export async function POST(request: NextRequest) {
 
     // ⚠️ CRITICAL: ต้องมี API Key!
     const API_KEY = process.env.ROBOFLOW_API_KEY;
-    
+
     if (!API_KEY) {
       console.error('❌ ROBOFLOW_API_KEY not found in environment variables');
       throw new Error('API Key not configured');
     }
 
-    // ✅ ต้องใส่ API Key ใน URL
-    const API_URL = `https://detect.roboflow.com/healthcare-713wl/2?api_key=${API_KEY}`;
-    
-    console.log('🔍 Sending request to Roboflow Inference API...');
-    console.log('📍 API URL:', API_URL.replace(API_KEY, '***')); // Hide key in log
+    // ✅ ใช้ Roboflow Hosted API (ไม่ใช่ detect.roboflow.com)
+    const API_URL = `https://api.roboflow.com/dental-clinic-wtzw1/healthcare-713wl/2`;
+
+    console.log('🔍 Sending request to Roboflow Hosted API...');
+    console.log('📍 API URL:', API_URL);
+    console.log('🔑 API Key exists:', !!API_KEY);
 
     const roboflowResponse = await fetch(API_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: base64Image,
+      body: JSON.stringify({
+        api_key: API_KEY,
+        image: {
+          type: 'base64',
+          value: base64Image
+        }
+      })
     });
 
     console.log('📊 Response status:', roboflowResponse.status);
@@ -279,6 +286,5 @@ export async function POST(request: NextRequest) {
   }
 }
 
+//good
 
-
-// comment
