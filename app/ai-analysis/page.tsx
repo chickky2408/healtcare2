@@ -41,12 +41,48 @@ export default function AiAnalysisPage() {
     }
 
     const checkEligibility = async () => {
-      const res = await fetch(`/api/user/appointments?userEmail=${user.email}`)
-      const data = await res.json()
-      if (Array.isArray(data) && data.length > 0) {
+      try {
+        // ดึง appointments ของ user
+        const res = await fetch('/api/appointments/user', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: user.email })
+        })
+
+        const data = await res.json()
+
+        if (!data.appointments || data.appointments.length === 0) {
+          alert('Please book an AI Diagnosis appointment first.')
+          router.push('/booking')
+          return
+        }
+
+        // ตรวจสอบว่ามี AI_DIAGNOSIS appointment ที่จ่ายเงินแล้วหรือไม่
+        const aiAppointments = data.appointments.filter(
+          (apt: any) => apt.type === 'AI_DIAGNOSIS'
+        )
+
+        if (aiAppointments.length === 0) {
+          alert('Please book an AI Diagnosis appointment first.')
+          router.push('/booking')
+          return
+        }
+
+        // ตรวจสอบว่ามีการจ่ายเงินสำเร็จแล้วหรือไม่
+        const paidAppointment = aiAppointments.find(
+          (apt: any) => apt.payment && apt.payment.status === 'SUCCESSFUL'
+        )
+
+        if (!paidAppointment) {
+          alert('Please complete payment for your AI Diagnosis appointment first.')
+          router.push('/dashboard/user/appointments')
+          return
+        }
+
         setAllowed(true)
-      } else {
-        alert('Please book an AI analysis appointment first.')
+      } catch (error) {
+        console.error('Error checking eligibility:', error)
+        alert('Error checking eligibility. Please try again.')
         router.push('/dashboard/user')
       }
     }

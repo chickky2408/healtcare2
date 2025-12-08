@@ -1594,7 +1594,7 @@ export default function AppointmentsPage() {
                         </div>
 
                         <div className="flex gap-3 flex-shrink-0">
-                          {!isPast && (
+                          {!isPast && appointment.payment?.status !== 'SUCCESSFUL' && (
                             <motion.button
                               onClick={() => router.push(`/dashboard/user/appointments/edit/${appointment.id}`)}
                               className="bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 hover:text-amber-100 px-4 py-3 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 border border-amber-400/30"

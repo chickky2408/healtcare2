@@ -171,129 +171,6 @@
 
 //work on production
 
-// import { NextRequest, NextResponse } from 'next/server';
-
-// // Production deployment with environment variables - v2
-// export async function POST(request: NextRequest) {
-//   try {
-//     const formData = await request.formData();
-//     // รองรับทั้ง 'image' และ 'images'
-//     const image = (formData.get('image') || formData.get('images')) as File;
-
-//     if (!image) {
-//       return NextResponse.json(
-//         { error: 'No image provided' },
-//         { status: 400 }
-//       );
-//     }
-
-//     // แปลงรูปเป็น base64
-//     const bytes = await image.arrayBuffer();
-//     const buffer = Buffer.from(bytes);
-//     const base64Image = buffer.toString('base64');
-
-//     // ⚠️ CRITICAL: ต้องมี API Key!
-//     const API_KEY = process.env.ROBOFLOW_API_KEY;
-
-//     if (!API_KEY) {
-//       console.error('❌ ROBOFLOW_API_KEY not found in environment variables');
-//       throw new Error('API Key not configured');
-//     }
-
-//     // ✅ ใช้ Roboflow Hosted API (ไม่ใช่ detect.roboflow.com)
-//     const API_URL = `https://api.roboflow.com/dental-clinic-wtzw1/healthcare-713wl/2`;
-
-//     console.log('🔍 Sending request to Roboflow Hosted API...');
-//     console.log('📍 API URL:', API_URL);
-//     console.log('🔑 API Key exists:', !!API_KEY);
-
-//     const roboflowResponse = await fetch(API_URL, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         api_key: API_KEY,
-//         image: {
-//           type: 'base64',
-//           value: base64Image
-//         }
-//       })
-//     });
-
-//     console.log('📊 Response status:', roboflowResponse.status);
-
-//     if (!roboflowResponse.ok) {
-//       const errorText = await roboflowResponse.text();
-//       console.error('❌ Roboflow API error:', errorText);
-//       throw new Error(`Roboflow API error: ${roboflowResponse.status} - ${errorText}`);
-//     }
-
-//     const data = await roboflowResponse.json();
-//     console.log('✅ Analysis complete:', data);
-
-//     // Format response ให้ตรงกับที่ frontend ต้องการ
-//     if (!data.predictions || data.predictions.length === 0) {
-//       return NextResponse.json({
-//         success: true,
-//         results: [{
-//           label: 'healthy',
-//           confidence: 0,
-//           findings: ['No dental diseases detected', 'Teeth appear healthy'],
-//           explanation: 'Your dental analysis shows no significant dental diseases detected. This is a positive sign! However, this AI analysis is not a substitute for professional dental examination.',
-//           imagePath: image.name,
-//           imageUrl: '',
-//           timestamp: new Date().toISOString(),
-//         }]
-//       });
-//     }
-
-//     const sorted = data.predictions.sort(
-//       (a: any, b: any) => b.confidence - a.confidence
-//     );
-
-//     const topPrediction = sorted[0];
-//     const findings = sorted.map((p: any) =>
-//       `${p.class}: ${(p.confidence * 100).toFixed(2)}% confidence`
-//     );
-
-//     return NextResponse.json({
-//       success: true,
-//       results: [{
-//         label: topPrediction.class.toLowerCase().replace(/ /g, '_'),
-//         confidence: topPrediction.confidence,
-//         findings,
-//         explanation: `AI analysis detected ${sorted.length} potential dental issue(s). The primary condition identified is ${topPrediction.class} with ${(topPrediction.confidence * 100).toFixed(2)}% confidence. Please consult with a dentist for professional diagnosis and treatment planning.`,
-//         imagePath: image.name,
-//         imageUrl: '',
-//         timestamp: new Date().toISOString(),
-//         detailedAnalysis: {
-//           totalDetections: sorted.length,
-//           predictions: sorted
-//         }
-//       }]
-//     });
-
-//   } catch (error) {
-//     console.error('❌ Roboflow analysis error:', error);
-//     return NextResponse.json(
-//       { 
-//         error: 'Failed to analyze image',
-//         details: error instanceof Error ? error.message : 'Unknown error'
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-//work on production
-
-
-
-
-
-//work on localhost
-
 import { NextRequest, NextResponse } from 'next/server';
 
 // Production deployment with environment variables - v2
@@ -316,26 +193,32 @@ export async function POST(request: NextRequest) {
     const base64Image = buffer.toString('base64');
 
     // ⚠️ CRITICAL: ต้องมี API Key!
-    // ลองใช้ Publishable Key สำหรับ Public Plan
-    const API_KEY = process.env.ROBOFLOW_PUBLISHABLE_KEY || process.env.ROBOFLOW_API_KEY;
+    const API_KEY = process.env.ROBOFLOW_API_KEY;
 
     if (!API_KEY) {
       console.error('❌ ROBOFLOW_API_KEY not found in environment variables');
       throw new Error('API Key not configured');
     }
 
-    // ✅ ต้องใส่ API Key ใน URL
-    const API_URL = `https://detect.roboflow.com/healthcare-713wl/2?api_key=${API_KEY}`;
-    
-    console.log('🔍 Sending request to Roboflow Inference API...');
-    console.log('📍 API URL:', API_URL.replace(API_KEY, '***')); // Hide key in log
+    // ✅ ใช้ Roboflow Hosted API (ไม่ใช่ detect.roboflow.com)
+    const API_URL = `https://api.roboflow.com/dental-clinic-wtzw1/healthcare-713wl/2`;
+
+    console.log('🔍 Sending request to Roboflow Hosted API...');
+    console.log('📍 API URL:', API_URL);
+    console.log('🔑 API Key exists:', !!API_KEY);
 
     const roboflowResponse = await fetch(API_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: base64Image,
+      body: JSON.stringify({
+        api_key: API_KEY,
+        image: {
+          type: 'base64',
+          value: base64Image
+        }
+      })
     });
 
     console.log('📊 Response status:', roboflowResponse.status);
@@ -402,3 +285,121 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+//work on production
+
+
+
+
+
+//work on localhost
+
+// import { NextRequest, NextResponse } from 'next/server';
+
+// // Production deployment with environment variables - v2
+// export async function POST(request: NextRequest) {
+//   try {
+//     const formData = await request.formData();
+//     // รองรับทั้ง 'image' และ 'images'
+//     const image = (formData.get('image') || formData.get('images')) as File;
+
+//     if (!image) {
+//       return NextResponse.json(
+//         { error: 'No image provided' },
+//         { status: 400 }
+//       );
+//     }
+
+//     // แปลงรูปเป็น base64
+//     const bytes = await image.arrayBuffer();
+//     const buffer = Buffer.from(bytes);
+//     const base64Image = buffer.toString('base64');
+
+//     // ⚠️ CRITICAL: ต้องมี API Key!
+//     // ลองใช้ Publishable Key สำหรับ Public Plan
+//     const API_KEY = process.env.ROBOFLOW_PUBLISHABLE_KEY || process.env.ROBOFLOW_API_KEY;
+
+//     if (!API_KEY) {
+//       console.error('❌ ROBOFLOW_API_KEY not found in environment variables');
+//       throw new Error('API Key not configured');
+//     }
+
+//     // ✅ ต้องใส่ API Key ใน URL
+//     const API_URL = `https://detect.roboflow.com/healthcare-713wl/2?api_key=${API_KEY}`;
+    
+//     console.log('🔍 Sending request to Roboflow Inference API...');
+//     console.log('📍 API URL:', API_URL.replace(API_KEY, '***')); // Hide key in log
+
+//     const roboflowResponse = await fetch(API_URL, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//       },
+//       body: base64Image,
+//     });
+
+//     console.log('📊 Response status:', roboflowResponse.status);
+
+//     if (!roboflowResponse.ok) {
+//       const errorText = await roboflowResponse.text();
+//       console.error('❌ Roboflow API error:', errorText);
+//       throw new Error(`Roboflow API error: ${roboflowResponse.status} - ${errorText}`);
+//     }
+
+//     const data = await roboflowResponse.json();
+//     console.log('✅ Analysis complete:', data);
+
+//     // Format response ให้ตรงกับที่ frontend ต้องการ
+//     if (!data.predictions || data.predictions.length === 0) {
+//       return NextResponse.json({
+//         success: true,
+//         results: [{
+//           label: 'healthy',
+//           confidence: 0,
+//           findings: ['No dental diseases detected', 'Teeth appear healthy'],
+//           explanation: 'Your dental analysis shows no significant dental diseases detected. This is a positive sign! However, this AI analysis is not a substitute for professional dental examination.',
+//           imagePath: image.name,
+//           imageUrl: '',
+//           timestamp: new Date().toISOString(),
+//         }]
+//       });
+//     }
+
+//     const sorted = data.predictions.sort(
+//       (a: any, b: any) => b.confidence - a.confidence
+//     );
+
+//     const topPrediction = sorted[0];
+//     const findings = sorted.map((p: any) =>
+//       `${p.class}: ${(p.confidence * 100).toFixed(2)}% confidence`
+//     );
+
+//     return NextResponse.json({
+//       success: true,
+//       results: [{
+//         label: topPrediction.class.toLowerCase().replace(/ /g, '_'),
+//         confidence: topPrediction.confidence,
+//         findings,
+//         explanation: `AI analysis detected ${sorted.length} potential dental issue(s). The primary condition identified is ${topPrediction.class} with ${(topPrediction.confidence * 100).toFixed(2)}% confidence. Please consult with a dentist for professional diagnosis and treatment planning.`,
+//         imagePath: image.name,
+//         imageUrl: '',
+//         timestamp: new Date().toISOString(),
+//         detailedAnalysis: {
+//           totalDetections: sorted.length,
+//           predictions: sorted
+//         }
+//       }]
+//     });
+
+//   } catch (error) {
+//     console.error('❌ Roboflow analysis error:', error);
+//     return NextResponse.json(
+//       { 
+//         error: 'Failed to analyze image',
+//         details: error instanceof Error ? error.message : 'Unknown error'
+//       },
+//       { status: 500 }
+//     );
+//   }
+// }
+ 

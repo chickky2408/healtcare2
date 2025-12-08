@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
-import { existsSync } from 'fs'
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +10,14 @@ export async function POST(req: NextRequest) {
     if (!paymentId || !file) {
       return NextResponse.json(
         { error: 'Payment ID and slip file are required' },
+        { status: 400 }
+      )
+    }
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: 'File size exceeds 5MB limit' },
         { status: 400 }
       )
     }
@@ -41,31 +46,17 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // สร้างชื่อไฟล์ที่ไม่ซ้ำ
-    const timestamp = Date.now()
-    const originalName = file.name.replace(/\s+/g, '_')
-    const filename = `slip_${timestamp}_${originalName}`
-
-    // กำหนด path สำหรับเก็บไฟล์
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'slips')
-
-    // สร้างโฟลเดอร์ถ้ายังไม่มี
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
-    const filepath = path.join(uploadsDir, filename)
-
-    // เขียนไฟล์
+    // แปลงไฟล์เป็น base64 เพื่อเก็บใน database
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
+    const base64 = buffer.toString('base64')
+    const dataUrl = `data:${file.type};base64,${base64}`
 
-    // อัปเดต payment
+    // อัปเดต payment ด้วย base64 string
     const updatedPayment = await (prisma as any).payment.update({
       where: { id: paymentId },
       data: {
-        slipImagePath: `/uploads/slips/${filename}`,
+        slipImagePath: dataUrl,
         status: 'PAID',
         paidAt: new Date()
       }
