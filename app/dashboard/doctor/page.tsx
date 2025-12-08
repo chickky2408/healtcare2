@@ -528,7 +528,7 @@ export default function DoctorDashboardPage() {
                   {doctor.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-800">Dr. {doctor.name}</h3>
+                  <h3 className="font-bold text-gray-800">{doctor.name}</h3>
                   <p className="text-sm text-gray-500">{doctor.email}</p>
                 </div>
               </div>
