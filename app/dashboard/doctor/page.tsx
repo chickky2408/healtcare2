@@ -258,8 +258,16 @@ export default function DoctorDashboardPage() {
         body: JSON.stringify({ email }),
       })
       const data = await response.json()
-      setAppointments(data.appointments || [])
-      checkUpcomingAppointments(data.appointments || [])
+
+      // เรียงลำดับจากใกล้ที่สุดไปไกลที่สุด
+      const sorted = (data.appointments || []).sort((a: Appointment, b: Appointment) => {
+        const dateTimeA = new Date(`${a.date}T${a.time}`).getTime()
+        const dateTimeB = new Date(`${b.date}T${b.time}`).getTime()
+        return dateTimeA - dateTimeB
+      })
+
+      setAppointments(sorted)
+      checkUpcomingAppointments(sorted)
     } catch (error) {
       console.error('Failed to fetch appointments:', error)
     } finally {
@@ -600,7 +608,7 @@ export default function DoctorDashboardPage() {
                       Welcome back,
                     </span>
                     <br />
-                    <span className="text-gray-800">Dr. {doctor.name}!</span>
+                    <span className="text-gray-800">{doctor.name}!</span>
                   </h1>
                   <p className="text-gray-600 text-lg">
                     Ready to provide excellent care today?
@@ -653,26 +661,46 @@ export default function DoctorDashboardPage() {
             initial="hidden"
             animate="visible"
           >
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-black text-gray-800">Appointments for Today</h2>
-            </div>
+            {(() => {
+              const now = new Date()
+              const upcomingAppointments = appointments.filter(apt => {
+                const aptDateTime = new Date(`${apt.date}T${apt.time}`)
+                return aptDateTime >= now
+              })
+              const pastAppointments = appointments.filter(apt => {
+                const aptDateTime = new Date(`${apt.date}T${apt.time}`)
+                return aptDateTime < now
+              })
 
-            {appointments.length === 0 ? (
-              <motion.div
-                className="text-center py-16"
-                variants={itemVariants}
-              >
-                <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Calendar className="w-12 h-12 text-blue-500" />
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">No Appointments Scheduled for Today</h3>
-                <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  Your schedule is clear today. This is an excellent opportunity to catch up on administrative tasks or take a well-deserved break.
-                </p>
-              </motion.div>
-            ) : (
-              <div className="space-y-6">
-                {appointments.map((appointment, index) => (
+              return (
+                <>
+                  {/* Upcoming Appointments */}
+                  <div className="mb-12">
+                    <div className="flex items-center justify-between mb-8">
+                      <h2 className="text-3xl font-black text-gray-800">Upcoming Appointments</h2>
+                      {upcomingAppointments.length > 0 && (
+                        <span className="bg-blue-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
+                          {upcomingAppointments.length} {upcomingAppointments.length === 1 ? 'appointment' : 'appointments'}
+                        </span>
+                      )}
+                    </div>
+
+                    {upcomingAppointments.length === 0 ? (
+                      <motion.div
+                        className="text-center py-16"
+                        variants={itemVariants}
+                      >
+                        <div className="w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                          <Calendar className="w-12 h-12 text-blue-500" />
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-3">No Upcoming Appointments</h3>
+                        <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                          Your schedule is clear. This is an excellent opportunity to catch up on administrative tasks or take a well-deserved break.
+                        </p>
+                      </motion.div>
+                    ) : (
+                      <div className="space-y-6">
+                        {upcomingAppointments.map((appointment, index) => (
                   <motion.div
                     key={appointment.id}
                     variants={itemVariants}
@@ -770,9 +798,81 @@ export default function DoctorDashboardPage() {
                       </div>
                     </div>
                   </motion.div>
-                ))}
-              </div>
-            )}
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Past Appointments */}
+                  {pastAppointments.length > 0 && (
+                    <div>
+                      <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-3xl font-black text-gray-500">Past Appointments</h2>
+                        <span className="bg-gray-400 text-white px-4 py-2 rounded-full font-semibold text-sm">
+                          {pastAppointments.length} completed
+                        </span>
+                      </div>
+
+                      <div className="space-y-6 opacity-60">
+                        {pastAppointments.map((appointment, index) => (
+                          <motion.div
+                            key={appointment.id}
+                            variants={itemVariants}
+                            className="bg-gray-100/60 backdrop-blur-lg p-6 lg:p-8 rounded-3xl border border-gray-200 shadow"
+                          >
+                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                              <div className="flex-1">
+                                <div className="flex items-start gap-4">
+                                  <div className="w-14 h-14 bg-gradient-to-r from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                                    <User className="w-7 h-7 text-white" />
+                                  </div>
+
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="text-xl font-bold text-gray-700 mb-2">{appointment.patientName}</h3>
+
+                                    <div className="flex items-center gap-4 text-gray-500 mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <Calendar className="w-4 h-4" />
+                                        <span className="font-medium">
+                                          {new Date(appointment.date).toLocaleDateString('en-US', {
+                                            weekday: 'long',
+                                            month: 'short',
+                                            day: 'numeric'
+                                          })}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4" />
+                                        <span className="font-medium">{appointment.time}</span>
+                                      </div>
+                                    </div>
+
+                                    <div className="space-y-2 text-gray-500">
+                                      <p><span className="font-medium">Email:</span> {appointment.patientEmail}</p>
+                                      <p><span className="font-medium">Treatment:</span> {appointment.type}</p>
+                                      {appointment.symptoms && (
+                                        <p><span className="font-medium">Symptoms:</span> {appointment.symptoms}</p>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-wrap gap-3 flex-shrink-0">
+                                <span className="bg-gray-300 text-gray-600 px-4 py-3 rounded-xl font-semibold border border-gray-400 flex items-center gap-2">
+                                  <CheckCircle className="w-4 h-4" />
+                                  Completed
+                                </span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )
+            })()}
           </motion.div>
         </main>
       </div>
