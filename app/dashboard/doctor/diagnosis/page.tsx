@@ -83,7 +83,7 @@ export default function DoctorDiagnosisPage() {
 
   // Group diagnoses by user email
   const groupedData = useMemo(() => {
-    if (!data) return {}
+    if (!data || !Array.isArray(data)) return {}
 
     return data.reduce((acc: Record<string, DiagnosisType[]>, item: DiagnosisType) => {
       const email = item.user?.email || 'unknown'
@@ -117,7 +117,8 @@ export default function DoctorDiagnosisPage() {
       <div className="space-y-4">
         {Object.entries(groupedData).map(([email, diagnoses]) => {
           const isExpanded = expandedUsers.has(email)
-          const user = diagnoses[0]?.user
+          const diagnosesArray = diagnoses as DiagnosisType[]
+          const user = diagnosesArray[0]?.user
 
           return (
             <div key={email} className="bg-white rounded-2xl shadow-lg border overflow-hidden">
@@ -135,7 +136,7 @@ export default function DoctorDiagnosisPage() {
                     <p className="text-sm text-gray-600">{email}</p>
                   </div>
                   <span className="ml-4 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">
-                    {diagnoses.length} {diagnoses.length === 1 ? 'analysis' : 'analyses'}
+                    {diagnosesArray.length} {diagnosesArray.length === 1 ? 'analysis' : 'analyses'}
                   </span>
                 </div>
                 {isExpanded ? <ChevronUp /> : <ChevronDown />}
@@ -145,7 +146,7 @@ export default function DoctorDiagnosisPage() {
               {isExpanded && (
                 <div className="p-4 bg-gray-50 border-t">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {diagnoses.map((item: DiagnosisType) => (
+                    {diagnosesArray.map((item: DiagnosisType) => (
                       <div
                         key={item.id}
                         className="bg-white rounded-xl shadow hover:shadow-lg border hover:scale-[1.02] transition-all duration-300"
