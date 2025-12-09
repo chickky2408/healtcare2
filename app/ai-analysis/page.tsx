@@ -150,7 +150,7 @@ export default function AiAnalysisPage() {
 
   const handleSubmit = async () => {
     console.log('🔵 handleSubmit called!', { images })
-    
+
     const user = JSON.parse(localStorage.getItem('user') || '{}')
     if (!user?.id || images.length === 0) {
       alert('Please select an image file.')
@@ -166,7 +166,16 @@ export default function AiAnalysisPage() {
 
     try {
       console.log('🚀 Calling API...')
-      
+
+      // แปลงรูปเป็น base64 สำหรับเก็บในฐานข้อมูล
+      const imageFile = images[0]
+      const reader = new FileReader()
+      const base64Promise = new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(imageFile)
+      })
+
       const res = await axios.post('/api/ai/analyze', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
         timeout: 60000,
@@ -179,8 +188,11 @@ export default function AiAnalysisPage() {
 
       setResult(analysisResult)
 
+      // รอให้ base64 conversion เสร็จ
+      const base64Image = await base64Promise
+
       await axios.post('/api/diagnosis/save', {
-        imagePath: analysisResult.imagePath || images[0].name,
+        imagePath: base64Image, // บันทึก base64 แทนชื่อไฟล์
         result: analysisResult.label,
         confidence: analysisResult.confidence,
         userId: user.id,
@@ -191,12 +203,12 @@ export default function AiAnalysisPage() {
       setMsg({ type: 'success', text: 'Analysis completed & saved successfully!' })
     } catch (err: any) {
       console.error('❌ Error:', err)
-      const errorMsg = 
+      const errorMsg =
         err?.response?.data?.message ||
         err?.response?.data?.error ||
         err?.message ||
         'Analysis failed. Please try again.'
-      
+
       alert('Error: ' + errorMsg)
       setMsg({ type: 'error', text: errorMsg })
     } finally {
