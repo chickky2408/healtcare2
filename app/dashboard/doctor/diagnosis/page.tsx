@@ -156,34 +156,45 @@ export default function DoctorDiagnosisPage() {
                           <p className="text-sm text-gray-500"><strong>🗓️ Date:</strong> {new Date(item.createdAt).toLocaleString()}</p>
                           <p className="text-sm font-semibold">🖼️ Image:</p>
                           <div className="relative group">
-                            <img
-                              src={item.imagePath}
-                              alt="Dental AI"
-                              className="mt-2 rounded-xl border w-full object-cover h-48"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.src = '/placeholder-dental.png'
-                              }}
-                            />
-                            <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <a
-                                href={item.imagePath}
-                                download={`diagnosis-${item.id}.jpg`}
-                                className="text-xs bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-1"
-                              >
-                                <Download className="w-3 h-3" />
-                                Download
-                              </a>
-                              <a
-                                href={item.imagePath}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-xs bg-gray-700 text-white px-3 py-2 rounded-lg hover:bg-gray-800 flex items-center gap-1"
-                              >
-                                <ZoomIn className="w-3 h-3" />
-                                Zoom
-                              </a>
-                            </div>
+                            {item.imagePath ? (
+                              <>
+                                <img
+                                  src={item.imagePath.startsWith('data:') ? item.imagePath : `/uploads/${item.imagePath}`}
+                                  alt="Dental AI"
+                                  className="mt-2 rounded-xl border w-full object-cover h-48 bg-gray-50"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement
+                                    const parent = target.parentElement
+                                    if (parent) {
+                                      parent.innerHTML = '<div class="mt-2 rounded-xl border w-full h-48 flex flex-col items-center justify-center bg-gray-100 text-gray-500"><svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><span class="text-sm">Image not available</span></div>'
+                                    }
+                                  }}
+                                />
+                                <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <a
+                                    href={item.imagePath.startsWith('data:') ? item.imagePath : `/uploads/${item.imagePath}`}
+                                    download={`diagnosis-${item.id}.jpg`}
+                                    className="text-xs bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-1 shadow-lg"
+                                  >
+                                    <Download className="w-3 h-3" />
+                                    Download
+                                  </a>
+                                  <a
+                                    href={item.imagePath.startsWith('data:') ? item.imagePath : `/uploads/${item.imagePath}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs bg-gray-700 text-white px-3 py-2 rounded-lg hover:bg-gray-800 flex items-center gap-1 shadow-lg"
+                                  >
+                                    <ZoomIn className="w-3 h-3" />
+                                    Zoom
+                                  </a>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="mt-2 rounded-xl border w-full h-48 flex items-center justify-center bg-gray-100 text-gray-500">
+                                <span>📷 No image uploaded</span>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
