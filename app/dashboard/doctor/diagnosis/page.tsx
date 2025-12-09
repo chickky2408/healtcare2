@@ -114,8 +114,15 @@ export default function DoctorDiagnosisPage() {
     <div className="p-6 max-w-7xl mx-auto">
       <h1 className="text-3xl font-bold text-blue-900 mb-6">🧠 AI Analysis of Patient</h1>
 
-      <div className="space-y-4">
-        {Object.entries(groupedData).map(([email, diagnoses]) => {
+      {Object.keys(groupedData).length === 0 ? (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-8 text-center">
+          <div className="text-6xl mb-4">🔍</div>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">No AI Analysis Found</h2>
+          <p className="text-gray-600">There are no patient AI diagnosis results yet. Results will appear here when patients upload dental images for analysis.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {Object.entries(groupedData).map(([email, diagnoses]) => {
           const isExpanded = expandedUsers.has(email)
           const diagnosesArray = diagnoses as DiagnosisType[]
           const user = diagnosesArray[0]?.user
@@ -206,7 +213,8 @@ export default function DoctorDiagnosisPage() {
             </div>
           )
         })}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
