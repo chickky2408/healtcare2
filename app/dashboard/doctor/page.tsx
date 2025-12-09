@@ -667,14 +667,20 @@ export default function DoctorDashboardPage() {
           >
             {(() => {
               const now = new Date()
+              console.log('🕐 Current time:', now.toISOString())
+
               const upcomingAppointments = appointments.filter(apt => {
                 const aptDateTime = new Date(`${apt.date}T${apt.time}`)
+                console.log(`Checking appointment: ${apt.date} ${apt.time} -> ${aptDateTime >= now ? 'UPCOMING' : 'PAST'}`)
                 return aptDateTime >= now
               })
               const pastAppointments = appointments.filter(apt => {
                 const aptDateTime = new Date(`${apt.date}T${apt.time}`)
                 return aptDateTime < now
               })
+
+              console.log('⏰ Upcoming appointments:', upcomingAppointments.length)
+              console.log('📅 Past appointments:', pastAppointments.length)
 
               return (
                 <>
