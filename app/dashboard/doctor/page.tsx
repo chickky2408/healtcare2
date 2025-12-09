@@ -600,7 +600,7 @@ export default function DoctorDashboardPage() {
                       Welcome back,
                     </span>
                     <br />
-                    <span className="text-gray-800">Dr. {doctor.name}!</span>
+                    <span className="text-gray-800">{doctor.name}!</span>
                   </h1>
                   <p className="text-gray-600 text-lg">
                     Ready to provide excellent care today?
