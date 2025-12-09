@@ -252,12 +252,15 @@ export default function DoctorDashboardPage() {
 
   const fetchAppointments = async (email: string) => {
     try {
+      console.log('🔍 Fetching appointments for doctor:', email)
       const response = await fetch('/api/appointments/doctor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       })
       const data = await response.json()
+      console.log('📊 API Response:', data)
+      console.log('📋 Appointments count:', data.appointments?.length || 0)
 
       // เรียงลำดับจากใกล้ที่สุดไปไกลที่สุด
       const sorted = (data.appointments || []).sort((a: Appointment, b: Appointment) => {
@@ -266,10 +269,11 @@ export default function DoctorDashboardPage() {
         return dateTimeA - dateTimeB
       })
 
+      console.log('✅ Sorted appointments:', sorted.length)
       setAppointments(sorted)
       checkUpcomingAppointments(sorted)
     } catch (error) {
-      console.error('Failed to fetch appointments:', error)
+      console.error('❌ Failed to fetch appointments:', error)
     } finally {
       setLoading(false)
     }
