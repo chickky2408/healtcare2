@@ -1897,13 +1897,15 @@ export default function UserDashboardPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                          <button
-                            onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
-                            className="flex items-center gap-2 bg-amber-500 dark:bg-amber-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-amber-600 dark:hover:bg-amber-500 transition-colors shadow-sm hover:shadow-md"
-                          >
-                            <Edit size={18} />
-                            <span className="hidden sm:inline">{t('appointments.edit')}</span>
-                          </button>
+                          {a.payment?.status !== 'SUCCESSFUL' && (
+                            <button
+                              onClick={() => router.push(`/dashboard/user/appointments/edit/${a.id}`)}
+                              className="flex items-center gap-2 bg-amber-500 dark:bg-amber-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-amber-600 dark:hover:bg-amber-500 transition-colors shadow-sm hover:shadow-md"
+                            >
+                              <Edit size={18} />
+                              <span className="hidden sm:inline">{t('appointments.edit')}</span>
+                            </button>
+                          )}
                           <button
                             onClick={() => cancelAppointment(a.id)}
                             className="flex items-center gap-2 bg-rose-500 dark:bg-rose-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-rose-600 dark:hover:bg-rose-500 transition-colors shadow-sm hover:shadow-md"
