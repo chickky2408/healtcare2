@@ -18,7 +18,7 @@
     "form-data": "^4.0.5",
     "framer-motion": "^12.6.3",
     "lucide-react": "^0.507.0",
-    "next": "15.2.6",
+    "next": "15.2.8",
     "nodemailer": "^7.0.11",
     "promptpay-qr": "^0.5.0",
     "qrcode": "^1.5.4",
